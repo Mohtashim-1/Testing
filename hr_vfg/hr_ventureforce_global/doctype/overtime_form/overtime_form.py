@@ -17,6 +17,7 @@ class OvertimeForm(Document):
 		for r in rec:
 			allow_ot = frappe.db.get_value('Employee', r.employee, 'is_overtime_allowed')
 			if allow_ot == 1 and r.approved_ot1 == "00:00:00" and r.late_sitting:
+			# if r.approved_ot1 == "00:00:00" and r.late_sitting:
 				self.append("details",{
 					"employee":r.employee,
 					"actual_overtime":r.late_sitting,
