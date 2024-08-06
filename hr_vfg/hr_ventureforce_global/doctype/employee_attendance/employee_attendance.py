@@ -42,6 +42,8 @@ class EmployeeAttendance(Document):
         holiday_full_day_ot =0
         self.no_of_holiday_night = 0
         self.total_absents = 0
+        # self.late_comparision = 0
+        self.late_comparision = 0
         extra_ot_amount = 0
         holiday_doc = None
         self.total_public_holidays = 0
@@ -563,6 +565,7 @@ class EmployeeAttendance(Document):
                                         total_late_hr_worked += data.late_sitting
 
                 if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
+                        self.late_comparision += 1
                         data.late = 0
                         data.late_coming_hours = None
                 if day_data and not holiday_flag:
@@ -725,7 +728,6 @@ class EmployeeAttendance(Document):
             "December":12
         }
         return dict_[month]
-    
 
 def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
     ab_index = []
