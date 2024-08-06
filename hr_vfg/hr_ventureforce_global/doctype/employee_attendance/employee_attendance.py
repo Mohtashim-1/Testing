@@ -61,6 +61,7 @@ class EmployeeAttendance(Document):
         _, num_days = calendar.monthrange(year, month)
         first_day = dt(year, month, 1)
         last_day = dt(year, month, num_days)
+
         if hr_settings.period_from != 1:
             if month == 1:
                 temp_month = 12
@@ -153,7 +154,7 @@ class EmployeeAttendance(Document):
                     data.check_in_1 = hr_settings.auto_fetch_check_in
                 if not data.check_out_1 and data.check_in_1:
                     data.check_out_1 = hr_settings.auto_fetch_check_out
-
+                
                 if str(data.check_in_1) == str(hr_settings.auto_fetch_check_in):
                     data.check_in_1 = None
                 if str(data.check_out_1) == str(hr_settings.auto_fetch_check_out):
@@ -162,7 +163,7 @@ class EmployeeAttendance(Document):
                 # if data.check_in_1 != None and data.check_out_1 == None and data.date < today():
                 #     data.check_out_1 = timedelta(hours=int(str(data.check_in_1).split(":")[0]),
                 #                               minutes=int(str(data.check_in_1).split(":")[1])+1)
-                  
+             
                 if data.approved_ot1:
                     total_approved_ot+= timedelta(hours=int(str(data.approved_ot1).split(":")[0]),minutes=int(str(data.approved_ot1).split(":")[1]))
                 if data.check_in_1 and data.check_out_1 and data.check_in_1 != data.check_out_1:
@@ -285,7 +286,10 @@ class EmployeeAttendance(Document):
                                 data.early_overtime = day_data.start_time - first_in_time 
                                 total_early_ot = total_early_ot + (day_data.start_time - first_in_time )
                             first_in_time = day_data.start_time
-
+                    # if data.late1 == 1:
+                    #     data.late = 0
+                    # if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
+                    #     data.late = 0
                     if first_in_time >= late_mark and first_in_time < half_day_time:
                         data.late = 1
                         if day_data.calculate_late_hours == "Late Mark":
@@ -330,6 +334,10 @@ class EmployeeAttendance(Document):
                                 data.late = 0
                             else:
                                 data.half_day = 0
+                    
+                    # if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
+                    #     data.late = 0
+                    
                     
                     if data.check_out_1:
                         out_diff = day_data.end_time - first_out_time
@@ -442,7 +450,9 @@ class EmployeeAttendance(Document):
                     if first_in_time >= timedelta(hours=get_time(hr_settings.night_shift_start_time).hour,minutes=get_time(hr_settings.night_shift_start_time).minute) or s_type == "Night":
                         data.night = 1
                 
-               
+                # if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
+                #         data.late = 0
+
                 if data.early:
                     total_early += 1
                 if data.late:
@@ -468,7 +478,9 @@ class EmployeeAttendance(Document):
 
                 if total_time:    
                     total_hr_worked = total_hr_worked + total_time
-                
+
+                # if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
+                #         data.late = 0
                 if data.late_sitting and data.weekly_off == 0 and data.public_holiday == 0:
                     
                     if day_data.overtime_slabs:
@@ -531,7 +543,8 @@ class EmployeeAttendance(Document):
                
                 if holiday_flag:
                      self.no_of_sundays+=1
-                    
+                
+                   
                      if total_time:
                                     if total_time >= timedelta(hours=hr_settings.holiday_halfday_ot,minutes=00,seconds=0) and \
                                         total_time < timedelta(hours=hr_settings.holiday_full_day_ot,minutes=00,seconds=0):
@@ -549,7 +562,9 @@ class EmployeeAttendance(Document):
                                         data.late_sitting = total_time
                                         total_late_hr_worked += data.late_sitting
 
-                
+                if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
+                        data.late = 0
+                        data.late_coming_hours = None
                 if day_data and not holiday_flag:
                     if day_data.late_slab and data.late_coming_hours:
                         lsm = frappe.get_doc("Late Slab", day_data.late_slab)
