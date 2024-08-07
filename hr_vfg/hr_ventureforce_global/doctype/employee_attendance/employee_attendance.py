@@ -581,7 +581,7 @@ class EmployeeAttendance(Document):
                     shift = first_shift_ass['shift_type']
 
                     shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
-                if shift1:
+                # if shift1:
                     first_shift_type = shift1[0]
                     start_time = first_shift_type['start_time']
                     end_time = first_shift_type['end_time']
