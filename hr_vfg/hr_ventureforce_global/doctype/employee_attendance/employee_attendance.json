@@ -32,7 +32,6 @@
   "total_half_days",
   "early_for_halfday",
   "no_of_nights",
-  "no_of_holiday_night",
   "no_of_sundays",
   "total_early_goings",
   "total_working_hours",
@@ -376,11 +375,6 @@
    "label": "Early for Absents"
   },
   {
-   "fieldname": "no_of_holiday_night",
-   "fieldtype": "Data",
-   "label": "No of Holiday Night"
-  },
-  {
    "fieldname": "total_weekly_off",
    "fieldtype": "Float",
    "label": "Total weekly Off"
@@ -420,7 +414,7 @@
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2024-08-08 01:26:28.216223",
+ "modified": "2024-08-08 01:56:41.153848",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
