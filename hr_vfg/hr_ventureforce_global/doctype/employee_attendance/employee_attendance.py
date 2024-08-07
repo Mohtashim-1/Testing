@@ -586,7 +586,9 @@ class EmployeeAttendance(Document):
                 if data.check_in_1 == None:
                     data.approved_early_over_time = None 
                     data.early_coming = None 
-                    
+                
+                shift1 = None
+
                 shift_ass = frappe.get_all("Shift Assignment", filters={'employee': "HR-EMP-00001", 'start_date': ["<=", '2024-06-01']}, fields=['*'])
                 if shift_ass:
                     first_shift_ass = shift_ass[0]
