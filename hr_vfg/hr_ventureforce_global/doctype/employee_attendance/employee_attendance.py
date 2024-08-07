@@ -606,11 +606,9 @@ class EmployeeAttendance(Document):
                         result_delta = shift_start_time_delta - check_in_time_delta
                         result_time = (datetime.min + result_delta).time()
                         data.early_over_time = result_time
-                        # data.test = result_time
 
                     else:
                         data.early_over_time = None
-                        # data.check = None
                     # result_delta = check_in_time_delta - shift_start_time_delta
                     # result_time = (datetime.min + result_delta).time()
                     # data.early_over_time = result_time
