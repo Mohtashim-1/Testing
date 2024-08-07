@@ -7,6 +7,9 @@
  "field_order": [
   "section_break_2",
   "date",
+  "shift_start",
+  "shift_end",
+  "early_over_time",
   "column_break_3",
   "check_in_1",
   "column_break_7",
@@ -14,6 +17,7 @@
   "section_break_12",
   "difference",
   "late_coming_hours",
+  "early_coming",
   "column_break_26",
   "per_day_hour",
   "early_going_hours",
@@ -328,11 +332,31 @@
    "fieldname": "late1",
    "fieldtype": "Check",
    "label": "Late Compensation"
+  },
+  {
+   "fieldname": "early_coming",
+   "fieldtype": "Time",
+   "label": "Early Coming"
+  },
+  {
+   "fieldname": "shift_start",
+   "fieldtype": "Time",
+   "label": "Shift Start"
+  },
+  {
+   "fieldname": "shift_end",
+   "fieldtype": "Time",
+   "label": "Shift End"
+  },
+  {
+   "fieldname": "early_over_time",
+   "fieldtype": "Time",
+   "label": "Early Over Time"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-08-06 14:00:07.441705",
+ "modified": "2024-08-07 13:58:45.946112",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",

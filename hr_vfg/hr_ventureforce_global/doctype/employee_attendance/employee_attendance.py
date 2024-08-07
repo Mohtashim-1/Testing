@@ -280,14 +280,16 @@ class EmployeeAttendance(Document):
                         in_diff = timedelta(hours=float(in_diff[0]), minutes=float(
                             in_diff[1]), seconds=float(in_diff[2]))
 
-                    if first_in_time < day_data.start_time:
-                        if first_in_time != timedelta(hours=0):
-                            if day_data.early_overtime_start:
-                                if first_in_time < day_data.early_overtime_start:
-                                    first_in_time = day_data.early_overtime_start
-                                data.early_overtime = day_data.start_time - first_in_time 
-                                total_early_ot = total_early_ot + (day_data.start_time - first_in_time )
-                            first_in_time = day_data.start_time
+                    # if first_in_time < day_data.start_time:
+                    #     if first_in_time != timedelta(hours=0):
+                    #         if day_data.early_overtime_start:
+                                # if first_in_time < day_data.early_overtime_start:
+                                #     first_in_time = day_data.early_overtime_start
+                                # data.early_overtime = day_data.start_time
+                                # data.early_overtime = day_data.start_time - first_in_time 
+                                # total_early_ot = total_early_ot + (day_data.start_time - first_in_time )
+                                # first_in_time = day_data.start_time
+                        
                     # if data.late1 == 1:
                     #     data.late = 0
                     # if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
@@ -568,6 +570,54 @@ class EmployeeAttendance(Document):
                         self.late_comparision += 1
                         data.late = 0
                         data.late_coming_hours = None
+                if data.check_in_1 == None and data.check_out_1 != None:
+                    data.absent = 0
+                if data.check_in_1 != None and data.check_out_1 == None:
+                    data.absent = 0
+                
+                shift_ass = frappe.get_all("Shift Assignment", filters={'employee': "HR-EMP-00001", 'start_date': ["<=", '2024-06-01']}, fields=['*'])
+                if shift_ass:
+                    first_shift_ass = shift_ass[0]
+                    shift = first_shift_ass['shift_type']
+
+                    shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
+                if shift1:
+                    first_shift_type = shift1[0]
+                    start_time = first_shift_type['start_time']
+                    end_time = first_shift_type['end_time']
+                    
+                    start_time_formatted = (datetime.min + start_time).time()
+                    end_time_formatted = (datetime.min + end_time).time()
+                    data.shift_start = start_time_formatted
+                    data.shift_end = end_time_formatted
+                    
+                else:
+                    print("No shift assignment found.")
+
+                
+                if data.check_in_1:
+                    # data.early_over_time = data.check_in_1 - start_time_formatted
+                    check_in_datetime = datetime.strptime(data.check_in_1, '%H:%M:%S')
+                    check_in_time = check_in_datetime.time()
+                    check_in_time_delta = timedelta(hours=check_in_time.hour, minutes=check_in_time.minute, seconds=check_in_time.second)
+                    shift_start_time = data.shift_start
+                    shift_start_time_delta = timedelta(hours=shift_start_time.hour, minutes=shift_start_time.minute, seconds=shift_start_time.second)
+                    if check_in_time_delta < shift_start_time_delta:
+                        result_delta = shift_start_time_delta - check_in_time_delta
+                        result_time = (datetime.min + result_delta).time()
+                        data.early_over_time = result_time
+                        # data.test = result_time
+
+                    else:
+                        data.early_over_time = None
+                        # data.check = None
+                    # result_delta = check_in_time_delta - shift_start_time_delta
+                    # result_time = (datetime.min + result_delta).time()
+                    # data.early_over_time = result_time
+                    # data.check = result_time
+
+                
+
                 if day_data and not holiday_flag:
                     if day_data.late_slab and data.late_coming_hours:
                         lsm = frappe.get_doc("Late Slab", day_data.late_slab)
