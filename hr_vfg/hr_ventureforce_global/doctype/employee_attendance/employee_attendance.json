@@ -33,7 +33,6 @@
   "early_for_halfday",
   "no_of_nights",
   "no_of_holiday_night",
-  "column_break_13",
   "no_of_sundays",
   "total_early_goings",
   "total_working_hours",
@@ -209,10 +208,6 @@
   },
   {
    "fieldname": "column_break_22",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_13",
    "fieldtype": "Column Break"
   },
   {
@@ -425,7 +420,7 @@
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2024-08-07 17:54:08.125828",
+ "modified": "2024-08-08 01:26:28.216223",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
