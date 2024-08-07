@@ -574,28 +574,41 @@ class EmployeeAttendance(Document):
                     data.absent = 0
                 if data.check_in_1 != None and data.check_out_1 == None:
                     data.absent = 0
-                
+                if data.check_in_1:
+                    data.approved_early_over_time = None
+                    data.early_coming = None
+                if data.check_out_1:
+                    data.approved_early_over_time = None 
+                    data.early_coming = None
+                if data.check_in_1 == None and data.check_out_1 == None:
+                    data.approved_early_over_time = None  
+                    data.early_coming = "00:00:00"
+                if data.check_in_1 == None:
+                    data.approved_early_over_time = None 
+                    data.early_coming = None 
+                    
                 shift_ass = frappe.get_all("Shift Assignment", filters={'employee': "HR-EMP-00001", 'start_date': ["<=", '2024-06-01']}, fields=['*'])
                 if shift_ass:
                     first_shift_ass = shift_ass[0]
                     shift = first_shift_ass['shift_type']
 
                     shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
-                # if shift1:
-                    first_shift_type = shift1[0]
-                    start_time = first_shift_type['start_time']
-                    end_time = first_shift_type['end_time']
-                    
-                    start_time_formatted = (datetime.min + start_time).time()
-                    end_time_formatted = (datetime.min + end_time).time()
-                    data.shift_start = start_time_formatted
-                    data.shift_end = end_time_formatted
+                    if shift1:
+                        first_shift_type = shift1[0]
+                        start_time = first_shift_type['start_time']
+                        end_time = first_shift_type['end_time']
+                        
+                        start_time_formatted = (datetime.min + start_time).time()
+                        end_time_formatted = (datetime.min + end_time).time()
+                        data.shift_start = start_time_formatted
+                        data.shift_end = end_time_formatted
                     
                 else:
                     print("No shift assignment found.")
 
                 
                 if data.check_in_1:
+                    data.approved_early_over_time = None
                     # data.early_over_time = data.check_in_1 - start_time_formatted
                     check_in_datetime = datetime.strptime(data.check_in_1, '%H:%M:%S')
                     check_in_time = check_in_datetime.time()
