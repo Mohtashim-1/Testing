@@ -570,6 +570,7 @@ class EmployeeAttendance(Document):
                         self.late_comparision += 1
                         data.late = 0
                         data.late_coming_hours = None
+                        total_lates -= 1
                 # if data.check_in_1 == None:
                 #     data.approved_early_over_time = None
                 # if data.check_in_1 == None and data.check_out_1 != None:
@@ -631,6 +632,7 @@ class EmployeeAttendance(Document):
 
                     else:
                         data.early_over_time = None
+                    
                     # result_delta = check_in_time_delta - shift_start_time_delta
                     # result_time = (datetime.min + result_delta).time()
                     # data.early_over_time = result_time
@@ -711,6 +713,8 @@ class EmployeeAttendance(Document):
                     if data.early:
                         total_early -= 1
                         data.early = 0
+                    if data.late1 == 1:  
+                        total_lates -= 1
                     if data.late:
                         total_lates -= 1
                         data.late = 0
