@@ -57,7 +57,8 @@
   "approved_ot1",
   "extra_duty_for_halfday",
   "extra_duty_for_fullday",
-  "approved_early_over_time"
+  "approved_early_over_time",
+  "approved_eot"
  ],
  "fields": [
   {
@@ -358,11 +359,16 @@
    "fieldname": "approved_early_over_time",
    "fieldtype": "Time",
    "label": "Approved Early Over Time"
+  },
+  {
+   "fieldname": "approved_eot",
+   "fieldtype": "Data",
+   "label": "Approved EOT"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-08-07 16:00:05.567016",
+ "modified": "2024-08-08 11:22:04.248239",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",

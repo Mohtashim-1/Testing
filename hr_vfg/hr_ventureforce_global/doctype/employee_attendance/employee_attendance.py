@@ -570,24 +570,26 @@ class EmployeeAttendance(Document):
                         self.late_comparision += 1
                         data.late = 0
                         data.late_coming_hours = None
-                if data.check_in_1 == None and data.check_out_1 != None:
-                    data.absent = 0
-                if data.check_in_1 != None and data.check_out_1 == None:
-                    data.absent = 0
-                if data.check_in_1:
-                    data.approved_early_over_time = None
-                    data.early_coming = None
-                if data.check_out_1:
-                    data.approved_early_over_time = None 
-                    data.early_coming = None
-                if data.check_in_1 == None and data.check_out_1 == None:
-                    data.approved_early_over_time = None  
-                    data.early_coming = "00:00:00"
-                if data.check_in_1 == None:
-                    data.approved_early_over_time = None 
-                    data.early_coming = None 
-                if data.shift_start != None and data.check_in_1 == None:
-                    data.early_coming = None
+                # if data.check_in_1 == None:
+                #     data.approved_early_over_time = None
+                # if data.check_in_1 == None and data.check_out_1 != None:
+                #     data.absent = 0
+                # if data.check_in_1 != None and data.check_out_1 == None:
+                #     data.absent = 0
+                # if data.check_in_1:
+                #     data.approved_early_over_time = None
+                #     data.early_coming = None
+                # if data.check_out_1:
+                #     data.approved_early_over_time = None 
+                #     data.early_coming = None
+                # if data.check_in_1 == None and data.check_out_1 == None:
+                #     data.approved_early_over_time = None  
+                #     data.early_coming = "00:00:00"
+                # if data.check_in_1 == None:
+                #     data.approved_early_over_time = None 
+                #     data.early_coming = None 
+                # if data.shift_start != None and data.check_in_1 == None:
+                #     data.early_coming = None
                 
 
                 shift1 = None
@@ -612,9 +614,10 @@ class EmployeeAttendance(Document):
                 else:
                     print("No shift assignment found.")
 
-                
+                if data.check_in_1 == None:
+                    data.approved_early_over_time = "00:00:00"
                 if data.check_in_1:
-                    data.approved_early_over_time = None
+                    data.approved_early_over_time = "00:00:00"
                     # data.early_over_time = data.check_in_1 - start_time_formatted
                     check_in_datetime = datetime.strptime(data.check_in_1, '%H:%M:%S')
                     check_in_time = check_in_datetime.time()
