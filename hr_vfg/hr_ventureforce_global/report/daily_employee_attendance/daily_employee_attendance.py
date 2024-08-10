@@ -11,21 +11,21 @@ def get_columns(filters):
 	return[
 		"Department:Data:120",
 		# "Biometric ID:Data:80",
-		"Date:Date:100",
+		# "Date:Date:100",
 			 "Employee:Data:120",
-			  "Employee Name:Data:120",
+			#   "Employee Name:Data:120",
 			  "Designation:Data:120",
 			
 			"Check In:Data:100",
 
 			"Check Out:Data:100",
-			"Total Hours:Data:100", 
+			# "Total Hours:Data:100", 
 			"Late Coming:Data:100",
 			# "Holidays:Data:50",
 			# "Halfday:Data:100",
 			"Early Going:Data:100",
 			"Over Time:Data:100",
-			"Status:Data:100"
+			# "Status:Data:100"
 
 	]
 def get_data(filters):
@@ -77,18 +77,18 @@ def get_data(filters):
 		else:
 			row=[""]
 		# row.append(item[1])
-		row.append(item[2])
+		# row.append(item[2])
 		row.append(item[3])
-		row.append(frappe.db.get_value("Employee",{"name":item[3]},"employee_name")),
+		# row.append(frappe.db.get_value("Employee",{"name":item[3]},"employee_name")),
 		row.append(frappe.db.get_value("Employee",{"name":item[3]},"designation")),
 		row.append(item[4])
 		row.append(item[5])
-		row.append(item[6])
+		# row.append(item[6])
 		row.append(item[7])
-		# row.append(item[8])
+		row.append(item[8])
 		# row.append(item[9])
 		row.append(item[10])
-		row.append(item[11])
+		# row.append(item[11])
 		status = "<span style='color:blue;'>P</span>"
 		if item[12] == 1:
 			status = "<span style='color:green;'>L</span>"

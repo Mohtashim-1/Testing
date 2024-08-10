@@ -23,6 +23,8 @@ from erpnext.setup.doctype.employee.employee import (
 
 class EmployeeAttendance(Document):
     def autoname(self):
+        if not self.employee or not self.month:
+            frappe.throw("Employee and Month must be set before generating the name.")
         self.name = make_autoname(self.employee + '-' + self.month)
 
     def validate(self):
@@ -571,6 +573,11 @@ class EmployeeAttendance(Document):
                         data.late = 0
                         data.late_coming_hours = None
                         total_lates -= 1
+                if data.weekly_off:
+                    data.shift_start = None
+                    data.shift_end = None
+                    data.early_over_time = None
+                    data.approved_ot1 = None
                 # if data.check_in_1 == None:
                 #     data.approved_early_over_time = None
                 # if data.check_in_1 == None and data.check_out_1 != None:
@@ -607,31 +614,111 @@ class EmployeeAttendance(Document):
                         start_time = first_shift_type['start_time']
                         end_time = first_shift_type['end_time']
                         
-                        start_time_formatted = (datetime.min + start_time).time()
-                        end_time_formatted = (datetime.min + end_time).time()
-                        data.shift_start = start_time_formatted
-                        data.shift_end = end_time_formatted
+                        data.shift_start =start_time
+                        data.shift_end = end_time
+                        data.shift_in= start_time
+                        data.shift_out = end_time
+
                     
-                else:
-                    print("No shift assignment found.")
+                        def time_to_seconds(time_string):
+                            """Helper function to convert time string to seconds."""
+                            if time_string is None:
+                                raise ValueError("Time string is None")
+                            t = datetime.strptime(time_string, "%H:%M:%S").time()
+                            return t.hour * 3600 + t.minute * 60 + t.second
 
-                if data.check_in_1 == None:
-                    data.approved_early_over_time = "00:00:00"
-                if data.check_in_1:
-                    data.approved_early_over_time = "00:00:00"
-                    # data.early_over_time = data.check_in_1 - start_time_formatted
-                    check_in_datetime = datetime.strptime(data.check_in_1, '%H:%M:%S')
-                    check_in_time = check_in_datetime.time()
-                    check_in_time_delta = timedelta(hours=check_in_time.hour, minutes=check_in_time.minute, seconds=check_in_time.second)
-                    shift_start_time = data.shift_start
-                    shift_start_time_delta = timedelta(hours=shift_start_time.hour, minutes=shift_start_time.minute, seconds=shift_start_time.second)
-                    if check_in_time_delta < shift_start_time_delta:
-                        result_delta = shift_start_time_delta - check_in_time_delta
-                        result_time = (datetime.min + result_delta).time()
-                        data.early_over_time = result_time
+                        def get_time_difference(t1, t2):
+                            """Calculate time difference in seconds between two time strings."""
+                            t1_seconds = time_to_seconds(t1)
+                            t2_seconds = time_to_seconds(t2)
+                            return timedelta(seconds=t1_seconds - t2_seconds)
 
-                    else:
-                        data.early_over_time = None
+                        # Retrieve and verify data values
+                        shift_in = data.shift_in
+                        check_in_1 = data.check_in_1
+
+                        # Print statements for debugging
+                        print(f"shift_in: {shift_in}")
+                        print(f"check_in_1: {check_in_1}")
+
+                        # Convert shift_in and check_in_1 to time strings if they are timedelta
+                        if isinstance(shift_in, timedelta):
+                            total_seconds = int(shift_in.total_seconds())
+                            hours, remainder = divmod(total_seconds, 3600)
+                            minutes, seconds = divmod(remainder, 60)
+                            shift_in_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+                        else:
+                            shift_in_time_string = shift_in
+
+                        if isinstance(check_in_1, timedelta):
+                            total_seconds = int(check_in_1.total_seconds())
+                            hours, remainder = divmod(total_seconds, 3600)
+                            minutes, seconds = divmod(remainder, 60)
+                            check_in_1_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+                        else:
+                            check_in_1_time_string = check_in_1
+
+                        # Ensure both time strings are not None
+                        if shift_in_time_string is None or check_in_1_time_string is None:
+                            data.early_ot = None
+                        else:
+                            # Convert time strings to datetime objects for comparison
+                            shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
+                            check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
+
+                            # Calculate time difference if check_in_1 is earlier than shift_in
+                            if check_in_1_datetime < shift_in_datetime:
+                                time_difference = get_time_difference(shift_in_time_string, check_in_1_time_string)
+                                data.early_ot = time_difference
+                            else:
+                                data.early_ot = None
+
+
+                
+                # if data.check_in_1:
+                #     time_format = "%H:%M:%S"
+                    
+                #     # Parse the strings into datetime objects
+                #     check_in_1_time = datetime.strptime(data.check_in_1, time_format)
+                #     shift_in_time = datetime.strptime(data.shift_in, time_format)
+                    
+                #     # Calculate the difference
+                #     early_ot_timedelta = shift_in_time - check_in_1_time
+                    
+                #     # Convert the difference back to hh:mm:ss format
+                #     early_ot_time = str(early_ot_timedelta)
+                    
+                #     # If the timedelta includes days, remove them
+                #     if len(early_ot_time) > 8:
+                #         early_ot_time = early_ot_time[-8:]
+                        
+                #     data.early_ot = early_ot_time
+
+                # if data.check_in_1:
+                #     time_format = "%H:%M:%S"
+                #     check_in_1_time = datetime.strptime(data.check_in_1, time_format)
+                #     shift_in_time = datetime.strptime(data.shift_in, time_format)
+                #     early_ot_timedelta = shift_in_time - check_in_1_time
+                #     early_ot_time = str(early_ot_timedelta)
+                #     data.early_ot = early_ot_time
+
+                # if data.check_in_1 == None:
+                #     data.approved_early_over_time = "00:00:00"
+                # if data.check_in_1:
+                #     data.approved_early_over_time = "00:00:00"
+                #     # data.early_over_time = data.check_in_1 - start_time_formatted
+                #     check_in_datetime = datetime.strptime(data.check_in_1, '%H:%M:%S')
+                #     check_in_time = check_in_datetime.time()
+                #     check_in_time_delta = timedelta(hours=check_in_time.hour, minutes=check_in_time.minute, seconds=check_in_time.second)
+                #     shift_start_time = data.shift_start
+                #     shift_start_time_delta = timedelta(hours=shift_start_time.hour, minutes=shift_start_time.minute, seconds=shift_start_time.second)
+                #     if check_in_time_delta < shift_start_time_delta:
+                #         result_delta = shift_start_time_delta - check_in_time_delta
+                #         result_time = (datetime.min + result_delta).time()
+                #         data.early_over_time = result_time
+
+                #     else:
+                #         data.early_over_time = None
                     
                     # result_delta = check_in_time_delta - shift_start_time_delta
                     # result_time = (datetime.min + result_delta).time()

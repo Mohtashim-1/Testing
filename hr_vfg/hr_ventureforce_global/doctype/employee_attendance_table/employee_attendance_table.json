@@ -9,11 +9,19 @@
   "date",
   "shift_start",
   "shift_end",
-  "early_over_time",
+  "shift_in",
+  "shift_out",
+  "early_ot",
   "column_break_3",
   "check_in_1",
   "column_break_7",
   "check_out_1",
+  "over_time_section",
+  "late_sitting",
+  "column_break_zbnu",
+  "early_over_time",
+  "column_break_ghsm",
+  "total_ot_hours",
   "section_break_12",
   "difference",
   "late_coming_hours",
@@ -22,7 +30,6 @@
   "per_day_hour",
   "early_going_hours",
   "column_break_13",
-  "late_sitting",
   "additional_hours",
   "section_break_26",
   "absent",
@@ -364,11 +371,44 @@
    "fieldname": "approved_eot",
    "fieldtype": "Data",
    "label": "Approved EOT"
+  },
+  {
+   "fieldname": "over_time_section",
+   "fieldtype": "Section Break",
+   "label": "Over Time"
+  },
+  {
+   "fieldname": "column_break_zbnu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ghsm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_ot_hours",
+   "fieldtype": "Data",
+   "label": "Total OT Hours"
+  },
+  {
+   "fieldname": "shift_in",
+   "fieldtype": "Data",
+   "label": "Shift In"
+  },
+  {
+   "fieldname": "shift_out",
+   "fieldtype": "Data",
+   "label": "Shift Out"
+  },
+  {
+   "fieldname": "early_ot",
+   "fieldtype": "Data",
+   "label": "Early OT"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-08-08 11:22:04.248239",
+ "modified": "2024-08-10 18:13:00.151175",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
