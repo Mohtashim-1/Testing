@@ -602,7 +602,7 @@ class EmployeeAttendance(Document):
 
                 shift1 = None
 
-                shift_ass = frappe.get_all("Shift Assignment", filters={'employee': "HR-EMP-00001", 'start_date': ["<=", '2024-06-01']}, fields=['*'])
+                shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee, 'start_date': ["<=", '2024-06-01']}, fields=['*'])
                 shift1 = None
                 if shift_ass:
                     first_shift_ass = shift_ass[0]
