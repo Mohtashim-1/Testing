@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:format:HR-EOT-{MM}-{YY}-{####}",
+ "autoname": "format:HR-EOT-{MM}-{YY}-{####}",
  "creation": "2024-08-12 01:13:44.947625",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -87,7 +87,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-12 02:00:28.469551",
+ "modified": "2024-08-12 02:11:34.961952",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Early Compensation",
