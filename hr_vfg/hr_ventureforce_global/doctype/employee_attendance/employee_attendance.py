@@ -700,7 +700,32 @@ class EmployeeAttendance(Document):
                 data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
 
                 if data.approved_ot1:
-                    pass
+                    approved_ot1_hours, approved_ot1_minutes, approved_ot1_seconds = map(int, data.approved_ot1.split(':'))
+
+                    # approved_ot1_hours, approved_ot1_minutes, approved_ot1_seconds = map(int, data.approved_ot1(':'))
+                    approved_ot1_timedelta = timedelta(hours=approved_ot1_hours, minutes=approved_ot1_minutes, seconds=approved_ot1_seconds)
+                    # approved_eot_timedelta = data.total_approved_ot
+                    # data.total_approved_ot = approved_ot1_seconds
+                else:
+                    approved_ot1_timedelta = timedelta(0) 
+                
+                if data.approved_eot:
+                    approved_eot_hours, approved_eot_minutes, approved_eot_seconds = map(int, data.approved_eot.split(':'))
+                    approved_eot_timedelta = timedelta(hours=approved_eot_hours, minutes=approved_eot_minutes, seconds=approved_eot_seconds)
+                    # data.total_approved_ot = approved_eot_timedelta 
+                else:
+                    approved_eot_timedelta = timedelta(0)
+                
+                total_approved_ot_data = approved_ot1_timedelta + approved_eot_timedelta
+
+                total_seconds = total_approved_ot_data.total_seconds()
+                hours, remainder = divmod(total_seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                data.total_approved_ot = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+
+
+                
+
 
 
                 
