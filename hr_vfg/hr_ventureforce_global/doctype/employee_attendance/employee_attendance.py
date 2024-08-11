@@ -599,10 +599,14 @@ class EmployeeAttendance(Document):
                 # if data.shift_start != None and data.check_in_1 == None:
                 #     data.early_coming = None
                 
+                # if data.check_in_1:
+                #     # if data.late_sitting:
+                #     data.total_ot_hours = "abcd"
+                #     print("abddd")
 
                 shift1 = None
 
-                shift_ass = frappe.get_all("Shift Assignment", filters={'employee': "HR-EMP-00001", 'start_date': ["<=", '2024-06-01']}, fields=['*'])
+                shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee, 'start_date': ["<=", '2024-06-01']}, fields=['*'])
                 shift1 = None
                 if shift_ass:
                     first_shift_ass = shift_ass[0]
@@ -666,6 +670,7 @@ class EmployeeAttendance(Document):
                             shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
                             check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
 
+
                             # Calculate time difference if check_in_1 is earlier than shift_in
                             if check_in_1_datetime < shift_in_datetime:
                                 time_difference = get_time_difference(shift_in_time_string, check_in_1_time_string)
@@ -727,6 +732,61 @@ class EmployeeAttendance(Document):
                 
 
 
+                # else:
+                #     raise ValueError("No Shift Found")    
+                
+                if data.late_sitting:
+                    late_sitting_timedelta = data.late_sitting
+                    # late_sitting_timedelta = timedelta(hours=data.late_sitting.hour, minutes=data.late_sitting.minutes, seconds= data.late_sitting.seconds)
+                else:
+                    late_sitting_timedelta = timedelta(0)
+                
+                if data.early_ot:
+                    if isinstance(data.early_ot, str):
+                        early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
+                        early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
+                    else:
+                        early_ot_timedelta = data.early_ot
+
+                else:
+                    early_ot_timedelta = timedelta(0)
+                
+                total_ot_time_delta = late_sitting_timedelta + early_ot_timedelta
+
+                total_seconds = total_ot_time_delta.total_seconds()
+                hours, remainder = divmod(total_seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+
+
+                # if data.check_in_1:
+
+                    # late_sitting_time = data.late_sitting if data.late_sitting else timedelta(0)
+                    # early_over_time = data.early_over_time if data.early_over_time else timedelta(0)    
+
+                    # total_ot_time_delta = late_sitting_time + early_over_time
+
+                    # total_seconds = total_ot_time_delta.total_seconds()
+
+                    # hours, remainder = divmod(total_seconds, 3600)
+                    # minutes, seconds = divmod(remainder, 60)
+                    # data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes), int(seconds))
+                    # pass
+                    # late_sitting_time = datetime.strptime(data.late_sitting)
+                    # early_over_time = datetime.strptime(data.early_over_time)
+                    # total_ot_delta = (late_sitting_time - datetime(1900,1,1)) + (early_over_time - datetime(1900,1,1))
+                    # data.total_ot_hours = str(total_ot_delta)
+                    # if '.' in data.total_ot_hours:
+                    #     data.total_ot_hours = data.total_ot_hours.split('.')[0]
+                    
+                    # print(data.total_ot_hours)
+
+                # if data.late_sitting:
+                #     data.total_ot_hours
+                # if data.early_over_time:
+                #     data.total_ot_hours
+                # if data.late_sitting and data.early_over_time:
+                #     data.total_ot_hours = data.late_sitting + data.early_over_time                
 
                 
                 # if data.check_in_1:
