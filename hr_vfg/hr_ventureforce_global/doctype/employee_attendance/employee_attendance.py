@@ -672,6 +672,35 @@ class EmployeeAttendance(Document):
                                 data.early_ot = time_difference
                             else:
                                 data.early_ot = None
+                
+                else:
+                    raise ValueError("No Shift Found")  
+                
+                if data.late_sitting:
+                    late_sitting_timedelta = data.late_sitting
+                    # late_sitting_timedelta = timedelta(hours=data.late_sitting.hour, minutes=data.late_sitting.minutes, seconds= data.late_sitting.seconds)
+                else:
+                    late_sitting_timedelta = timedelta(0)
+                
+                if data.early_ot:
+                    if isinstance(data.early_ot, str):
+                        early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
+                        early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
+                    else:
+                        early_ot_timedelta = data.early_ot
+
+                else:
+                    early_ot_timedelta = timedelta(0)
+                
+                total_ot_time_delta = late_sitting_timedelta + early_ot_timedelta
+
+                total_seconds = total_ot_time_delta.total_seconds()
+                hours, remainder = divmod(total_seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+
+                if data.approved_ot1:
+                    pass
 
 
                 

@@ -18,10 +18,13 @@
   "check_out_1",
   "over_time_section",
   "late_sitting",
+  "approved_ot1",
   "column_break_zbnu",
   "early_over_time",
+  "approved_eot",
   "column_break_ghsm",
   "total_ot_hours",
+  "total_approved_ot",
   "section_break_12",
   "difference",
   "late_coming_hours",
@@ -61,11 +64,9 @@
   "early_going",
   "column_break_38",
   "type",
-  "approved_ot1",
   "extra_duty_for_halfday",
   "extra_duty_for_fullday",
-  "approved_early_over_time",
-  "approved_eot"
+  "approved_early_over_time"
  ],
  "fields": [
   {
@@ -404,11 +405,16 @@
    "fieldname": "early_ot",
    "fieldtype": "Data",
    "label": "Early OT"
+  },
+  {
+   "fieldname": "total_approved_ot",
+   "fieldtype": "Data",
+   "label": "Total Approved OT"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-08-10 18:13:00.151175",
+ "modified": "2024-08-11 17:28:39.143421",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
