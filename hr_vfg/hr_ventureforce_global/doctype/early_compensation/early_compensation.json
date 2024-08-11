@@ -1,0 +1,112 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-12 01:13:44.947625",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_fc9a",
+  "month",
+  "column_break_xwjq",
+  "year",
+  "column_break_hajr",
+  "employee",
+  "section_break_evlm",
+  "get_data",
+  "section_break_fypm",
+  "early_over_time_form_ct",
+  "section_break_yqow",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_fc9a",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Early Compensation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
+  },
+  {
+   "fieldname": "column_break_xwjq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Link",
+   "label": "Year",
+   "options": "Year"
+  },
+  {
+   "fieldname": "column_break_hajr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "section_break_fypm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "early_over_time_form_ct",
+   "fieldtype": "Table",
+   "label": "Early Over Time Form CT",
+   "options": "Early Over Time Form CT"
+  },
+  {
+   "fieldname": "section_break_yqow",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_evlm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "get_data",
+   "fieldtype": "Button",
+   "label": "Get Data"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-12 01:24:16.438886",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Early Compensation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

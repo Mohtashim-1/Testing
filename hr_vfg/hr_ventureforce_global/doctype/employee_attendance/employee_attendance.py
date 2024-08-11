@@ -839,7 +839,9 @@ class EmployeeAttendance(Document):
                 else:
                     self.approved_early_over_time_hour = 0
                 if self.approved_ot and self.approved_early_over_time_hour:
-                    self.approved_overtime_le = float(self.approved_ot) + float(self.approved_early_over_time_hour)
+                    approved_overtime_le = float(self.approved_ot) + float(self.approved_early_over_time_hour)
+                    self.approved_overtime_le = "{:.2f}".format(approved_overtime_le)
+
                 else:
                     self.approved_overtime_le = 0
                 
