@@ -39,6 +39,7 @@ class EmployeeAttendance(Document):
         total_additional_hours = timedelta(hours=0, minutes=0, seconds=0)
         total_early_ot = timedelta(hours=0, minutes=0, seconds=0)
         total_approved_ot = timedelta(hours=0, minutes=0, seconds=0)
+        total_approved_early_ot = timedelta(hours=0, minutes=0, seconds=0)
         required_working_hrs = 0.0
         holiday_halfday_ot =0
         holiday_full_day_ot =0
@@ -87,6 +88,48 @@ class EmployeeAttendance(Document):
         total_holiday_hours = timedelta(hours=0,minutes=0,seconds=0)
         previous = None
         index = 0
+        total_seconds1 = 0  # This should be declared before use
+        total_seconds = 0
+
+        for data in self.table1:
+            if data.early_ot:
+                try:
+                    # Ensure the time format is valid
+                    time_parts = [int(part) for part in data.early_ot.split(':')]
+                    if len(time_parts) == 3:
+                        time_seconds1 = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                        total_seconds1 += time_seconds1  # Accumulate the total seconds
+                        print(f"Added {time_seconds1} seconds from {data.early_ot}")
+                    else:
+                        print(f"Invalid time format in early_ot: {data.early_ot}")
+                except ValueError:
+                    print(f"Error processing time format in early_ot: {data.early_ot}")
+            else:
+                print(f"early_ot is None or empty for row")
+
+            total_hours1 = total_seconds1 / 3600.0
+            self.early_ot = "{:.2f}".format(total_hours1)
+
+            if data.approved_eot:
+                try:
+                    # Ensure the time format is valid
+                    time_parts = [int(part) for part in data.approved_eot.split(':')]
+                    if len(time_parts) == 3:
+                        time_seconds = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                        total_seconds += time_seconds  # Accumulate the total seconds
+                        print(f"Added {time_seconds} seconds from {data.approved_eot}")
+                    else:
+                        print(f"Invalid time format in approved_eot: {data.approved_eot}")
+                except ValueError:
+                    print(f"Error processing time format in approved_eot: {data.approved_eot}")
+            else:
+                print(f"approved_eot is None or empty for row")
+
+        total_hours = total_seconds / 3600.0
+        self.approved_early_over_time_hour = "{:.2f}".format(total_hours)
+        print(f"Total seconds accumulated: {total_seconds}")
+
+
         for data in self.table1:
             first_in_time = timedelta(hours=1,minutes=0,seconds=0)
             first_out_time = timedelta(hours=1,minutes=0,seconds=0)
@@ -100,6 +143,7 @@ class EmployeeAttendance(Document):
             data.total_ot_amount = 0
             tempdate = data.date
             holiday_flag = False
+            
            
             if getdate(data.date) < getdate(frappe.db.get_value("Employee",self.employee,"date_of_joining")):
                 data.absent=1
@@ -642,8 +686,8 @@ class EmployeeAttendance(Document):
                         check_in_1 = data.check_in_1
 
                         # Print statements for debugging
-                        print(f"shift_in: {shift_in}")
-                        print(f"check_in_1: {check_in_1}")
+                        # print(f"shift_in: {shift_in}")
+                        # print(f"check_in_1: {check_in_1}")
 
                         # Convert shift_in and check_in_1 to time strings if they are timedelta
                         if isinstance(shift_in, timedelta):
@@ -752,23 +796,50 @@ class EmployeeAttendance(Document):
                 else:
                     late_sitting_timedelta = timedelta(0)
                 
-                if data.early_ot:
-                    if isinstance(data.early_ot, str):
-                        early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
-                        early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
-                    else:
-                        early_ot_timedelta = data.early_ot
+                # if data.early_ot:
+                #     early_ot_timedelta = data.early_ot
+                    # if isinstance(data.early_ot, str):
+                    #     early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
+                    #     early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
+                    # else:
+                    #     early_ot_timedelta = data.early_ot
 
-                else:
-                    early_ot_timedelta = timedelta(0)
+                # else:
+                #     early_ot_timedelta = timedelta(0)
                 
-                total_ot_time_delta = late_sitting_timedelta + early_ot_timedelta
+                # total_ot_time_delta = late_sitting_timedelta + early_ot_timedelta
 
-                total_seconds = total_ot_time_delta.total_seconds()
-                hours, remainder = divmod(total_seconds, 3600)
-                minutes, seconds = divmod(remainder, 60)
-                data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+                # total_seconds = total_ot_time_delta.total_seconds()
+                # hours, remainder = divmod(total_seconds, 3600)
+                # minutes, seconds = divmod(remainder, 60)
+                # data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+                # set total overtime 
+                if self.late_sitting_hours:
+                    self.total_overtime = self.late_sitting_hours
+                else:
+                    self.total_overtime = 0
+                if self.early_ot:
+                    self.total_overtime = self.early_ot
+                else:
+                    self.total_overtime = 0
+                if self.late_sitting_hours and self.early_ot:
+                    self.total_overtime = self.early_ot + self.late_sitting_hours
 
+                # set approved overtime le
+
+                if self.approved_ot:
+                    self.approved_overtime_le = float(self.approved_ot)
+                else:
+                    self.approved_overtime_le = 0
+                if self.approved_early_over_time_hour:
+                    self.approved_overtime_le = float(self.approved_early_over_time_hour)
+                else:
+                    self.approved_early_over_time_hour = 0
+                if self.approved_ot and self.approved_early_over_time_hour:
+                    self.approved_overtime_le = float(self.approved_ot) + float(self.approved_early_over_time_hour)
+                else:
+                    self.approved_overtime_le = 0
+                
 
                 # if data.check_in_1:
 

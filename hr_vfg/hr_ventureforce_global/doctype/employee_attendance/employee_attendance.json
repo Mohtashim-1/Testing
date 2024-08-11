@@ -43,10 +43,13 @@
   "hours_worked",
   "over_time_data_section",
   "late_sitting_hours",
+  "approved_ot",
   "column_break_xhgm",
   "early_ot",
+  "approved_early_over_time_hour",
   "column_break_zvym",
   "total_overtime",
+  "approved_overtime_le",
   "time_calculation_section",
   "holiday_hour",
   "extra_hours",
@@ -58,9 +61,7 @@
   "early_over_time",
   "holiday_full_day_ot",
   "total_public_holidays",
-  "approved_early_over_time_hour",
   "column_break_43",
-  "approved_ot",
   "extra_ot_amount",
   "section_break_15",
   "short_hours",
@@ -264,7 +265,7 @@
   {
    "fieldname": "approved_ot",
    "fieldtype": "Data",
-   "label": "Approved Over Time"
+   "label": "Approved Over Time - L"
   },
   {
    "fieldname": "month_days",
@@ -406,7 +407,7 @@
   {
    "fieldname": "approved_early_over_time_hour",
    "fieldtype": "Data",
-   "label": "Approved Early Over Time Hour"
+   "label": "Approved Over Time - E"
   },
   {
    "fieldname": "early_ot",
@@ -431,11 +432,16 @@
   {
    "fieldname": "column_break_zvym",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_overtime_le",
+   "fieldtype": "Data",
+   "label": "Approved Overtime - LE"
   }
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2024-08-11 21:21:48.284902",
+ "modified": "2024-08-11 22:10:39.849589",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
