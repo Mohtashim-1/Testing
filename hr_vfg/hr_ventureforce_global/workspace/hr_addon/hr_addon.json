@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"1RfbO3EGgl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Addon</span>\",\"col\":12}},{\"id\":\"68eaFaKIxr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"ObM2ZnZfSF\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"epHnr-50QH\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Setting\",\"col\":4}},{\"id\":\"nzlnI-MXZn\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}},{\"id\":\"lOwGzDNJWY\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}}]",
+ "content": "[{\"id\":\"1RfbO3EGgl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Addon</span>\",\"col\":12}},{\"id\":\"68eaFaKIxr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"ObM2ZnZfSF\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"epHnr-50QH\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Setting\",\"col\":4}},{\"id\":\"lOwGzDNJWY\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"nzlnI-MXZn\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}},{\"id\":\"nBD1DqEoZy\",\"type\":\"card\",\"data\":{\"card_name\":\"Shift Management\",\"col\":4}},{\"id\":\"DXtsGjxm7y\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave\",\"col\":4}},{\"id\":\"G6_ivmuQCM\",\"type\":\"card\",\"data\":{\"card_name\":\"Recruitment\",\"col\":4}}]",
  "creation": "2024-08-12 00:22:29.997674",
  "custom_blocks": [],
  "docstatus": 0,
@@ -149,9 +149,146 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Shift Management",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Shift Type",
+   "link_count": 0,
+   "link_to": "Shift Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Shift Request",
+   "link_count": 0,
+   "link_to": "Shift Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Shift Assignment",
+   "link_count": 0,
+   "link_to": "Shift Assignment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Shift Transfer",
+   "link_count": 0,
+   "link_to": "Employee Shift Transfer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Holiday List",
+   "link_count": 0,
+   "link_to": "Holiday List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Type",
+   "link_count": 0,
+   "link_to": "Leave Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Period",
+   "link_count": 0,
+   "link_to": "Leave Period",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Policy",
+   "link_count": 0,
+   "link_to": "Leave Policy",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Application",
+   "link_count": 0,
+   "link_to": "Leave Application",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Allocation",
+   "link_count": 0,
+   "link_to": "Leave Allocation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Recruitment",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Job Opening",
+   "link_count": 0,
+   "link_to": "Job Opening",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-08-12 00:31:17.875396",
+ "modified": "2024-08-12 00:35:23.862905",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
