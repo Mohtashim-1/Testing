@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"1RfbO3EGgl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Addonull</span>\",\"col\":12}},{\"id\":\"VCa8qpcm6P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"4q1VMAUmgY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Transfer\",\"col\":3}},{\"id\":\"58PavjCslP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Full and Final Statement\",\"col\":3}},{\"id\":\"bKDlq3xswW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Increment\",\"col\":3}},{\"id\":\"ObM2ZnZfSF\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"epHnr-50QH\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Setting\",\"col\":4}},{\"id\":\"lOwGzDNJWY\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"nzlnI-MXZn\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}},{\"id\":\"nBD1DqEoZy\",\"type\":\"card\",\"data\":{\"card_name\":\"Shift Management\",\"col\":4}},{\"id\":\"DXtsGjxm7y\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave\",\"col\":4}},{\"id\":\"G6_ivmuQCM\",\"type\":\"card\",\"data\":{\"card_name\":\"Recruitment\",\"col\":4}},{\"id\":\"Z9nzFZuuNq\",\"type\":\"card\",\"data\":{\"card_name\":\"Payroll\",\"col\":4}}]",
+ "content": "[{\"id\":\"1RfbO3EGgl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Addon</span>\",\"col\":12}},{\"id\":\"VCa8qpcm6P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"4q1VMAUmgY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Transfer\",\"col\":3}},{\"id\":\"58PavjCslP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Full and Final Statement\",\"col\":3}},{\"id\":\"bKDlq3xswW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Increment\",\"col\":3}},{\"id\":\"ObM2ZnZfSF\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"epHnr-50QH\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Setting\",\"col\":4}},{\"id\":\"lOwGzDNJWY\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"nzlnI-MXZn\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}},{\"id\":\"nBD1DqEoZy\",\"type\":\"card\",\"data\":{\"card_name\":\"Shift Management\",\"col\":4}},{\"id\":\"DXtsGjxm7y\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave\",\"col\":4}},{\"id\":\"G6_ivmuQCM\",\"type\":\"card\",\"data\":{\"card_name\":\"Recruitment\",\"col\":4}},{\"id\":\"Z9nzFZuuNq\",\"type\":\"card\",\"data\":{\"card_name\":\"Payroll\",\"col\":4}}]",
  "creation": "2024-08-12 00:22:29.997674",
  "custom_blocks": [],
  "docstatus": 0,
@@ -357,7 +357,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-08-12 01:01:59.838861",
+ "modified": "2024-08-12 01:09:48.196274",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
