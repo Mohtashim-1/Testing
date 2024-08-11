@@ -727,6 +727,7 @@ class EmployeeAttendance(Document):
                 hours, remainder = divmod(total_seconds, 3600)
                 minutes, seconds = divmod(remainder, 60)
                 data.total_approved_ot = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+                
 
 
                 
