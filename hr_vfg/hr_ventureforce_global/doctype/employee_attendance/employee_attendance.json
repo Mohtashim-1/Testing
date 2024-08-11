@@ -41,8 +41,13 @@
   "lates_for_absent",
   "early_for_absents",
   "hours_worked",
-  "time_calculation_section",
+  "over_time_data_section",
   "late_sitting_hours",
+  "column_break_xhgm",
+  "early_ot",
+  "column_break_zvym",
+  "total_overtime",
+  "time_calculation_section",
   "holiday_hour",
   "extra_hours",
   "column_break_22",
@@ -54,7 +59,6 @@
   "holiday_full_day_ot",
   "total_public_holidays",
   "approved_early_over_time_hour",
-  "early_ot",
   "column_break_43",
   "approved_ot",
   "extra_ot_amount",
@@ -343,8 +347,7 @@
   },
   {
    "fieldname": "time_calculation_section",
-   "fieldtype": "Section Break",
-   "label": "Over Time Calculation"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_44",
@@ -410,11 +413,29 @@
    "fieldtype": "Float",
    "label": "Early OT",
    "precision": "2"
+  },
+  {
+   "fieldname": "over_time_data_section",
+   "fieldtype": "Section Break",
+   "label": "Over Time Data"
+  },
+  {
+   "fieldname": "column_break_xhgm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_overtime",
+   "fieldtype": "Data",
+   "label": "Total Overtime"
+  },
+  {
+   "fieldname": "column_break_zvym",
+   "fieldtype": "Column Break"
   }
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2024-08-08 01:56:41.153848",
+ "modified": "2024-08-11 21:21:48.284902",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

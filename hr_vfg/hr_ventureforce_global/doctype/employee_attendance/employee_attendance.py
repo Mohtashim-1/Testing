@@ -727,11 +727,21 @@ class EmployeeAttendance(Document):
                 hours, remainder = divmod(total_seconds, 3600)
                 minutes, seconds = divmod(remainder, 60)
                 data.total_approved_ot = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
-                
 
+                if self.late_sitting_hours is None:
+                    self.late_sitting_hours = 0.0
+                else:
+                    self.late_sitting_hours = float(self.late_sitting_hours)
 
-                
+                late_sitting_hours_float = float(self.late_sitting_hours)
 
+                # set total overtime in employee attendance   
+                if self.early_ot is None:
+                    self.early_ot = 0.0
+                else:
+                    self.early_ot = float(self.early_ot)
+
+                early_ot_float = float(self.early_ot)
 
                 # else:
                 #     raise ValueError("No Shift Found")    
