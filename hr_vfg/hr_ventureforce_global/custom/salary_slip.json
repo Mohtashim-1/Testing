@@ -1907,7 +1907,7 @@
    "description": null,
    "docstatus": 0,
    "dt": "Salary Slip",
-   "fetch_from": null,
+   "fetch_from": "employee_attendance.manual_absent",
    "fetch_if_empty": 0,
    "fieldname": "custom_manual_absent",
    "fieldtype": "Float",

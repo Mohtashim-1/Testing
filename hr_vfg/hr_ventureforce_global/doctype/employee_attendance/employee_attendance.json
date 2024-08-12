@@ -27,6 +27,7 @@
   "lates_for_halfday",
   "total_working_days",
   "late_comparision",
+  "manual_absent",
   "cb18",
   "total_absents",
   "total_half_days",
@@ -437,11 +438,16 @@
    "fieldname": "approved_overtime_le",
    "fieldtype": "Data",
    "label": "Approved Overtime - LE"
+  },
+  {
+   "fieldname": "manual_absent",
+   "fieldtype": "Float",
+   "label": "Manual Absent"
   }
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2024-08-11 22:10:39.849589",
+ "modified": "2024-08-12 16:23:11.935906",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
