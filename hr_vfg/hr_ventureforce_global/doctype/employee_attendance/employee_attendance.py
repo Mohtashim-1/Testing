@@ -652,7 +652,9 @@ class EmployeeAttendance(Document):
 
                 shift_ass = frappe.get_all("Shift Assignment", 
                                            filters={'employee': self.employee,
-                                            'start_date': ["<=", '2024-06-01']}, 
+                                            'start_date': ["<=", getdate(data.date)],
+                                            # 'start_date': ["<=", '2024-06-01']
+                                            }, 
                                             fields=['*'])
                 shift1 = None
                 if shift_ass:
