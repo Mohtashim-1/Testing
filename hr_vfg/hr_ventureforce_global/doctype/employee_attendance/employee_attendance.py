@@ -241,7 +241,7 @@ class EmployeeAttendance(Document):
                     if len(shift_ass) > 0:
                         shift = shift_ass[0].shift_type
                     if shift == None:
-                        frappe.throw(_("No shift available for this employee"))
+                        frappe.throw(_("No shift available for this employee{0}").format(self.employee))
                     data.shift = shift
                     shift_doc = frappe.get_doc("Shift Type", shift)
                     s_type = shift_doc.shift_type
@@ -728,7 +728,7 @@ class EmployeeAttendance(Document):
                                 data.early_ot = None
                 
                 else:
-                    raise ValueError("No Shift Found")  
+                    raise ValueError(f"No Shift Found for these employee: {self.employee}")
                 
                 if data.late_sitting:
                     late_sitting_timedelta = data.late_sitting
