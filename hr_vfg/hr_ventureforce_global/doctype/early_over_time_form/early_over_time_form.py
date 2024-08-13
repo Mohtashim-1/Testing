@@ -11,7 +11,7 @@ class EarlyOverTimeForm(Document):
 		rec = frappe.db.sql("""
 		SELECT p.employee,p.employee_name,c.shift_start,c.date, c.check_in_1, c.early_ot, c.early_over_time, c.name as child_name, p.name as parent_name FROM `tabEmployee Attendance` p
 		LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
-		where p.month=%s and p.year=%s and c.date=%s and c.early_ot is not null, c.early_over_time is not null and c.check_in_1 is not null and c.approved_eot is null""",
+		where p.month=%s and p.year=%s and c.date=%s and c.early_ot is not null and c.early_over_time is not null and c.check_in_1 is not null and c.approved_eot is null""",
 		(self.month,self.year,self.date),as_dict=1)
 
 		if len(rec)>0:
