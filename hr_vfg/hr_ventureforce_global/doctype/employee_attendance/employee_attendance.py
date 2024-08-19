@@ -580,10 +580,10 @@ class EmployeeAttendance(Document):
                     data.approved_ot1 = None
                 # if data.check_in_1 == None:
                 #     data.approved_early_over_time = None
-                # if data.check_in_1 == None and data.check_out_1 != None:
-                #     data.absent = 0
-                # if data.check_in_1 != None and data.check_out_1 == None:
-                #     data.absent = 0
+                if data.check_in_1 == None and data.check_out_1 != None:
+                    data.absent = 0
+                if data.check_in_1 != None and data.check_out_1 == None:
+                    data.absent = 0
                 # if data.check_in_1:
                 #     data.approved_early_over_time = None
                 #     data.early_coming = None
@@ -704,7 +704,8 @@ class EmployeeAttendance(Document):
                 minutes, seconds = divmod(remainder, 60)
                 data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
 
-
+                if data.approved_ot1:
+                    pass
                 # if data.check_in_1:
 
                     # late_sitting_time = data.late_sitting if data.late_sitting else timedelta(0)
