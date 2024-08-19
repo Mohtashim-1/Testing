@@ -143,7 +143,7 @@ class CustomSalarySlip(SalarySlip):
 def add_leaves(doc, method):
 			
 			rec = frappe.db.sql("""select name from `tabLeave Application` where status="Approved" and  from_date>=%s and to_date<=%s 
-				                             and employee=%s and custom_late_absent_adjustment_as_a_leave=1 and docstatus=1 """,
+				                             and employee=%s and custom_late_absent_adjusted_as_a_leave=1 and docstatus=1 """,
 				                      (getdate(doc.get("start_date")),getdate(doc.get("end_date")),doc.employee), as_dict=True)
 			
 			adj_list = []

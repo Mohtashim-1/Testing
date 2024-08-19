@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:HR-LCA-{MM}-{YY}-{####}",
  "creation": "2024-08-06 11:55:16.323108",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -98,10 +99,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-06 12:05:39.079621",
+ "modified": "2024-08-12 02:02:25.501657",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Coming Adjustment",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

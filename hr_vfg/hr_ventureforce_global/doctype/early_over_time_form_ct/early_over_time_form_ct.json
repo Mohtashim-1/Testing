@@ -9,6 +9,7 @@
   "employee",
   "employee_name",
   "designation",
+  "date",
   "check_in_1",
   "early_over_time",
   "approved_early_over_time",
@@ -84,12 +85,17 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Actual Early Over Time"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Data",
+   "label": "Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-07 15:44:40.017476",
+ "modified": "2024-08-12 01:27:50.288855",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Early Over Time Form CT",
