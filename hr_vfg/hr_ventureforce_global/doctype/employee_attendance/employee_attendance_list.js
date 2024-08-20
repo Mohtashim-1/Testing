@@ -9,9 +9,9 @@ frappe.listview_settings['Employee Attendance'] = {
 						title: __('Add Follow Up'),
 						fields: [
 				
-							{ fieldtype: 'Date', reqd:1, fieldname: 'from_date', label: __("From Date") },
+							{ fieldtype: 'Date', reqd:1, fieldname: 'from_date', label: __("From Date"),default: frappe.datetime.add_months(frappe.datetime.get_today(), -1), },
 							{ fieldtype: 'Column Break' },
-							{ fieldtype: 'Date',reqd:1, fieldname: 'to_date', label: __("To Date") },
+							{ fieldtype: 'Date',reqd:1, fieldname: 'to_date', label: __("To Date"), default: frappe.datetime.get_today(),},
 							{ fieldtype: 'Section Break' },
 				
 							{ fieldtype: 'Link', fieldname: 'employee', label: __("Employee"),options:"Employee" },

@@ -107,18 +107,31 @@ doc_events = {
 
 scheduler_events = {
     "cron": {
-		"0 04 * * *": [
-			"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-		]
-	},
-    "cron": {
-		"0 11 * * *": [
-			"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-		]
-	},
-#	"all": [
-#		"hr_vfg.tasks.all"
-#	],
+        "*/1 * * * *": [
+            "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+        ]
+    }
+}
+# scheduler_events = {
+    # "cron": {
+	# 	"0 04 * * *": [
+	# 		"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+	# 	]
+	# },
+    # "cron": {
+	# 	"0 11 * * *": [
+	# 		"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+	# 	]
+	# },
+    # "cron": {
+	# 	"*/1 * * * *": [
+	# 		"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+	# 	]
+	# }
+	# "all": [
+	# 	"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook",
+    #     "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_long"
+	# ]
 #	"daily": [
 #		"hr_vfg.tasks.daily"
 #	],
@@ -131,7 +144,7 @@ scheduler_events = {
 #	"monthly": [
 #		"hr_vfg.tasks.monthly"
 #	]
-}
+# }
 
 # Testing
 # -------
