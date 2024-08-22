@@ -112,6 +112,11 @@ scheduler_events = {
         ]
     },
     "cron": {
+        "* * * * *": [
+            "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+        ]
+    },
+    "cron": {
         "* 06 * * *": [
             "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
         ]
