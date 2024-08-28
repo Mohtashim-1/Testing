@@ -23,7 +23,6 @@ class LateCompensationEmployeeWise(Document):
 					"check_in_1": r.check_in_1,
 					"late_coming_hours":r.late_coming_hours,
 					"late": r.late,
-					# "late1":r.late1,
 					"late1":1,
 					"att_ref": r.parent_name,
 					"att_child_ref":r.child_name
