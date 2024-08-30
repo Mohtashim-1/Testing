@@ -9,8 +9,9 @@ class OvertimeForm(Document):
 	def get_data(self):
 		rec = frappe.db.sql(""" select p.employee,p.employee_name, p.designation, c.late_sitting,c.approved_ot1, c.name as child_name, p.name as parent_name from `tabEmployee Attendance` p
 					  LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
-					  where p.month=%s and p.year=%s and c.date=%s and c.late_sitting is not  NULL""",
-					  (self.month,self.year,self.date),as_dict=1)
+					  where p.month=%s and p.year=%s and c.date=%s and c.late_sitting is not  NULL and c.late_sitting > %s
+					  """,
+					  (self.month,self.year,self.date, self.ot_frequency),as_dict=1)
 		
 		if len(rec) > 0:
 			self.details = []

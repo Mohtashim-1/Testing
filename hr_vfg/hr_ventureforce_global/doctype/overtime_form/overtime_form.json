@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
+  "ot_frequency",
   "column_break_2",
   "month",
   "column_break_4",
@@ -94,13 +95,19 @@
   {
    "fieldname": "section_break_12",
    "fieldtype": "Section Break"
+  },
+  {
+   "default": "00:30:00",
+   "fieldname": "ot_frequency",
+   "fieldtype": "Time",
+   "label": "OT Frequency"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-04-30 12:56:50.208568",
+ "modified": "2024-08-31 02:17:53.949592",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Overtime Form",
