@@ -14,6 +14,10 @@ class EarlyOverTimeForm(Document):
 		where p.month=%s and p.year=%s and c.date=%s and c.early_ot is not null and c.early_over_time is not null and c.check_in_1 is not null and c.approved_eot is null and c.early_ot > %s """,
 		(self.month,self.year,self.date, self.ot_frequency),as_dict=1)
 
+# for threshould of ot frequency had been added
+#  if len(rec)>0:
+			# self.early_over_time_form_ct = []
+
 		if len(rec)>0:
 			self.early_over_time_form_ct = []
 		
