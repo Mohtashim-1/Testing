@@ -621,11 +621,13 @@ class EmployeeAttendance(Document):
                     data.shift_start = None
                     data.shift_end = None
                     data.early_over_time = None
-                    data.approved_ot1 = None
+                    # data.approved_ot1 = None
                 if data.check_in_1 is None and data.check_out_1 is not None:
                     data.absent = 0
                 if data.check_in_1 is not None and data.check_out_1 is None:
                     data.absent = 0
+                # if data.check_in_1:
+                #         data.approved_ot1 = "00:00:00" 
                 # if data.check_in_1 == None:
                 #     data.approved_early_over_time = None
                 # if data.check_in_1 == None and data.check_out_1 != None:
@@ -1012,8 +1014,7 @@ class EmployeeAttendance(Document):
                     if data.late:
                         total_lates -= 1
                         data.late = 0
-                    if data.weekly_off:
-                        data.approved_ot1 = "00:00:00"
+                    
                 
                 check_sanwich_after_holiday(self,previous,data,hr_settings,index)
                
