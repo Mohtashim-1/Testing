@@ -1012,6 +1012,8 @@ class EmployeeAttendance(Document):
                     if data.late:
                         total_lates -= 1
                         data.late = 0
+                    if data.weekly_off:
+                        data.approved_ot1 = "00:00:00"
                 
                 check_sanwich_after_holiday(self,previous,data,hr_settings,index)
                
