@@ -106,32 +106,18 @@ doc_events = {
 # ---------------
 
 scheduler_events = {
-    "cron": {
-        "59 * * * *": [
-            "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-        ]
-    },
-    "cron": {
-        "* * * * *": [
-            "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-        ]
-    },
-    "cron": {
-        "* 06 * * *": [
-            "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-        ]
-    },
-    "cron": {
-        "* 12 * * *": [
-            "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-        ]
-    },
-    "cron": {
-        "* 20 * * *": [
-            "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-        ]
-    }
+    "daily": [
+        "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+    ]
+    # working
+    # "all": [
+    #     "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+    # ],
+    # "hourly": [
+    #     "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+    # ]
 }
+
 
 # scheduler_events = {
     # "cron": {
