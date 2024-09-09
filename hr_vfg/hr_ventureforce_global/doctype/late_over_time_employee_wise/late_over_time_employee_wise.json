@@ -1,15 +1,24 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:LOTE-{MM}-{YY}-{###}",
  "creation": "2024-09-09 18:15:04.135239",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "month",
-  "column_break_cmnq",
-  "year",
-  "column_break_sfpl",
   "employee",
+  "column_break_cmnq",
+  "month",
+  "column_break_sfpl",
+  "year",
+  "column_break_vyoc",
+  "ot_threshold",
+  "section_break_gakh",
+  "get_data",
+  "section_break_nsrt",
+  "late_over_time_employee_wise_ct",
+  "remarks_section",
+  "remarks",
   "section_break_lklv",
   "amended_from"
  ],
@@ -53,15 +62,56 @@
    "fieldtype": "Link",
    "label": "Employee",
    "options": "Employee"
+  },
+  {
+   "fieldname": "section_break_nsrt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "late_over_time_employee_wise_ct",
+   "fieldtype": "Table",
+   "label": "Late Over Time Employee Wise CT",
+   "options": "Late Over Time Employee Wise CT"
+  },
+  {
+   "fieldname": "section_break_gakh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "get_data",
+   "fieldtype": "Button",
+   "label": "Get Data"
+  },
+  {
+   "default": "00:30:00",
+   "fieldname": "ot_threshold",
+   "fieldtype": "Time",
+   "label": "OT Threshold"
+  },
+  {
+   "fieldname": "column_break_vyoc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-09 18:16:40.660382",
+ "modified": "2024-09-09 18:41:39.696175",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Over Time Employee Wise",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -80,5 +130,8 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
 }

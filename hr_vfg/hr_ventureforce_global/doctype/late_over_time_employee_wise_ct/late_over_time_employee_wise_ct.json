@@ -1,0 +1,128 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-09 18:18:00.571639",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "column_break_tdhc",
+  "employee_name",
+  "column_break_guvv",
+  "date",
+  "column_break_ixgr",
+  "late_sitting",
+  "section_break_7ihd",
+  "approved_ot",
+  "column_break_ufsn",
+  "description",
+  "column_break_hkpi",
+  "att_ref",
+  "column_break_lbyw",
+  "att_child_ref"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fieldname": "late_sitting",
+   "fieldtype": "Time",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Late Sitting"
+  },
+  {
+   "fieldname": "approved_ot",
+   "fieldtype": "Time",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Approved OT"
+  },
+  {
+   "fieldname": "column_break_tdhc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_guvv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ufsn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_ixgr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hkpi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "att_ref",
+   "fieldtype": "Data",
+   "label": "att_ref"
+  },
+  {
+   "fieldname": "column_break_lbyw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "att_child_ref",
+   "fieldtype": "Data",
+   "label": "att_child_ref"
+  },
+  {
+   "fieldname": "section_break_7ihd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-09-09 18:42:20.873434",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Late Over Time Employee Wise CT",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
