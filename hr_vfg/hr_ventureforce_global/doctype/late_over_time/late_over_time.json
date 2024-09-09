@@ -9,8 +9,8 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
-  "ot_frequency",
   "column_break_2",
+  "ot_frequency",
   "month",
   "column_break_4",
   "year",
@@ -39,6 +39,7 @@
   {
    "fieldname": "month",
    "fieldtype": "Select",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Month",
    "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
@@ -51,6 +52,7 @@
    "default": "2024",
    "fieldname": "year",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Year",
    "options": "Year"
@@ -64,15 +66,6 @@
    "fieldtype": "Table",
    "label": "Details",
    "options": "Overtime Form CT"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Overtime Form",
-   "print_hide": 1,
-   "read_only": 1
   },
   {
    "fieldname": "get_data",
@@ -100,13 +93,24 @@
    "default": "00:30:00",
    "fieldname": "ot_frequency",
    "fieldtype": "Time",
-   "label": "OT Frequency"
+   "label": "OT Frequency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Late Over Time",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-31 11:55:45.879846",
+ "modified": "2024-09-09 18:14:04.172110",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Over Time",
