@@ -23,6 +23,10 @@ class AttendanceAdjustment(Document):
 		# 	return True
 		hr_settings = frappe.get_single('V HR Settings')
 		for data in self.table_4:
+			# att = frappe.db.sql(""" select p.name, c.check_in_1, c.check_out_1, late, half_day from `tabEmployee Attendance` p 
+			# JOIN `tabEmployee Attendance Table` c
+			# 		ON c.parent = p.name where c.date=%s and p.month=%s and p.employee=%s""",
+			# 		(self.date,self.month,data.employee_id), as_dict=1)
 			att = frappe.db.sql(""" select p.name, c.check_in_1, c.check_out_1, late, half_day from `tabEmployee Attendance` p 
 			JOIN `tabEmployee Attendance Table` c
 					ON c.parent = p.name where c.date=%s and p.month=%s and p.employee=%s""",
@@ -207,8 +211,8 @@ class AttendanceAdjustment(Document):
 				"check_in_1":r.check_in_1 or "00:00:00",
 				"employee_name":r.employee_name,
 				"check_out_1":r.check_out_1 or "00:00:00",
-				"check_in":"00:00:00",
-				"check_out":"00:00:00"
+				"check_in":r.check_in_1 or "00:00:00",
+				"check_out":r.check_out_1 or "00:00:00",
 				
 			})
 		self.save()

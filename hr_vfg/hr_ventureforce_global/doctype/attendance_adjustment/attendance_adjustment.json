@@ -17,6 +17,7 @@
  ],
  "fields": [
   {
+   "default": "Now",
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date"
@@ -32,7 +33,7 @@
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Type",
-   "options": "Select\nAdjustment"
+   "options": "\nAdjustment"
   },
   {
    "fieldname": "table_4",
@@ -64,7 +65,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2024-04-30 17:24:25.625309",
+ "modified": "2024-09-09 18:47:48.407631",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Attendance Adjustment",
