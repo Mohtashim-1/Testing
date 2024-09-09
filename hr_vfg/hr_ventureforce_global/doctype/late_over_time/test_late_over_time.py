@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestOvertimeForm(FrappeTestCase):
+class TestLateOverTime(FrappeTestCase):
 	pass

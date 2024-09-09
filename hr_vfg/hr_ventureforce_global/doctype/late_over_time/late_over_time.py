@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 
-class OvertimeForm(Document):
+class LateOverTime(Document):
 	@frappe.whitelist()
 	def get_data(self):
 		rec = frappe.db.sql(""" select p.employee,p.employee_name, p.designation, c.late_sitting,c.approved_ot1, c.name as child_name, p.name as parent_name from `tabEmployee Attendance` p
