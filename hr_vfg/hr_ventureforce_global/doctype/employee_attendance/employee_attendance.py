@@ -246,6 +246,15 @@ class EmployeeAttendance(Document):
                     shift_doc = frappe.get_doc("Shift Type", shift)
                     s_type = shift_doc.shift_type
                     data.absent = 0
+
+                    #  day of week 
+                
+                    date1 = data.date
+                    print(f"\n\n\n\\\n\n\n{date1}")
+                    dateobj = getdate(date1)
+                    day_of_week = dateobj.strftime('%A')
+                    data.day = day_of_week
+                    print(dateobj)
                    
                     day_name = datetime.strptime(
                         str(data.date), '%Y-%m-%d').strftime('%A')
@@ -462,6 +471,7 @@ class EmployeeAttendance(Document):
                         data.half_day = 0
                         data.early = 0
 
+
                 if total_time:
                     total_time_hours = total_time.total_seconds()/3600
                     if total_time_hours >= day_data.minimum_hours_for_present:
@@ -528,6 +538,8 @@ class EmployeeAttendance(Document):
 
                 if total_time:    
                     total_hr_worked = total_hr_worked + total_time
+                
+                
 
                 # if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
                 #         data.late = 0
@@ -659,6 +671,7 @@ class EmployeeAttendance(Document):
                 shift_ass = frappe.get_all("Shift Assignment", 
                                            filters={'employee': self.employee,
                                             'start_date': ["<=", getdate(data.date)],
+                                            'status' : 'Active',
                                             # 'start_date': ["<=", '2024-06-01']
                                             }, 
                                             fields=['*'])
@@ -1099,6 +1112,9 @@ class EmployeeAttendance(Document):
             "December":12
         }
         return dict_[month]
+    
+
+                
 
 def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
     ab_index = []
