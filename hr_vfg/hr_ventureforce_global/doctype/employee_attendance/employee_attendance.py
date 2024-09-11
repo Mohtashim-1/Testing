@@ -638,6 +638,7 @@ class EmployeeAttendance(Document):
                     data.absent = 0
                 if data.check_in_1 is not None and data.check_out_1 is None:
                     data.absent = 0
+                    
                 # if data.check_in_1:
                 #         data.approved_ot1 = "00:00:00" 
                 # if data.check_in_1 == None:
@@ -666,6 +667,8 @@ class EmployeeAttendance(Document):
                 #     data.total_ot_hours = "abcd"
                 #     print("abddd")
 
+                # if data.day == "Monday":
+                #     data.early_ot = "90:90:90"
                 shift1 = None
 
                 shift_ass = frappe.get_all("Shift Assignment", 
@@ -675,79 +678,143 @@ class EmployeeAttendance(Document):
                                             # 'start_date': ["<=", '2024-06-01']
                                             }, 
                                             fields=['*'])
+                # if data.day == "Monday":
+                #     data.early_ot = "90:90:90"
                 shift1 = None
+
                 if shift_ass:
                     first_shift_ass = shift_ass[0]
-                    shift = first_shift_ass['shift_type']
-
-                    shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
-                    if shift1:
-                        first_shift_type = shift1[0]
-                        start_time = first_shift_type['start_time']
-                        end_time = first_shift_type['end_time']
+                
+                    # shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
+                    shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
+                    if shift1 and len(shift1) > 0:
+                        shift_data = shift1[0]
+                        # data.early_ot = "90:00:00"
+                        child_table_records = frappe.db.sql("""
+                        select name, start_time, end_time, shift_end
+                                                            FROM `tabShift Day`
+                                                            WHERE parent = %s
+                        """,(shift_data['name'],), as_dict=True)
+                        # child_table_records = frappe.get_list('Shift Day', 
+                        #                                       filters={'parent': shift_data['name']},
+                        #                                       fields=["name", "day", "start_time", "end_time","late_mark","shift_end","half_day"],
+                        #                                       order_by = 'idx asc'
+                        #                                 )
+                        # print(f"\n\n\n\n\n\n\n{child_table_records}\n\n\n\n\n")
                         
-                        data.shift_start =start_time
-                        data.shift_end = end_time
-                        data.shift_in= start_time
-                        data.shift_out = end_time
+                        
+                        # child_table_records = frappe.get_list('Shift Day', 
+                        #                                       filters={'parent': shift_data['name']},
+                        #                                       fields=["*"],
+                        #                                       order_by = 'idx asc'
+                        #                                 )
+
+                        if child_table_records and len(child_table_records) > 0:
+                            child_table = child_table_records[0]
+                            
+    
+                            # Verify if `start_time` and `half_day` fields are available
+                            # print("Start Time:", child_table.get('start_time'))
+                            # print("Half Day:", child_table.get('half_day'))
+
+                            # if data.day == "Monday":
+                            # data.early_ot = "test"
+                            data.shift_in = child_table.start_time
+                            data.shift_out = child_table.get('end_time')
+                            data.early_ot = child_table.end_time
+                            # data.shift_out = child_table.get('half_day')
+                            # print(f"\n    \n\n\n\n\n\n\n\nchild_table")
+                            # data.shift_out = child_table.get('half_day')
+                            # print("Keys in child_table:", child_table.keys())
+                            # data.shift_in = child_table.end_time
+                            # data.save()
+
+                    # child_table = shift1.get('day')
+                    # child_table[0]
+                    # if data.day == "Monday":
+                    #     data.early_ot = "90:90:90"
+                    #     data.shift_in = child_table[0].start_time
 
                     
-                        def time_to_seconds(time_string):
-                            """Helper function to convert time string to seconds."""
-                            if time_string is None:
-                                raise ValueError("Time string is None")
-                            t = datetime.strptime(time_string, "%H:%M:%S").time()
-                            return t.hour * 3600 + t.minute * 60 + t.second
+                    # if shift1:
+                    #     if data.day == "Monday":
+                    #         data.early_ot = "90:90:90"
+                        # child_table = shift1.get('day')
+                        # child_table[0].day
+                        # if child_table[0].day == "Monday":
+                        # data.shift_start = child_table[0].start_time
+                        # data.shift_start = child_table[0].end_time
+                        # data.shift_in = child_table[0].start_time
+                        # data.shift_out = child_table[0].end_time
 
-                        def get_time_difference(t1, t2):
-                            """Calculate time difference in seconds between two time strings."""
-                            t1_seconds = time_to_seconds(t1)
-                            t2_seconds = time_to_seconds(t2)
-                            return timedelta(seconds=t1_seconds - t2_seconds)
+                    # shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
+                #     if shift1:
+                #         first_shift_type = shift1[0]
+                #         start_time = first_shift_type['start_time']
+                #         end_time = first_shift_type['end_time']
+                        
+                #         data.shift_start =start_time
+                #         data.shift_end = end_time
+                #         data.shift_in= start_time
+                #         data.shift_out = end_time
 
-                        # Retrieve and verify data values
-                        shift_in = data.shift_in
-                        check_in_1 = data.check_in_1
+                    
+                #         def time_to_seconds(time_string):
+                #             """Helper function to convert time string to seconds."""
+                #             if time_string is None:
+                #                 raise ValueError("Time string is None")
+                #             t = datetime.strptime(time_string, "%H:%M:%S").time()
+                #             return t.hour * 3600 + t.minute * 60 + t.second
 
-                        # Print statements for debugging
-                        # print(f"shift_in: {shift_in}")
-                        # print(f"check_in_1: {check_in_1}")
+                #         def get_time_difference(t1, t2):
+                #             """Calculate time difference in seconds between two time strings."""
+                #             t1_seconds = time_to_seconds(t1)
+                #             t2_seconds = time_to_seconds(t2)
+                #             return timedelta(seconds=t1_seconds - t2_seconds)
 
-                        # Convert shift_in and check_in_1 to time strings if they are timedelta
-                        if isinstance(shift_in, timedelta):
-                            total_seconds = int(shift_in.total_seconds())
-                            hours, remainder = divmod(total_seconds, 3600)
-                            minutes, seconds = divmod(remainder, 60)
-                            shift_in_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
-                        else:
-                            shift_in_time_string = shift_in
+                #         # Retrieve and verify data values
+                #         shift_in = data.shift_in
+                #         check_in_1 = data.check_in_1
 
-                        if isinstance(check_in_1, timedelta):
-                            total_seconds = int(check_in_1.total_seconds())
-                            hours, remainder = divmod(total_seconds, 3600)
-                            minutes, seconds = divmod(remainder, 60)
-                            check_in_1_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
-                        else:
-                            check_in_1_time_string = check_in_1
+                #         # Print statements for debugging
+                #         # print(f"shift_in: {shift_in}")
+                #         # print(f"check_in_1: {check_in_1}")
 
-                        # Ensure both time strings are not None
-                        if shift_in_time_string is None or check_in_1_time_string is None:
-                            data.early_ot = None
-                        else:
-                            # Convert time strings to datetime objects for comparison
-                            shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
-                            check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
+                #         # Convert shift_in and check_in_1 to time strings if they are timedelta
+                #         if isinstance(shift_in, timedelta):
+                #             total_seconds = int(shift_in.total_seconds())
+                #             hours, remainder = divmod(total_seconds, 3600)
+                #             minutes, seconds = divmod(remainder, 60)
+                #             shift_in_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+                #         else:
+                #             shift_in_time_string = shift_in
+
+                #         if isinstance(check_in_1, timedelta):
+                #             total_seconds = int(check_in_1.total_seconds())
+                #             hours, remainder = divmod(total_seconds, 3600)
+                #             minutes, seconds = divmod(remainder, 60)
+                #             check_in_1_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+                #         else:
+                #             check_in_1_time_string = check_in_1
+
+                #         # Ensure both time strings are not None
+                #         if shift_in_time_string is None or check_in_1_time_string is None:
+                #             data.early_ot = None
+                #         else:
+                #             # Convert time strings to datetime objects for comparison
+                #             shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
+                #             check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
 
 
-                            # Calculate time difference if check_in_1 is earlier than shift_in
-                            if check_in_1_datetime < shift_in_datetime:
-                                time_difference = get_time_difference(shift_in_time_string, check_in_1_time_string)
-                                data.early_ot = time_difference
-                            else:
-                                data.early_ot = None
+                #             # Calculate time difference if check_in_1 is earlier than shift_in
+                #             if check_in_1_datetime < shift_in_datetime:
+                #                 time_difference = get_time_difference(shift_in_time_string, check_in_1_time_string)
+                #                 data.early_ot = time_difference
+                #             else:
+                #                 data.early_ot = None
                 
-                else:
-                    raise ValueError(f"No Shift Found for these employee: {self.employee}")
+                # else:
+                #     raise ValueError(f"No Shift Found for these employee: {self.employee}")
                 
                 if data.late_sitting:
                     late_sitting_timedelta = data.late_sitting
