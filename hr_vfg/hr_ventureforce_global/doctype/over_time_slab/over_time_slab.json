@@ -1,0 +1,70 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:over_time_slab_name",
+ "creation": "2024-09-11 16:09:57.419596",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "over_time_slab_name",
+  "over_time_slab_ct",
+  "section_break_o3sx",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_o3sx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Over Time Slab",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "over_time_slab_ct",
+   "fieldtype": "Table",
+   "label": "Over Time Slab CT",
+   "options": "Over Time Slab CT"
+  },
+  {
+   "fieldname": "over_time_slab_name",
+   "fieldtype": "Data",
+   "label": "Over Time Slab Name",
+   "unique": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-11 16:59:37.204449",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Over Time Slab",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

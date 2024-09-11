@@ -13,6 +13,8 @@
   "column_break_6",
   "end_time",
   "over_time_start",
+  "section_break_hsrh",
+  "over_time_slab",
   "data_8",
   "max_early",
   "minimum_hours_for_present",
@@ -45,8 +47,7 @@
    "fieldname": "end_time",
    "fieldtype": "Time",
    "in_list_view": 1,
-   "label": "End Time",
-   "search_index": 1
+   "label": "End Time"
   },
   {
    "fieldname": "late_mark",
@@ -132,11 +133,24 @@
    "fieldtype": "Link",
    "label": "Early Slab",
    "options": "Early Slab"
+  },
+  {
+   "fieldname": "section_break_hsrh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "over_time_slab",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Over Time Slab",
+   "options": "Over Time Slab"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2023-04-14 12:27:43.856174",
+ "modified": "2024-09-11 16:57:35.143565",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Shift Day",
@@ -145,5 +159,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
