@@ -691,7 +691,7 @@ class EmployeeAttendance(Document):
                         shift_data = shift1[0]
                         # data.early_ot = "90:00:00"
                         child_table_records = frappe.db.sql("""
-                        select name, start_time, end_time, shift_end
+                        select name, day, start_time, end_time, shift_end
                                                             FROM `tabShift Day`
                                                             WHERE parent = %s
                         """,(shift_data['name'],), as_dict=True)
@@ -711,29 +711,12 @@ class EmployeeAttendance(Document):
 
                         if child_table_records and len(child_table_records) > 0:
                             child_table = child_table_records[0]
-                            
-    
-                            # Verify if `start_time` and `half_day` fields are available
-                            # print("Start Time:", child_table.get('start_time'))
-                            # print("Half Day:", child_table.get('half_day'))
+                            for child_table in child_table_records:
+                                if data.day == child_table['day']:
+                                    data.shift_in = child_table.start_time
+                                    data.shift_out = child_table.end_time
+                                    # data.early_ot = child_table.end_time
 
-                            # if data.day == "Monday":
-                            # data.early_ot = "test"
-                            data.shift_in = child_table.start_time
-                            data.shift_out = child_table.get('end_time')
-                            data.early_ot = child_table.end_time
-                            # data.shift_out = child_table.get('half_day')
-                            # print(f"\n    \n\n\n\n\n\n\n\nchild_table")
-                            # data.shift_out = child_table.get('half_day')
-                            # print("Keys in child_table:", child_table.keys())
-                            # data.shift_in = child_table.end_time
-                            # data.save()
-
-                    # child_table = shift1.get('day')
-                    # child_table[0]
-                    # if data.day == "Monday":
-                    #     data.early_ot = "90:90:90"
-                    #     data.shift_in = child_table[0].start_time
 
                     
                     # if shift1:
