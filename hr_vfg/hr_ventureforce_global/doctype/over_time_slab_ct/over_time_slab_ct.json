@@ -15,6 +15,7 @@
   "column_break_ynbh",
   "total_hours",
   "column_break_scvu",
+  "formula",
   "per_hour_calculation"
  ],
  "fields": [
@@ -85,12 +86,18 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Total Hours"
+  },
+  {
+   "fieldname": "formula",
+   "fieldtype": "Select",
+   "label": "Over Time Amount",
+   "options": "Employee's Overtime Rate\nEmployee's Overtime Rate x 1.5\nEmployee's Overtime Rate x 2\nEmployee Full Day\nEmployee Full Day"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-11 18:41:51.088762",
+ "modified": "2024-09-12 12:05:16.820859",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Over Time Slab CT",
