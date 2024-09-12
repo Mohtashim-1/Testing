@@ -16,6 +16,7 @@
   "total_hours",
   "column_break_scvu",
   "formula",
+  "hours_for_full_day_over_time",
   "per_hour_calculation"
  ],
  "fields": [
@@ -28,13 +29,9 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "1",
+   "columns": 1,
    "fieldname": "per_hour_calculation",
    "fieldtype": "Float",
-   "in_filter": 1,
-   "in_list_view": 1,
-   "in_preview": 1,
-   "in_standard_filter": 1,
    "label": "Per Hour Calculation",
    "non_negative": 1,
    "precision": "2",
@@ -53,6 +50,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "columns": 2,
    "fieldname": "type",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -62,6 +60,7 @@
    "options": "Weekday\nWeekly Off\nPublic Holiday"
   },
   {
+   "columns": 1,
    "fieldname": "from_time",
    "fieldtype": "Time",
    "in_list_view": 1,
@@ -70,6 +69,7 @@
    "label": "From Time"
   },
   {
+   "columns": 1,
    "fieldname": "to_time",
    "fieldtype": "Time",
    "in_filter": 1,
@@ -79,6 +79,7 @@
    "label": "To Time"
   },
   {
+   "columns": 1,
    "fieldname": "total_hours",
    "fieldtype": "Time",
    "in_filter": 1,
@@ -88,16 +89,34 @@
    "label": "Total Hours"
   },
   {
+   "columns": 2,
    "fieldname": "formula",
    "fieldtype": "Select",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
    "label": "Over Time Amount",
-   "options": "Employee's Overtime Rate\nEmployee's Overtime Rate x 1.5\nEmployee's Overtime Rate x 2\nEmployee Full Day\nEmployee Full Day"
+   "options": "Employee's Overtime Rate\nEmployee's Overtime Rate x 1.5\nEmployee's Overtime Rate x 2\nEmployee Full Day\nEmployee Full Day x 2"
+  },
+  {
+   "columns": 2,
+   "depends_on": "eval: doc.formula == 'Employee Full Day' || doc.formula == 'Employee Full Day x 2'",
+   "fieldname": "hours_for_full_day_over_time",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Hours for Full Day Over Time",
+   "mandatory_depends_on": "eval: doc.formula == 'Employee Full Day' || doc.formula == 'Employee Full Day x 2'"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-12 12:05:16.820859",
+ "modified": "2024-09-12 13:21:31.311914",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Over Time Slab CT",
