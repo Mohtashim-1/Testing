@@ -19,6 +19,7 @@
   "over_time_section",
   "late_sitting",
   "approved_ot1",
+  "estimated_late",
   "column_break_zbnu",
   "early_ot",
   "approved_eot",
@@ -42,6 +43,7 @@
   "column_break_19",
   "half_day",
   "public_holiday",
+  "weekday",
   "column_break_25",
   "late",
   "weekly_off",
@@ -417,11 +419,22 @@
    "fieldname": "day",
    "fieldtype": "Data",
    "label": "Day"
+  },
+  {
+   "default": "0",
+   "fieldname": "weekday",
+   "fieldtype": "Check",
+   "label": "Weekday"
+  },
+  {
+   "fieldname": "estimated_late",
+   "fieldtype": "Data",
+   "label": "Estimated Late"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-09-11 14:55:02.635581",
+ "modified": "2024-09-12 18:36:28.169215",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
