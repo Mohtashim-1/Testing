@@ -729,27 +729,44 @@ class EmployeeAttendance(Document):
                                     data.shift_in = child_table.start_time
                                     data.shift_out = child_table.end_time
                                     
+                                    #  calculating difference b/w shift out and check in 
                                     shift_out_str = data.shift_out  # Example: "18:00:00"
                                     check_out_1_str = data.check_out_1  # Example: "19:30:00"
-                                    # data.difference1 = "909090"
-                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str):
-                                        
-                                        shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S")
-                                        check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")
-                                    
-                                        if check_out_1_time < shift_out_time:
-                                            # Add 1 day (24 hours) to `check_out_1_time` to handle the next day scenario
-                                            check_out_1_time += timedelta(days=1)
-                                        difference1 = check_out_1_time - shift_out_time
-                                        
-                                        total_seconds = int(difference1.total_secconds())
-                                        hours = total_seconds / 3600
-                                        minutes = (total_seconds % 3600) / 60
-                                        seconds = total_seconds % 60
-                                        difference_str = f"{hours:2}:{minutes:02}:{seconds:02}"
-                                        data.difference1 = difference_str
-                                    
 
+                                    # Handle the case where `shift_out_str` is a timedelta
+                                    if isinstance(shift_out_str, timedelta):
+                                        # Convert timedelta to a time string
+                                        shift_out_time = (datetime.min + shift_out_str).time()
+                                        shift_out_str = shift_out_time.strftime("%H:%M:%S")
+                                        
+                                    # Ensure both are strings and `check_out_1_str` is not None
+                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str):
+                                        try:
+                                            # Convert the string times to datetime objects
+                                            shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S")
+                                            check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")
+                                            
+                                            # If check-out time is earlier than shift-out, assume it's from the next day
+                                            if check_out_1_time < shift_out_time:
+                                                check_out_1_time += timedelta(days=1)
+                                            
+                                            # Calculate the time difference
+                                            difference1 = check_out_1_time - shift_out_time
+                                            
+                                            # Get the total difference in seconds and break it down into hours, minutes, and seconds
+                                            total_seconds = int(difference1.total_seconds())
+                                            hours = total_seconds // 3600
+                                            minutes = (total_seconds % 3600) // 60
+                                            seconds = total_seconds % 60
+                                            
+                                            # Format the time difference as HH:MM:SS
+                                            difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
+                                            data.difference1 = difference_str  # Assign the formatted difference to the data object
+                                        except ValueError as e:
+                                            # Log the error in case the string-to-time conversion fails
+                                            frappe.log_error(f"Error converting time: {e}", "Time Conversion Error")
+                                    
+                                    
                                     # Print the result
                                     # print("Time difference:", difference)
 
