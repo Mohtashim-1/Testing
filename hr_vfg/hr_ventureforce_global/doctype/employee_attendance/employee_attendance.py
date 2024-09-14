@@ -648,6 +648,15 @@ class EmployeeAttendance(Document):
                     data.public_holiday = 0
                 else:
                     data.weekday = 1
+                    
+                if data.weekly_off == 1:
+                    data.day_type = "Weekly Off"
+                elif data.weekday == 1:
+                    data.day_type = "Weekday"
+                elif data.public_holiday == 1:
+                    data.day_type = "Public Holiday"
+                    
+            
 
                     
                 # if data.check_in_1:
@@ -692,6 +701,7 @@ class EmployeeAttendance(Document):
                 # if data.day == "Monday":
                 #     data.early_ot = "90:90:90"
                 shift1 = None
+                
 
                 if shift_ass:
                     first_shift_ass = shift_ass[0]
@@ -707,11 +717,139 @@ class EmployeeAttendance(Document):
                                                             WHERE parent = %s
                         """,(shift_data['name'],), as_dict=True)
                         
+                        
+
+                        
                        
                         
                         if child_table_records and len(child_table_records) > 0:
-                            # over_time_slab_doc = frappe.get_doc("Over Time Slab", child_table_records[0].over_time_slab)
-                            over_time_slab_doc = frappe.db.sql(""" select * from `tabOver Time Slab` as ots left join `tabOver Time Slab CT` as otc on otc.parent = ots.name """,as_dict=True)
+                            child_table = child_table_records[0]
+                            for child_table in child_table_records:
+                                if data.day == child_table['day']:
+                                    data.shift_in = child_table.start_time
+                                    data.shift_out = child_table.end_time
+                                    
+                                    shift_out_str = data.shift_out  # Example: "18:00:00"
+                                    check_out_1_str = data.check_out_1  # Example: "19:30:00"
+                                    # data.difference1 = "909090"
+                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str):
+                                        
+                                        shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S")
+                                        check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")
+                                    
+                                        if check_out_1_time < shift_out_time:
+                                            # Add 1 day (24 hours) to `check_out_1_time` to handle the next day scenario
+                                            check_out_1_time += timedelta(days=1)
+                                        difference1 = check_out_1_time - shift_out_time
+                                        
+                                        total_seconds = int(difference1.total_secconds())
+                                        hours = total_seconds / 3600
+                                        minutes = (total_seconds % 3600) / 60
+                                        seconds = total_seconds % 60
+                                        difference_str = f"{hours:2}:{minutes:02}:{seconds:02}"
+                                        data.difference1 = difference_str
+                                    
+
+                                    # Print the result
+                                    # print("Time difference:", difference)
+
+                                    # # If you want to store the difference in string format (e.g., "HH:MM:SS")
+                                    # difference_str = str(difference)
+                                    # print("Difference as string:", difference_str)
+                             
+                            day_type = data.day_type 
+
+                            over_time_slab_doc = frappe.db.sql("""
+                            SELECT 
+                                ots.name,
+                                otc.from_time,
+                                otc.to_time,
+                                otc.type,
+                                otc.formula,
+                                otc.per_hour_calculation,
+                                otc.hours_for_full_day_over_time
+                            FROM 
+                                `tabOver Time Slab` as ots
+                            LEFT JOIN 
+                                `tabOver Time Slab CT` as otc 
+                            ON 
+                                otc.parent = ots.name
+                            WHERE 
+                                otc.type = %s 
+                        """, (day_type,), as_dict=True)
+
+                        
+                        # Ensure `check_out_1_str` and `shift_out_str` are not None and are strings
+                        # Ensure `shift_out_str` and `check_out_1_str` are strings and handle other types
+                        shift_out_str = data.shift_out
+                        check_out_1_str = data.check_out_1
+
+                        # Initialize check_out_1_time and shift_out_time
+                        check_out_1_time = None
+                        shift_out_time = None
+
+                        # Convert to string if they are of type datetime.timedelta
+                        if isinstance(shift_out_str, timedelta):
+                            shift_out_str = str(shift_out_str)
+                        if isinstance(check_out_1_str, timedelta):
+                            check_out_1_str = str(check_out_1_str)
+
+                        # Check if the strings are valid
+                        if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str):
+                            try:
+                                shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
+                                check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
+                            except ValueError as e:
+                                print(f"Error parsing time: {e}")
+                        else:
+                            print("Error: shift_out_str or check_out_1_str is not a valid string.")
+
+                        if over_time_slab_doc:
+                            for record in over_time_slab_doc:
+                                data.over_time_type = record.type
+                                data.per_hours_calculation = record.per_hour_calculation
+                                data.over_time_amount = record.formula
+
+                                # Convert `from_time` and `to_time` from timedelta to time if necessary
+                                if isinstance(record.from_time, timedelta):
+                                    record.from_time = (datetime.min + record.from_time).time()
+
+                                if isinstance(record.to_time, timedelta):
+                                    record.to_time = (datetime.min + record.to_time).time()
+
+                                # Handle the case when `from_time` is greater than `to_time` (shift crosses midnight)
+                                if check_out_1_time is not None:
+                                    if record.from_time > record.to_time:
+                                        # Shift crosses midnight
+                                        if check_out_1_time >= record.from_time or check_out_1_time <= record.to_time:
+                                            data.estimated_late = "909090"
+                                            # data.late_sitting.strftime("%H:%M:%S") if data.late_sitting else "00:00:00"
+                                        else:
+                                            data.estimated_late = "00:00:00"
+                                    else:
+                                        # Normal shift
+                                        if check_out_1_time > record.from_time and check_out_1_time < record.to_time:
+                                            data.estimated_late = "909090"
+                                            # data.late_sitting.strftime("%H:%M:%S") if data.late_sitting else "00:00:00"
+                                        else:
+                                            data.estimated_late = "00:00:00"
+
+                                print(record)
+
+                            # Usage Example
+                            # day_type = data.day_type  # Assuming day_type is available in your data
+                            # overtime_data = get_overtime_slab_data(day_type)
+
+                            # if overtime_data:
+                            #     print("Overtime Slab Data for", day_type)
+                            #     for slab in overtime_data:
+                            #         data.over_time_type = slab.get('type')
+                            #         frappe.log(f"No.: {slab.get('name')}")
+                            #         # ... Process other data
+                            # else:
+                            #     frappe.log(f"No overtime slab found for day type: {day_type}")
+                            
+                            # data.early_ot = over_time_slab_doc
                             # Fetch only necessary columns, add relevant filters
                             
                             # over_time_slab_doc = frappe.db.sql("""
@@ -722,45 +860,115 @@ class EmployeeAttendance(Document):
                             # """, as_dict=True)
 
                             # # Process logic
-                            time_format = "%H:%M:%S"
+                            # time_format = "%H:%M:%S"
 
-                            # Function to convert timedelta to time
-                            def timedelta_to_time(td):
-                                if isinstance(td, timedelta):
-                                    # Convert timedelta to total seconds and then to time
-                                    return (datetime.min + td).time()
-                                return td
+                            # # Function to convert timedelta to time
+                            # def timedelta_to_time(td):
+                            #     if isinstance(td, timedelta):
+                            #         # Convert timedelta to total seconds and then to time
+                            #         return (datetime.min + td).time()
+                            #     return td
 
-                            # Function to handle time spans that go past midnight
-                            def is_within_time_span(check_time, from_time, to_time):
-                                if from_time > to_time:  # Time span crosses midnight
-                                    return check_time >= from_time or check_time <= to_time
-                                else:  # Regular time span
-                                    return from_time <= check_time <= to_time
+                            # # Function to handle time spans that go past midnight
+                            # def is_within_time_span(check_time, from_time, to_time):
+                            #     if from_time > to_time:  # Time span crosses midnight
+                            #         return check_time >= from_time or check_time <= to_time
+                            #     else:  # Regular time span
+                            #         return from_time <= check_time <= to_time
 
                             # Iterate through the overtime slabs
-                            for ot in over_time_slab_doc:
+                            # for row in over_time_slab_doc.get("Over Time Slab CT"):
+                            # for ot in over_time_slab_doc:
+                                # if data.weekday == 1:
+                                #     data.over_time_type = ot.get("type")
+                                # else:
+                                #     data.over_time_type = "test"
+                                # if data.day_type == "Weekday":
+                                #     if ot.type == "Weekday":
+                                #         data.over_time_type = "1"
+                                # elif data.day_type == "Weekly Off":
+                                #     if ot.type == "Weekly Off":
+                                #         data.over_time_type = "2"
+                                    
+                                
+                                    
+                                # data.early_ot = '3'
                                 # Check if it's not a weekly off (i.e., working day)
-                                if data.weekly_off == 0:
+                                # if data.weekly_off == 0:
+                                    # data.early_ot = '2'
                                     # Check if overtime type exists
-                                    if ot.type:
+                                    # if data.weekday == 1:
+                                    
+                                    
+                                    # if data.weekly_off == 1:
+                                        # data.early_ot = '1'
                                         # Ensure `data[4].check_out_1`, `ot.from_time`, and `ot.to_time` are non-empty and valid
-                                        if data.check_out_1 and ot.from_time and ot.to_time:
-                                            # Convert `data[4].check_out_1` to `datetime.time` if it's a string
-                                            if isinstance(data.check_out_1, str):
-                                                data.check_out_1 = datetime.strptime(data.check_out_1, time_format).time()
-
-                                            # Convert `from_time` and `to_time` to `datetime.time`, handling potential `timedelta`
-                                            ot.from_time = timedelta_to_time(ot.from_time)
-                                            ot.to_time = timedelta_to_time(ot.to_time)
-
-                                            # Check if `check_out_1` is within the overtime slab range
-                                            if is_within_time_span(data.check_out_1, ot.from_time, ot.to_time):
-                                                data.early_ot = ot.total_hours
+                                        # if data.check_out_1 and ot.from_time and ot.to_time:
+                                            # print("Row Index:", ot.idx)
+                                            # print("Type:", ot.type)
+                                            # print("From Time:", ot.from_time)
+                                            # print("To Time:", ot.to_time)
+                                            
+                                            # data.over_time_type = ot.type
+                                            # data.over_time_amount = ot.formula
+                                            # data.per_hours_calculation = ot.per_hour_calculation
+                                            # data.early_ot = ot.per_hour_calculation
+                                            # if data.late_sitting is not None:
                                                 
-                                else:
-                                    # If it's a weekly off or holiday, set early overtime to 0
-                                    data.early_ot = 0
+                                            #     late_sitting_obj = datetime.strptime(data.check_out_1, '%H:%M:%S')
+                                            #     # data.estimated_late = late_sitting_obj
+                                            #     late_sitting_time_delta = timedelta(hours=late_sitting_obj.hour, minutes=late_sitting_obj.minute, seconds=late_sitting_obj.second)
+                                            #     # data.estimated_late = 1
+                                            #     expected_late_sitting = late_sitting_time_delta * data.per_hours_calculation
+                                            #     data.estimated_late = expected_late_sitting
+                                            # else:
+                                            #     data.estimated_late = 0
+                                    
+                                                
+                                            
+                                            
+                            #                 # Convert `data[4].check_out_1` to `datetime.time` if it's a string
+                            #                 if isinstance(data.check_out_1, str):
+                            #                     data.check_out_1 = datetime.strptime(data.check_out_1, time_format).time()
+                            #                     data.early_ot = '6'
+
+                            #                 # # Convert `from_time` and `to_time` to `datetime.time`, handling potential `timedelta`
+                            #                 ot.from_time = timedelta_to_time(ot.from_time)
+                            #                 ot.to_time = timedelta_to_time(ot.to_time)
+                            #                 data.early_ot = ot.per_hour_calculation
+                                            
+                                            
+
+                                            # # Check if `check_out_1` is within the overtime slab range
+                                            # if is_within_time_span(data.check_out_1, ot.from_time, ot.to_time):
+                                            #     # data.early_ot = ot.total_hours 
+                                            #     # Example time string and float value
+                                            #     time_string = data.late_sitting  # Time in HH:MM:SS format
+                                            #     multiplier = ot.per_hour_calculation          # Float value to multiply by
+
+                                            #     # Step 1: Convert the time string to a `datetime` object
+                                            #     time_format = "%H:%M:%S"
+                                            #     time_obj = datetime.strptime(time_string, time_format)
+
+                                            #     # Step 2: Convert the `datetime` object to `timedelta`
+                                            #     time_delta = timedelta(hours=time_obj.hour, minutes=time_obj.minute, seconds=time_obj.second)
+
+                                            #     # Step 3: Convert `timedelta` to total seconds
+                                            #     total_seconds = time_delta.total_seconds()
+
+                                            #     # Step 4: Multiply the total seconds by the float
+                                            #     new_total_seconds = total_seconds * multiplier
+
+                                            #     # Step 5: Convert the result back to `timedelta`
+                                            #     new_time_delta = timedelta(seconds=new_total_seconds)
+
+                                            #     # Step 6: Optionally convert `timedelta` back to `HH:MM:SS` format
+                                            #     new_time_string = str(new_time_delta)
+                                            #     data.early_ot = new_time_string
+                                                
+                                # else:
+                                #     # If it's a weekly off or holiday, set early overtime to 0
+                                #     data.early_ot = 0
                             
                             
 
@@ -768,11 +976,7 @@ class EmployeeAttendance(Document):
                             # result = frappe.db.sql(query, (shift_data['name'],), as_dict=True)
 
                             # data.early_ot = over_time_slab_doc.name
-                            child_table = child_table_records[0]
-                            for child_table in child_table_records:
-                                if data.day == child_table['day']:
-                                    data.shift_in = child_table.start_time
-                                    data.shift_out = child_table.end_time
+                            
 
                     
                         # def time_to_seconds(time_string):
