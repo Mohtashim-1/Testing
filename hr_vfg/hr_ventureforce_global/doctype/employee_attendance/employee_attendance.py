@@ -757,10 +757,7 @@ class EmployeeAttendance(Document):
                                             shift_in_time = datetime.strptime(shift_in_str, "%H:%M:%S")
                                             
                                             difference1 = timedelta()
-                                            
-                                            # if shift_in_time < check_out_1_time:
-                                            #     check_out_1_time += timedelta(days=1)
-                                                
+                                             
                                             if check_out_1_time < shift_out_time and data.over_time_type != "Weekly Off":
                                                 check_out_1_time += timedelta(days=1)
                                                 difference1 = check_out_1_time - shift_out_time
@@ -770,8 +767,6 @@ class EmployeeAttendance(Document):
                                             if data.over_time_type == "Weekly Off":
                                                 # difference1 = timedelta(hours=10, minutes=10, seconds=10)
                                                 difference1 = check_out_1_time - shift_in_time
-                                            
-                                            
                                             
                                             # # Get the total difference in seconds and break it down into hours, minutes, and seconds
                                             total_seconds = int(difference1.total_seconds())
