@@ -732,6 +732,9 @@ class EmployeeAttendance(Document):
                                     #  calculating difference b/w shift out and check in 
                                     shift_out_str = data.shift_out  # Example: "18:00:00"
                                     check_out_1_str = data.check_out_1  # Example: "19:30:00"
+                                    shift_in_str = data.shift_in
+                                    
+                                    # difference1 = timedelta()
 
                                     # Handle the case where `shift_out_str` is a timedelta
                                     if isinstance(shift_out_str, timedelta):
@@ -739,21 +742,38 @@ class EmployeeAttendance(Document):
                                         shift_out_time = (datetime.min + shift_out_str).time()
                                         shift_out_str = shift_out_time.strftime("%H:%M:%S")
                                         
+                                    if isinstance(shift_in_str, timedelta):
+                                        shift_in_time = (datetime.min + shift_in_str).time()
+                                        shift_in_str = shift_in_time.strftime("%H:%M:%S")
+                                    # else:
+                                    #     shift_in_str = data.shift_in
+                                        
                                     # Ensure both are strings and `check_out_1_str` is not None
-                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str):
+                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(shift_in_str, str):
                                         try:
                                             # Convert the string times to datetime objects
                                             shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S")
                                             check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")
+                                            shift_in_time = datetime.strptime(shift_in_str, "%H:%M:%S")
                                             
-                                            # If check-out time is earlier than shift-out, assume it's from the next day
-                                            if check_out_1_time < shift_out_time:
+                                            difference1 = timedelta()
+                                            
+                                            # if shift_in_time < check_out_1_time:
+                                            #     check_out_1_time += timedelta(days=1)
+                                                
+                                            if check_out_1_time < shift_out_time and data.over_time_type != "Weekly Off":
                                                 check_out_1_time += timedelta(days=1)
+                                                difference1 = check_out_1_time - shift_out_time
                                             
-                                            # Calculate the time difference
-                                            difference1 = check_out_1_time - shift_out_time
+                                            if check_out_1_time > shift_out_time:
+                                                difference1 = check_out_1_time - shift_out_time
+                                            if data.over_time_type == "Weekly Off":
+                                                # difference1 = timedelta(hours=10, minutes=10, seconds=10)
+                                                difference1 = check_out_1_time - shift_in_time
                                             
-                                            # Get the total difference in seconds and break it down into hours, minutes, and seconds
+                                            
+                                            
+                                            # # Get the total difference in seconds and break it down into hours, minutes, and seconds
                                             total_seconds = int(difference1.total_seconds())
                                             hours = total_seconds // 3600
                                             minutes = (total_seconds % 3600) // 60
@@ -762,18 +782,11 @@ class EmployeeAttendance(Document):
                                             # Format the time difference as HH:MM:SS
                                             difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
                                             data.difference1 = difference_str  # Assign the formatted difference to the data object
+                                            # data.difference1 = difference1
                                         except ValueError as e:
                                             # Log the error in case the string-to-time conversion fails
                                             frappe.log_error(f"Error converting time: {e}", "Time Conversion Error")
                                     
-                                    
-                                    # Print the result
-                                    # print("Time difference:", difference)
-
-                                    # # If you want to store the difference in string format (e.g., "HH:MM:SS")
-                                    # difference_str = str(difference)
-                                    # print("Difference as string:", difference_str)
-                             
                             day_type = data.day_type 
 
                             over_time_slab_doc = frappe.db.sql("""
@@ -800,6 +813,7 @@ class EmployeeAttendance(Document):
                         # Ensure `shift_out_str` and `check_out_1_str` are strings and handle other types
                         shift_out_str = data.shift_out
                         check_out_1_str = data.check_out_1
+                        
 
                         # Initialize check_out_1_time and shift_out_time
                         check_out_1_time = None
@@ -812,10 +826,13 @@ class EmployeeAttendance(Document):
                             check_out_1_str = str(check_out_1_str)
 
                         # Check if the strings are valid
-                        if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str):
+                        if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(data.difference, str):
                             try:
                                 shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
                                 check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
+                                time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
+                                time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
+                                
                             except ValueError as e:
                                 print(f"Error parsing time: {e}")
                         else:
@@ -826,6 +843,8 @@ class EmployeeAttendance(Document):
                                 data.over_time_type = record.type
                                 data.per_hours_calculation = record.per_hour_calculation
                                 data.over_time_amount = record.formula
+                                threshould = record.hours_for_full_day_over_time
+                                # threshould_time = timedelta(hours=threshould.hour, minutes=threshould.minute, seconds= threshould.second)
 
                                 # Convert `from_time` and `to_time` from timedelta to time if necessary
                                 if isinstance(record.from_time, timedelta):
@@ -839,7 +858,11 @@ class EmployeeAttendance(Document):
                                     if record.from_time > record.to_time:
                                         # Shift crosses midnight
                                         if check_out_1_time >= record.from_time or check_out_1_time <= record.to_time:
-                                            data.estimated_late = "909090"
+                                            if time_difference_delta >= threshould:
+                                                time_difference_multiplied = time_difference_delta * record.per_hour_calculation
+                                                time_difference_result = time_difference_multiplied.total_seconds()
+                                                final_timedelta = timedelta(seconds=time_difference_result)
+                                                data.estimated_late = final_timedelta
                                             # data.late_sitting.strftime("%H:%M:%S") if data.late_sitting else "00:00:00"
                                         else:
                                             data.estimated_late = "00:00:00"
