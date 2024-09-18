@@ -811,6 +811,7 @@ class EmployeeAttendance(Document):
                         
 
                         # Initialize check_out_1_time and shift_out_time
+                        time_difference_delta = timedelta(0)
                         check_out_1_time = None
                         shift_out_time = None
 
@@ -821,7 +822,7 @@ class EmployeeAttendance(Document):
                             check_out_1_str = str(check_out_1_str)
 
                         # Check if the strings are valid
-                        if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(data.difference, str):
+                        if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(data.difference1, str):
                             try:
                                 shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
                                 check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
@@ -832,6 +833,8 @@ class EmployeeAttendance(Document):
                                 print(f"Error parsing time: {e}")
                         else:
                             print("Error: shift_out_str or check_out_1_str is not a valid string.")
+                        
+                        frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
 
                         if over_time_slab_doc:
                             for record in over_time_slab_doc:
@@ -847,6 +850,8 @@ class EmployeeAttendance(Document):
 
                                 if isinstance(record.to_time, timedelta):
                                     record.to_time = (datetime.min + record.to_time).time()
+                                
+                                frappe.log_error(f"Record: from_time: {record.from_time}, to_time: {record.to_time}")
 
                                 # Handle the case when `from_time` is greater than `to_time` (shift crosses midnight)
                                 if check_out_1_time is not None:
@@ -858,18 +863,27 @@ class EmployeeAttendance(Document):
                                                 time_difference_result = time_difference_multiplied.total_seconds()
                                                 final_timedelta = timedelta(seconds=time_difference_result)
                                                 data.estimated_late = final_timedelta
-                                            # data.late_sitting.strftime("%H:%M:%S") if data.late_sitting else "00:00:00"
+                                            else:
+                                                time_difference_multiplied = time_difference_delta * record.per_hour_calculation
+                                                time_difference_result = time_difference_multiplied.total_seconds()
+                                                final_timedelta = timedelta(seconds=time_difference_result)
+                                                data.estimated_late = final_timedelta
                                         else:
-                                            data.estimated_late = "00:00:00"
-                                    else:
-                                        # Normal shift
-                                        if check_out_1_time > record.from_time and check_out_1_time < record.to_time:
-                                            data.estimated_late = "909090"
-                                            # data.late_sitting.strftime("%H:%M:%S") if data.late_sitting else "00:00:00"
-                                        else:
-                                            data.estimated_late = "00:00:00"
+                                            if data.over_time_type == "Weekly Off":
+                                                time_difference_multiplied = time_difference_delta * record.per_hour_calculation
+                                                time_difference_result = time_difference_multiplied.total_seconds()
+                                                final_timedelta = timedelta(seconds=time_difference_result)
+                                                data.estimated_late = final_timedelta
+                                                
+                                        
+                                frappe.log_error(f"Estimated Late: {data.date} - {data.estimated_late}")
+                                
+                        if hasattr(data, 'estimated_late'):
+                            frappe.log_error(f"Final Estimated Late: {data.estimated_late}")
+                        else:
+                            frappe.log_error("No estimated late time calculated.")
 
-                                print(record)
+                        frappe.log_error(f"Record processed: {record}")
 
                             # Usage Example
                             # day_type = data.day_type  # Assuming day_type is available in your data
