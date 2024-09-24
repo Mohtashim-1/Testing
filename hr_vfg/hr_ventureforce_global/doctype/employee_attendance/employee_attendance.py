@@ -537,6 +537,8 @@ class EmployeeAttendance(Document):
 
                 if total_time:    
                     total_hr_worked = total_hr_worked + total_time
+                    
+                
                 
                 
 
@@ -656,6 +658,7 @@ class EmployeeAttendance(Document):
                 elif data.public_holiday == 1:
                     data.day_type = "Public Holiday"
                     
+                    
             
 
                     
@@ -701,8 +704,7 @@ class EmployeeAttendance(Document):
                 # if data.day == "Monday":
                 #     data.early_ot = "90:90:90"
                 shift1 = None
-                
-
+            
                 if shift_ass:
                     first_shift_ass = shift_ass[0]
                 
@@ -779,8 +781,9 @@ class EmployeeAttendance(Document):
                                             data.difference1 = difference_str  # Assign the formatted difference to the data object
                                             # data.difference1 = difference1
                                         except ValueError as e:
+                                            pass
                                             # Log the error in case the string-to-time conversion fails
-                                            frappe.log_error(f"Error converting time: {e}", "Time Conversion Error")
+                                            # frappe.log_error(f"Error converting time: {e}", "Time Conversion Error")
                                     
                             day_type = data.day_type 
 
@@ -834,8 +837,8 @@ class EmployeeAttendance(Document):
                         else:
                             print("Error: shift_out_str or check_out_1_str is not a valid string.")
                         
-                        frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
-
+                        # frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
+                        
                         if over_time_slab_doc:
                             for record in over_time_slab_doc:
                                 data.over_time_type = record.type
@@ -851,7 +854,7 @@ class EmployeeAttendance(Document):
                                 if isinstance(record.to_time, timedelta):
                                     record.to_time = (datetime.min + record.to_time).time()
                                 
-                                frappe.log_error(f"Record: from_time: {record.from_time}, to_time: {record.to_time}")
+                                # frappe.log_error(f"Record: from_time: {record.from_time}, to_time: {record.to_time}")
 
                                 # Handle the case when `from_time` is greater than `to_time` (shift crosses midnight)
                                 if check_out_1_time is not None:
@@ -877,14 +880,14 @@ class EmployeeAttendance(Document):
                                                     data.estimated_late = difference_str1
                                                 
                                         
-                                frappe.log_error(f"Estimated Late: {data.date} - {data.estimated_late}")
+                                # frappe.log_error(f"Estimated Late: {data.date} - {data.estimated_late}")
                                 
-                        if hasattr(data, 'estimated_late'):
-                            frappe.log_error(f"Final Estimated Late: {data.estimated_late}")
-                        else:
-                            frappe.log_error("No estimated late time calculated.")
+                        # if hasattr(data, 'estimated_late'):
+                        #     frappe.log_error(f"Final Estimated Late: {data.estimated_late}")
+                        # else:
+                        #     frappe.log_error("No estimated late time calculated.")
 
-                        frappe.log_error(f"Record processed: {record}")
+                        # frappe.log_error(f"Record processed: {record}")
 
                             # Usage Example
                             # day_type = data.day_type  # Assuming day_type is available in your data
@@ -1366,7 +1369,32 @@ class EmployeeAttendance(Document):
                     if data.late:
                         total_lates -= 1
                         data.late = 0
+                
+                # if data.check_out_1 is None:
+                #     log = frappe.get_all(
+                #         'Attendance Logs',
+                #         filters={'attendance_date': "2024-08-31", 'type': 'Check Out'},  # Ensure correct date format
+                #         fields=['attendance_time']
+                #     )
                     
+                #     if log:  # Check if log is not empty
+                #         data.check_out_1 = log[0].attendance_time
+
+                if data.check_out_1 is None or data.check_out_1 is not None or data.check_in_1 is not None:
+                    
+                    formatted_date = frappe.utils.formatdate(data.check_in_1, "yyyy-mm-dd")
+                    
+                    log = frappe.db.sql("""
+                        SELECT attendance_time 
+                        FROM `tabAttendance Logs`
+                        WHERE attendance_date = %s
+                        AND `type` = 'Check Out'
+                    """, (formatted_date,))  # Ensure the date format is 'YYYY-MM-DD'
+
+
+                    if log:  # Check if log is not empty
+                        data.check_out_1 = log[0][0]  # Since frappe.db.sql returns a list of tuples
+                
                 
                 check_sanwich_after_holiday(self,previous,data,hr_settings,index)
                
