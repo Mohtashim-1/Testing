@@ -9,6 +9,8 @@
   "over_time_slab_name",
   "column_break_bppj",
   "standard_workinghours",
+  "early_over_time_slab_ct_section",
+  "early_overtime_slab",
   "section_break_clkb",
   "over_time_slab_ct",
   "section_break_o3sx",
@@ -56,12 +58,24 @@
   },
   {
    "fieldname": "section_break_clkb",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Late Over Time Slab"
+  },
+  {
+   "fieldname": "early_over_time_slab_ct_section",
+   "fieldtype": "Section Break",
+   "label": "Early Over Time Slab"
+  },
+  {
+   "fieldname": "early_overtime_slab",
+   "fieldtype": "Table",
+   "label": "Early Overtime Slab",
+   "options": "Early Overtime Slab"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-12 12:42:38.914425",
+ "modified": "2024-09-25 12:16:30.765543",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Over Time Slab",

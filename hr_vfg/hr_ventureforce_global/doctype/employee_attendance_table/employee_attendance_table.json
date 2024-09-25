@@ -25,8 +25,13 @@
   "approved_ot1",
   "difference1",
   "column_break_zbnu",
+  "over_time_type1",
   "early_ot",
+  "estimate_early",
+  "early_per_hours_calculation",
+  "early_over_time_amount",
   "approved_eot",
+  "early_difference1",
   "column_break_ghsm",
   "total_ot_hours",
   "total_approved_ot",
@@ -461,11 +466,36 @@
    "fieldname": "difference1",
    "fieldtype": "Data",
    "label": "Difference1"
+  },
+  {
+   "fieldname": "over_time_type1",
+   "fieldtype": "Data",
+   "label": "Over Time Type1"
+  },
+  {
+   "fieldname": "estimate_early",
+   "fieldtype": "Data",
+   "label": "Estimate Early"
+  },
+  {
+   "fieldname": "early_per_hours_calculation",
+   "fieldtype": "Float",
+   "label": "Early Per Hours Calculation"
+  },
+  {
+   "fieldname": "early_over_time_amount",
+   "fieldtype": "Data",
+   "label": "Early Over Time Amount"
+  },
+  {
+   "fieldname": "early_difference1",
+   "fieldtype": "Data",
+   "label": "Early Difference1"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-09-14 16:26:57.729445",
+ "modified": "2024-09-25 12:13:44.812512",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
