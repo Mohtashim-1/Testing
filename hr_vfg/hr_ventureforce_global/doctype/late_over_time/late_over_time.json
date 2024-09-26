@@ -93,6 +93,7 @@
    "default": "00:30:00",
    "fieldname": "ot_frequency",
    "fieldtype": "Time",
+   "hidden": 1,
    "label": "OT Frequency",
    "read_only": 1
   },
@@ -110,7 +111,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-09 18:14:04.172110",
+ "modified": "2024-09-26 18:52:01.931467",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Over Time",
