@@ -9,10 +9,11 @@ class EarlyOverTimeForm(Document):
 	@frappe.whitelist()
 	def get_data(self):
 		rec = frappe.db.sql("""
-		SELECT p.employee,p.employee_name,c.shift_start,c.date, c.check_in_1, c.early_ot, c.early_over_time, c.name as child_name, p.name as parent_name FROM `tabEmployee Attendance` p
+		SELECT p.employee,p.employee_name,c.shift_start,c.date, c.check_in_1, c.estimate_early, c.early_over_time, c.name as child_name, p.name as parent_name FROM `tabEmployee Attendance` p
 		LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
-		where p.month=%s and p.year=%s and c.date=%s and c.early_ot is not null and c.early_over_time is not null and c.check_in_1 is not null and c.approved_eot is null and c.early_ot > %s """,
-		(self.month,self.year,self.date, self.ot_frequency),as_dict=1)
+		where c.date=%s and c.estimate_early is not null and c.approved_eot is null """,
+		# where p.month=%s and p.year=%s and c.date=%s and c.early_ot is not null and c.early_over_time is not null and c.check_in_1 is not null and c.approved_eot is null and c.early_ot > %s """,
+		(self.date),as_dict=1)
 
 # for threshould of ot frequency had been added
 #  if len(rec)>0:
@@ -28,8 +29,9 @@ class EarlyOverTimeForm(Document):
 					"employee":r.employee,
 					"employee_name":r.employee_name,
 					"check_in_1" : r.check_in_1,
-					"early_over_time":r.early_ot,
-					"approved_early_over_time":r.early_ot,
+					"date": r.date,
+					"early_over_time":r.estimate_early,
+					"approved_early_over_time":r.estimate_early,
 					# "check":r.early_over_time,
 					"att_ref":r.parent_name,
 					"att_child_ref":r.child_name
@@ -47,4 +49,14 @@ class EarlyOverTimeForm(Document):
 			""",(r.approved_early_over_time,r.att_child_ref))
 			frappe.db.commit()
 			doc = frappe.get_doc("Employee Attendance",r.att_ref)
+			doc.save()
+
+	
+	def on_cancel(self):
+		for r in self.early_over_time_form_ct:
+			frappe.db.sql("""
+			update `tabEmployee Attendance Table` set approved_eot='' where name=%s
+			""", (r.att_child_ref))
+			frappe.db.commit()
+			doc = frappe.get_doc("Employee Attendance", r.att_ref)
 			doc.save()

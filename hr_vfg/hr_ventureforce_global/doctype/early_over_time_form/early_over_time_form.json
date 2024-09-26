@@ -49,6 +49,7 @@
   {
    "fieldname": "month",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Month",
    "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
   },
@@ -60,6 +61,7 @@
    "default": "2024",
    "fieldname": "year",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Year",
    "options": "Year"
   },
@@ -96,13 +98,14 @@
    "default": "00:30:00",
    "fieldname": "ot_frequency",
    "fieldtype": "Time",
+   "hidden": 1,
    "label": "OT Frequency"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-31 02:30:29.736358",
+ "modified": "2024-09-26 18:58:01.638095",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Early Over Time Form",
