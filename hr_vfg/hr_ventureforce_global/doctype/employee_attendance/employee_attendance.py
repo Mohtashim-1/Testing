@@ -88,8 +88,29 @@ class EmployeeAttendance(Document):
         total_holiday_hours = timedelta(hours=0,minutes=0,seconds=0)
         previous = None
         index = 0
-        total_seconds1 = 0  # This should be declared before use
+        total_seconds1 = 0  
         total_seconds = 0
+
+        if self.table1:
+            first_date = self.table1[0].date  
+            last_date = self.table1[-1].date  
+
+            fuel = frappe.get_list("Fuel Rate", filters={
+                "from_date": [">=", first_date],
+                "to_date": ["<=", last_date]
+            }, fields=['*'])
+
+            if fuel[0]:
+                fuel_allowed = fuel[0].rate_per_litre  
+                self.fuel_allowance_rate = fuel_allowed
+                if self.fuel_allowance_rate and self.fuel_allowance_limit:
+                    self.fuel_allowance_total = self.fuel_allowance_rate * self.fuel_allowance_limit
+                else:
+                    self.fuel_allowance_total = 0
+            else:
+                self.fuel_allowance_rate = "0" 
+
+
 
         for data in self.table1:
             if data.early_ot:

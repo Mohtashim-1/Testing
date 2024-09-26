@@ -465,6 +465,7 @@
   },
   {
    "default": "0",
+   "fetch_from": "employee.custom_fuel_allowance_allowed",
    "fieldname": "fuel_allowance_allowed",
    "fieldtype": "Check",
    "label": "Fuel Allowance Allowed"
@@ -474,6 +475,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "employee.custom_allowed_fule_in_litre",
    "fieldname": "fuel_allowance_limit",
    "fieldtype": "Float",
    "label": "Fuel Allowance Limit"
@@ -499,7 +501,7 @@
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-09-26 17:56:05.648494",
+ "modified": "2024-09-26 18:16:56.622340",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
