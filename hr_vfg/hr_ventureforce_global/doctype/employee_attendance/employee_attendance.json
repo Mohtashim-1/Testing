@@ -75,7 +75,15 @@
   "late_plus_early_hours_",
   "total_extra_duty_for_fullday",
   "column_break_54",
-  "late_early_adjustment"
+  "late_early_adjustment",
+  "allowance_section",
+  "fuel_allowance_allowed",
+  "column_break_zjeh",
+  "fuel_allowance_limit",
+  "column_break_rrvw",
+  "fuel_allowance_rate",
+  "column_break_foba",
+  "fuel_allowance_total"
  ],
  "fields": [
   {
@@ -449,11 +457,49 @@
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image"
+  },
+  {
+   "fieldname": "allowance_section",
+   "fieldtype": "Section Break",
+   "label": "Allowance"
+  },
+  {
+   "default": "0",
+   "fieldname": "fuel_allowance_allowed",
+   "fieldtype": "Check",
+   "label": "Fuel Allowance Allowed"
+  },
+  {
+   "fieldname": "column_break_zjeh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fuel_allowance_limit",
+   "fieldtype": "Float",
+   "label": "Fuel Allowance Limit"
+  },
+  {
+   "fieldname": "column_break_rrvw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fuel_allowance_rate",
+   "fieldtype": "Float",
+   "label": "Fuel Allowance Rate"
+  },
+  {
+   "fieldname": "column_break_foba",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fuel_allowance_total",
+   "fieldtype": "Float",
+   "label": "Fuel Allowance Total"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-08-21 01:28:36.656416",
+ "modified": "2024-09-26 17:56:05.648494",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
