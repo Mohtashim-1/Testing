@@ -280,45 +280,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Over Time",
-   "link_count": 3,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Late Over Time",
-   "link_count": 0,
-   "link_to": "Overtime Form",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Early Over Time",
-   "link_count": 0,
-   "link_to": "Early Over Time Form",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Early Over Time Employee Wise",
-   "link_count": 0,
-   "link_to": "Early Compensation",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Compensation",
    "link_count": 2,
    "link_type": "DocType",
@@ -422,9 +383,58 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Over Time",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Late Over Time",
+   "link_count": 0,
+   "link_to": "Late Over Time",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Late Over Time Employee Wise",
+   "link_count": 0,
+   "link_to": "Late Over Time Employee Wise",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Early Over Time",
+   "link_count": 0,
+   "link_to": "Early Over Time Form",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Early Over Time Employee Wise",
+   "link_count": 0,
+   "link_to": "Early Compensation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-08-31 11:54:53.939818",
+ "modified": "2024-09-26 16:53:01.402952",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
