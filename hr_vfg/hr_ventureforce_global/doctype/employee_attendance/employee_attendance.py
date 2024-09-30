@@ -88,19 +88,23 @@ class EmployeeAttendance(Document):
         total_holiday_hours = timedelta(hours=0,minutes=0,seconds=0)
         previous = None
         index = 0
-        total_seconds1 = 0  
-        total_seconds = 0
+        total_seconds1 = 0
+        total_seconds2 = 0
+        total_seconds3 = 0
+        total_seconds_approved_eot = 0
+        total_seconds_approved_ot1 = 0
 
         if self.table1:
             first_date = self.table1[0].date  
             last_date = self.table1[-1].date  
 
+            # Fetch fuel rate
             fuel = frappe.get_list("Fuel Rate", filters={
                 "from_date": [">=", first_date],
                 "to_date": ["<=", last_date]
             }, fields=['*'])
 
-            if fuel[0]:
+            if fuel and fuel[0]:
                 fuel_allowed = fuel[0].rate_per_litre  
                 self.fuel_allowance_rate = fuel_allowed
                 if self.fuel_allowance_rate and self.fuel_allowance_limit:
@@ -110,16 +114,15 @@ class EmployeeAttendance(Document):
             else:
                 self.fuel_allowance_rate = "0" 
 
-
-
+        # Loop through table1 rows
         for data in self.table1:
+            # Sum early_ot
             if data.early_ot:
                 try:
-                    # Ensure the time format is valid
                     time_parts = [int(part) for part in data.early_ot.split(':')]
                     if len(time_parts) == 3:
                         time_seconds1 = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
-                        total_seconds1 += time_seconds1  # Accumulate the total seconds
+                        total_seconds1 += time_seconds1
                         print(f"Added {time_seconds1} seconds from {data.early_ot}")
                     else:
                         print(f"Invalid time format in early_ot: {data.early_ot}")
@@ -128,17 +131,44 @@ class EmployeeAttendance(Document):
             else:
                 print(f"early_ot is None or empty for row")
 
-            total_hours1 = total_seconds1 / 3600.0
-            self.early_ot = "{:.2f}".format(total_hours1)
+            # Sum estimated_late
+            if data.estimated_late:
+                try:
+                    time_parts1 = [int(part) for part in data.estimated_late.split(':')]
+                    if len(time_parts1) == 3:
+                        time_seconds2 = time_parts1[0] * 3600 + time_parts1[1] * 60 + time_parts1[2]
+                        total_seconds2 += time_seconds2
+                        print(f"Added {time_seconds2} seconds from {data.estimated_late}")
+                    else:
+                        print(f"Invalid time format in estimated_late: {data.estimated_late}")
+                except ValueError:
+                    print(f"Error processing time format in estimated_late: {data.estimated_late}")
+            else:
+                print(f"estimated_late is None or empty for row")
 
+            # Sum estimate_early (fixed variable and print statement)
+            if data.estimate_early:
+                try:
+                    time_parts2 = [int(part) for part in data.estimate_early.split(':')]
+                    if len(time_parts2) == 3:
+                        time_seconds3 = time_parts2[0] * 3600 + time_parts2[1] * 60 + time_parts2[2]
+                        total_seconds3 += time_seconds3
+                        print(f"Added {time_seconds3} seconds from {data.estimate_early}")
+                    else:
+                        print(f"Invalid time format in estimate_early: {data.estimate_early}")
+                except ValueError:
+                    print(f"Error processing time format in estimate_early: {data.estimate_early}")
+            else:
+                print(f"estimate_early is None or empty for row")
+            
+            # Sum approved_eot
             if data.approved_eot:
                 try:
-                    # Ensure the time format is valid
                     time_parts = [int(part) for part in data.approved_eot.split(':')]
                     if len(time_parts) == 3:
-                        time_seconds = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
-                        total_seconds += time_seconds  # Accumulate the total seconds
-                        print(f"Added {time_seconds} seconds from {data.approved_eot}")
+                        time_seconds_approved_eot = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                        total_seconds_approved_eot += time_seconds_approved_eot
+                        print(f"Added {time_seconds_approved_eot} seconds from {data.approved_eot}")
                     else:
                         print(f"Invalid time format in approved_eot: {data.approved_eot}")
                 except ValueError:
@@ -146,10 +176,57 @@ class EmployeeAttendance(Document):
             else:
                 print(f"approved_eot is None or empty for row")
 
-        total_hours = total_seconds / 3600.0
-        self.approved_early_over_time_hour = "{:.2f}".format(total_hours)
-        print(f"Total seconds accumulated: {total_seconds}")
+            # total of late sitting approved 
+            if data.approved_ot1:
+                try:
+                    time_parts3 = [int(parts) for parts in data.approved_ot1.split(':')]
+                    if len(time_parts3) == 3:
+                        time_seconds_approved_ot1 = time_parts3[0] * 3600 + time_parts3[1] * 60 + time_parts3[2]
+                        total_seconds_approved_ot1 += time_seconds_approved_ot1
+                    else:
+                        print(f"Invalid time format in approved_ot1 : {data.approved_ot1}")
+                except ValueError:
+                    print(f"Error processing time format in approved_ot1: {data.approved_ot1}")
+            else:
+                print(f"approved_ot1 is None or empty for row")
+            
+            # total of approved early ot 
 
+            if data.approved_eot:
+                try:
+                    time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]
+                    if len(time_parts3) == 3:
+                        time_seconds_approved_eot1 = time_parts4[0] * 3600 + time_parts4[1] * 60 + time_parts4[2]
+                        total_seconds_approved_eot += time_seconds_approved_eot
+                    else:
+                        print(f"Invalid time format in approved_eot : {data.approved_eot}")
+                except ValueError:
+                    print(f"Error processing time format in approved_eot: {data.approved_eot}")
+            else:
+                print(f"approved_eot is None or empty for row")
+
+
+        # Calculate total hours after loop
+        self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
+        self.late_sitting = "{:.2f}".format(total_seconds2 / 3600.0)
+        self.early_sitting = "{:.2f}".format(total_seconds3 / 3600.0)
+        self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
+
+        print(f"Total seconds accumulated for approved_eot: {total_seconds_approved_eot}")
+
+        # total of late sitting and early sitting 
+        total_sitting = float(self.late_sitting) + float(self.early_sitting)
+        self.total_sitting = "{:.2f}".format(total_sitting)
+
+        # total of approved ot1
+        self.approved_late_sitting =  "{:.2f}".format(total_seconds_approved_ot1 / 3600.0)
+
+        # total of approved_eot 
+        self.approved_early_sitting = "{:.2f}".format(time_seconds_approved_eot1 / 3600.0)
+
+        # approved total sitting
+        approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
+        self.approved_total_sitting = approved_total_sitting
 
         for data in self.table1:
             first_in_time = timedelta(hours=1,minutes=0,seconds=0)
@@ -997,10 +1074,10 @@ class EmployeeAttendance(Document):
                                     record_1.to_time = (datetime.min + record_1.to_time).time()
                             
                                 if data.check_in_1:
-                                    if record_1.from_time > record_1.to_time:
+                                    if record_1.from_time < record_1.to_time:
                                         # Shift crosses midnight
-                                        if check_in_1_time >= record_1.from_time or check_in_1_time <= record_1.to_time:
-                                            if time_difference_delta1 < threshould:
+                                        if check_in_1_time < record_1.to_time:
+                                            if time_difference_delta1 > threshould:
                                                 time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
                                                 time_difference_result = time_difference_multiplied.total_seconds()
                                                 final_timedelta = timedelta(seconds=time_difference_result)
@@ -1012,7 +1089,7 @@ class EmployeeAttendance(Document):
                                                 data.estimate_early = final_timedelta
                                         else:
                                             if data.over_time_type == "Weekly Off":
-                                                if time_difference_delta1 < threshould:
+                                                if time_difference_delta1 > threshould:
                                                     time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
                                                     time_difference_result = time_difference_multiplied.total_seconds()
                                                     final_timedelta = timedelta(seconds=time_difference_result)
@@ -1024,18 +1101,19 @@ class EmployeeAttendance(Document):
                                                     data.estimate_early = difference_str1
                                                     
                                     else:
+                                        pass
                                         # Shift crosses midnight
-                                        if check_in_1_time >= record_1.from_time or check_in_1_time <= record_1.to_time:
-                                            if time_difference_delta1 < threshould:
-                                                time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
-                                                time_difference_result = time_difference_multiplied.total_seconds()
-                                                final_timedelta = timedelta(seconds=time_difference_result)
-                                                time_delta_difference = int(final_timedelta.total_seconds())
-                                                hours = time_delta_difference // 3600
-                                                minutes = (time_delta_difference % 3600) // 60
-                                                seconds = time_delta_difference % 60
-                                                difference_str1 = f"{hours}:{minutes}:{seconds}"
-                                                data.estimate_early = final_timedelta
+                                        # if check_in_1_time >= record_1.from_time or check_in_1_time <= record_1.to_time:
+                                        #     if time_difference_delta1 < threshould:
+                                        #         time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
+                                        #         time_difference_result = time_difference_multiplied.total_seconds()
+                                        #         final_timedelta = timedelta(seconds=time_difference_result)
+                                        #         time_delta_difference = int(final_timedelta.total_seconds())
+                                        #         hours = time_delta_difference // 3600
+                                        #         minutes = (time_delta_difference % 3600) // 60
+                                        #         seconds = time_delta_difference % 60
+                                        #         difference_str1 = f"{hours}:{minutes}:{seconds}"
+                                        #         data.estimate_early = "09:09:09"
 
 
                                 
@@ -1189,72 +1267,138 @@ class EmployeeAttendance(Document):
                             
 
                     
-                        # def time_to_seconds(time_string):
-                        #     """Helper function to convert time string to seconds."""
-                        #     if time_string is None:
-                        #         raise ValueError("Time string is None")
-                        #     t = datetime.strptime(time_string, "%H:%M:%S").time()
-                        #     return t.hour * 3600 + t.minute * 60 + t.second
+                        def time_to_seconds(time_string):
+                            """Helper function to convert time string to seconds."""
+                            if time_string is None:
+                                raise ValueError("Time string is None")
+                            t = datetime.strptime(time_string, "%H:%M:%S").time()
+                            return t.hour * 3600 + t.minute * 60 + t.second
 
-                        # def get_time_difference(t1, t2):
-                        #     """Calculate time difference in seconds between two time strings."""
-                        #     t1_seconds = time_to_seconds(t1)
-                        #     t2_seconds = time_to_seconds(t2)
-                        #     return timedelta(seconds=t1_seconds - t2_seconds)
+                        def get_time_difference(t1, t2):
+                            """Calculate time difference in seconds between two time strings."""
+                            t1_seconds = time_to_seconds(t1)
+                            t2_seconds = time_to_seconds(t2)
+                            return timedelta(seconds=t1_seconds - t2_seconds)
 
-                        # # Retrieve and verify data values
-                        # shift_in = data.shift_in
-                        # check_in_1 = data.check_in_1
+                        # Retrieve and verify data values
+                        shift_in = data.shift_in
+                        check_in_1 = data.check_in_1
 
-                        # # Print statements for debugging
-                        # # print(f"shift_in: {shift_in}")
-                        # # print(f"check_in_1: {check_in_1}")
+                        # Print statements for debugging
+                        # print(f"shift_in: {shift_in}")
+                        # print(f"check_in_1: {check_in_1}")
 
-                        # # Convert shift_in and check_in_1 to time strings if they are timedelta
-                        # if isinstance(shift_in, timedelta):
-                        #     total_seconds = int(shift_in.total_seconds())
-                        #     hours, remainder = divmod(total_seconds, 3600)
-                        #     minutes, seconds = divmod(remainder, 60)
-                        #     shift_in_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
-                        # else:
-                        #     shift_in_time_string = shift_in
+                        # Convert shift_in and check_in_1 to time strings if they are timedelta
+                        if isinstance(shift_in, timedelta):
+                            total_seconds = int(shift_in.total_seconds())
+                            hours, remainder = divmod(total_seconds, 3600)
+                            minutes, seconds = divmod(remainder, 60)
+                            shift_in_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+                        else:
+                            shift_in_time_string = shift_in
 
-                        # if isinstance(check_in_1, timedelta):
-                        #     total_seconds = int(check_in_1.total_seconds())
-                        #     hours, remainder = divmod(total_seconds, 3600)
-                        #     minutes, seconds = divmod(remainder, 60)
-                        #     check_in_1_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
-                        # else:
-                        #     check_in_1_time_string = check_in_1
+                        if isinstance(check_in_1, timedelta):
+                            total_seconds = int(check_in_1.total_seconds())
+                            hours, remainder = divmod(total_seconds, 3600)
+                            minutes, seconds = divmod(remainder, 60)
+                            check_in_1_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+                        else:
+                            check_in_1_time_string = check_in_1
 
-                        # # Ensure both time strings are not None
-                        # if shift_in_time_string is None or check_in_1_time_string is None:
-                        #     data.early_ot = None
-                        # else:
-                        #     # Convert time strings to datetime objects for comparison
-                        #     shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
-                        #     check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
+                        # Ensure both time strings are not None
+                        if shift_in_time_string is None or check_in_1_time_string is None:
+                            data.early_ot = None
+                        else:
+                            # Convert time strings to datetime objects for comparison
+                            shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
+                            check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
 
 
-                        #     # Calculate time difference if check_in_1 is earlier than shift_in
-                        #     if check_in_1_datetime < shift_in_datetime:
-                        #         time_difference = get_time_difference(shift_in_time_string, check_in_1_time_string)
-                        #         data.early_ot = time_difference
-                        #     else:
-                        #         data.early_ot = None
+                            # Calculate time difference if check_in_1 is earlier than shift_in
+                            if check_in_1_datetime < shift_in_datetime:
+                                time_difference = get_time_difference(shift_in_time_string, check_in_1_time_string)
+                                data.early_ot = time_difference
+                            else:
+                                data.early_ot = None
                         
-                        # if data.late_sitting:
-                        #     late_sitting_timedelta = data.late_sitting
-                        #     # late_sitting_timedelta = timedelta(hours=data.late_sitting.hour, minutes=data.late_sitting.minutes, seconds= data.late_sitting.seconds)
+                        if data.late_sitting:
+                            late_sitting_timedelta = data.late_sitting
+                            # late_sitting_timedelta = timedelta(hours=data.late_sitting.hour, minutes=data.late_sitting.minutes, seconds= data.late_sitting.seconds)
+                        else:
+                            late_sitting_timedelta = timedelta(0)
+                        
+                        if data.early_ot:
+                            if isinstance(data.early_ot, str):
+                                early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
+                                early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
+                            else:
+                                early_ot_timedelta = data.early_ot
+
+                        else:
+                            early_ot_timedelta = timedelta(0)
+                        
+                        total_ot_time_delta = late_sitting_timedelta + early_ot_timedelta
+
+                        total_seconds = total_ot_time_delta.total_seconds()
+                        hours, remainder = divmod(total_seconds, 3600)
+                        minutes, seconds = divmod(remainder, 60)
+                        data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+
+                        if data.approved_ot1:
+                            approved_ot1_hours, approved_ot1_minutes, approved_ot1_seconds = map(int, data.approved_ot1.split(':'))
+
+                            # approved_ot1_hours, approved_ot1_minutes, approved_ot1_seconds = map(int, data.approved_ot1(':'))
+                            approved_ot1_timedelta = timedelta(hours=approved_ot1_hours, minutes=approved_ot1_minutes, seconds=approved_ot1_seconds)
+                            # approved_eot_timedelta = data.total_approved_ot
+                            # data.total_approved_ot = approved_ot1_seconds
+                        else:
+                            approved_ot1_timedelta = timedelta(0) 
+                        
+                        if data.approved_eot:
+                            approved_eot_hours, approved_eot_minutes, approved_eot_seconds = map(int, data.approved_eot.split(':'))
+                            approved_eot_timedelta = timedelta(hours=approved_eot_hours, minutes=approved_eot_minutes, seconds=approved_eot_seconds)
+                            # data.total_approved_ot = approved_eot_timedelta 
+                        else:
+                            approved_eot_timedelta = timedelta(0)
+                        
+                        total_approved_ot_data = approved_ot1_timedelta + approved_eot_timedelta
+
+                        total_seconds = total_approved_ot_data.total_seconds()
+                        hours, remainder = divmod(total_seconds, 3600)
+                        minutes, seconds = divmod(remainder, 60)
+                        data.total_approved_ot = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+
+                        if self.late_sitting_hours is None:
+                            self.late_sitting_hours = 0.0
+                        else:
+                            self.late_sitting_hours = float(self.late_sitting_hours)
+
+                        late_sitting_hours_float = float(self.late_sitting_hours)
+
+                        # set total overtime in employee attendance   
+                        if self.early_ot is None:
+                            self.early_ot = 0.0
+                        else:
+                            self.early_ot = float(self.early_ot)
+
+                        early_ot_float = float(self.early_ot)
+
                         # else:
-                        #     late_sitting_timedelta = timedelta(0)
+                        #     raise ValueError("No Shift Found")    
+                        
+                        if data.late_sitting:
+                            late_sitting_timedelta = data.late_sitting
+                            # late_sitting_timedelta = timedelta(hours=data.late_sitting.hour, minutes=data.late_sitting.minutes, seconds= data.late_sitting.seconds)
+                        else:
+                            late_sitting_timedelta = timedelta(0)
                         
                         # if data.early_ot:
-                        #     if isinstance(data.early_ot, str):
-                        #         early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
-                        #         early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
-                        #     else:
-                        #         early_ot_timedelta = data.early_ot
+                        #     early_ot_timedelta = data.early_ot
+                            # if isinstance(data.early_ot, str):
+                            #     early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
+                            #     early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
+                            # else:
+                            #     early_ot_timedelta = data.early_ot
 
                         # else:
                         #     early_ot_timedelta = timedelta(0)
@@ -1265,100 +1409,34 @@ class EmployeeAttendance(Document):
                         # hours, remainder = divmod(total_seconds, 3600)
                         # minutes, seconds = divmod(remainder, 60)
                         # data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
+                        # set total overtime 
+                        if self.late_sitting_hours:
+                            self.total_overtime = self.late_sitting_hours
+                        else:
+                            self.total_overtime = 0
+                        if self.early_ot:
+                            self.total_overtime = self.early_ot
+                        else:
+                            self.total_overtime = 0
+                        if self.late_sitting_hours and self.early_ot:
+                            self.total_overtime = self.early_ot + self.late_sitting_hours
 
-                        # if data.approved_ot1:
-                        #     approved_ot1_hours, approved_ot1_minutes, approved_ot1_seconds = map(int, data.approved_ot1.split(':'))
+                        # set approved overtime le
 
-                        #     # approved_ot1_hours, approved_ot1_minutes, approved_ot1_seconds = map(int, data.approved_ot1(':'))
-                        #     approved_ot1_timedelta = timedelta(hours=approved_ot1_hours, minutes=approved_ot1_minutes, seconds=approved_ot1_seconds)
-                        #     # approved_eot_timedelta = data.total_approved_ot
-                        #     # data.total_approved_ot = approved_ot1_seconds
-                        # else:
-                        #     approved_ot1_timedelta = timedelta(0) 
-                        
-                        # if data.approved_eot:
-                        #     approved_eot_hours, approved_eot_minutes, approved_eot_seconds = map(int, data.approved_eot.split(':'))
-                        #     approved_eot_timedelta = timedelta(hours=approved_eot_hours, minutes=approved_eot_minutes, seconds=approved_eot_seconds)
-                        #     # data.total_approved_ot = approved_eot_timedelta 
-                        # else:
-                        #     approved_eot_timedelta = timedelta(0)
-                        
-                        # total_approved_ot_data = approved_ot1_timedelta + approved_eot_timedelta
+                        if self.approved_ot:
+                            self.approved_overtime_le = float(self.approved_ot)
+                        else:
+                            self.approved_overtime_le = 0
+                        if self.approved_early_over_time_hour:
+                            self.approved_overtime_le = float(self.approved_early_over_time_hour)
+                        else:
+                            self.approved_early_over_time_hour = 0
+                        if self.approved_ot and self.approved_early_over_time_hour:
+                            approved_overtime_le = float(self.approved_ot) + float(self.approved_early_over_time_hour)
+                            self.approved_overtime_le = "{:.2f}".format(approved_overtime_le)
 
-                        # total_seconds = total_approved_ot_data.total_seconds()
-                        # hours, remainder = divmod(total_seconds, 3600)
-                        # minutes, seconds = divmod(remainder, 60)
-                        # data.total_approved_ot = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
-
-                        # if self.late_sitting_hours is None:
-                        #     self.late_sitting_hours = 0.0
-                        # else:
-                        #     self.late_sitting_hours = float(self.late_sitting_hours)
-
-                        # late_sitting_hours_float = float(self.late_sitting_hours)
-
-                        # # set total overtime in employee attendance   
-                        # if self.early_ot is None:
-                        #     self.early_ot = 0.0
-                        # else:
-                        #     self.early_ot = float(self.early_ot)
-
-                        # early_ot_float = float(self.early_ot)
-
-                        # # else:
-                        # #     raise ValueError("No Shift Found")    
-                        
-                        # if data.late_sitting:
-                        #     late_sitting_timedelta = data.late_sitting
-                        #     # late_sitting_timedelta = timedelta(hours=data.late_sitting.hour, minutes=data.late_sitting.minutes, seconds= data.late_sitting.seconds)
-                        # else:
-                        #     late_sitting_timedelta = timedelta(0)
-                        
-                        # # if data.early_ot:
-                        # #     early_ot_timedelta = data.early_ot
-                        #     # if isinstance(data.early_ot, str):
-                        #     #     early_ot_hours, early_ot_minutes, early_ot_seconds = map(int, data.early_ot.split(':'))
-                        #     #     early_ot_timedelta = timedelta(hours=early_ot_hours,minutes=early_ot_minutes,seconds=early_ot_seconds)
-                        #     # else:
-                        #     #     early_ot_timedelta = data.early_ot
-
-                        # # else:
-                        # #     early_ot_timedelta = timedelta(0)
-                        
-                        # # total_ot_time_delta = late_sitting_timedelta + early_ot_timedelta
-
-                        # # total_seconds = total_ot_time_delta.total_seconds()
-                        # # hours, remainder = divmod(total_seconds, 3600)
-                        # # minutes, seconds = divmod(remainder, 60)
-                        # # data.total_ot_hours = "{:02}:{:02}:{:02}".format(int(hours),int(minutes),int(seconds))
-                        # # set total overtime 
-                        # if self.late_sitting_hours:
-                        #     self.total_overtime = self.late_sitting_hours
-                        # else:
-                        #     self.total_overtime = 0
-                        # if self.early_ot:
-                        #     self.total_overtime = self.early_ot
-                        # else:
-                        #     self.total_overtime = 0
-                        # if self.late_sitting_hours and self.early_ot:
-                        #     self.total_overtime = self.early_ot + self.late_sitting_hours
-
-                        # # set approved overtime le
-
-                        # if self.approved_ot:
-                        #     self.approved_overtime_le = float(self.approved_ot)
-                        # else:
-                        #     self.approved_overtime_le = 0
-                        # if self.approved_early_over_time_hour:
-                        #     self.approved_overtime_le = float(self.approved_early_over_time_hour)
-                        # else:
-                        #     self.approved_early_over_time_hour = 0
-                        # if self.approved_ot and self.approved_early_over_time_hour:
-                        #     approved_overtime_le = float(self.approved_ot) + float(self.approved_early_over_time_hour)
-                        #     self.approved_overtime_le = "{:.2f}".format(approved_overtime_le)
-
-                        # else:
-                        #     self.approved_overtime_le = 0
+                        else:
+                            self.approved_overtime_le = 0
                 
                 else:
                     raise ValueError(f"No Shift Found for these employee: {self.employee}")

@@ -46,12 +46,18 @@
   "over_time_data_section",
   "late_sitting_hours",
   "approved_ot",
+  "late_sitting",
+  "approved_late_sitting",
   "column_break_xhgm",
   "early_ot",
   "approved_early_over_time_hour",
+  "early_sitting",
+  "approved_early_sitting",
   "column_break_zvym",
   "total_overtime",
   "approved_overtime_le",
+  "total_sitting",
+  "approved_total_sitting",
   "time_calculation_section",
   "holiday_hour",
   "extra_hours",
@@ -497,11 +503,41 @@
    "fieldname": "fuel_allowance_total",
    "fieldtype": "Float",
    "label": "Fuel Allowance Total"
+  },
+  {
+   "fieldname": "late_sitting",
+   "fieldtype": "Float",
+   "label": "Late Sitting"
+  },
+  {
+   "fieldname": "early_sitting",
+   "fieldtype": "Float",
+   "label": "Early Sitting"
+  },
+  {
+   "fieldname": "total_sitting",
+   "fieldtype": "Float",
+   "label": "Total Sitting"
+  },
+  {
+   "fieldname": "approved_late_sitting",
+   "fieldtype": "Float",
+   "label": "Approved Late Sitting"
+  },
+  {
+   "fieldname": "approved_early_sitting",
+   "fieldtype": "Float",
+   "label": "Approved Early Sitting"
+  },
+  {
+   "fieldname": "approved_total_sitting",
+   "fieldtype": "Float",
+   "label": "Approved Total Sitting"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-09-26 18:16:56.622340",
+ "modified": "2024-09-30 15:07:18.046802",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
