@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"1RfbO3EGgl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Addon</span>\",\"col\":12}},{\"id\":\"VCa8qpcm6P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"4q1VMAUmgY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Transfer\",\"col\":3}},{\"id\":\"58PavjCslP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Full and Final Statement\",\"col\":3}},{\"id\":\"bKDlq3xswW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Increment\",\"col\":3}},{\"id\":\"ObM2ZnZfSF\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"lOwGzDNJWY\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"nBD1DqEoZy\",\"type\":\"card\",\"data\":{\"card_name\":\"Shift Management\",\"col\":4}},{\"id\":\"Z9nzFZuuNq\",\"type\":\"card\",\"data\":{\"card_name\":\"Payroll\",\"col\":4}},{\"id\":\"I1OU1wd0t4\",\"type\":\"card\",\"data\":{\"card_name\":\"Over Time\",\"col\":4}},{\"id\":\"pKq0_z6DTp\",\"type\":\"card\",\"data\":{\"card_name\":\"Compensation\",\"col\":4}},{\"id\":\"DXtsGjxm7y\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave\",\"col\":4}},{\"id\":\"wszmmrBe3a\",\"type\":\"card\",\"data\":{\"card_name\":\"Advance\",\"col\":4}},{\"id\":\"G6_ivmuQCM\",\"type\":\"card\",\"data\":{\"card_name\":\"Recruitment\",\"col\":4}},{\"id\":\"epHnr-50QH\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Setting\",\"col\":4}},{\"id\":\"nzlnI-MXZn\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"1RfbO3EGgl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Addon</span>\",\"col\":12}},{\"id\":\"VCa8qpcm6P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"4q1VMAUmgY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Transfer\",\"col\":3}},{\"id\":\"58PavjCslP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Full and Final Statement\",\"col\":3}},{\"id\":\"bKDlq3xswW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Increment\",\"col\":3}},{\"id\":\"ObM2ZnZfSF\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jK0G_-WsK8\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Shortcut</b></span>\",\"col\":12}},{\"id\":\"d9gw7bv9tS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Attendance Summary\",\"col\":3}},{\"id\":\"8bxISxTSQ0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Employee Attendance\",\"col\":3}},{\"id\":\"bdPZf5weKA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance Register\",\"col\":3}},{\"id\":\"cFIC_GjKTJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Individual Attendance\",\"col\":3}},{\"id\":\"rXsdDbqtg2\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"lOwGzDNJWY\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"nBD1DqEoZy\",\"type\":\"card\",\"data\":{\"card_name\":\"Shift Management\",\"col\":4}},{\"id\":\"Z9nzFZuuNq\",\"type\":\"card\",\"data\":{\"card_name\":\"Payroll\",\"col\":4}},{\"id\":\"I1OU1wd0t4\",\"type\":\"card\",\"data\":{\"card_name\":\"Over Time\",\"col\":4}},{\"id\":\"pKq0_z6DTp\",\"type\":\"card\",\"data\":{\"card_name\":\"Compensation\",\"col\":4}},{\"id\":\"DXtsGjxm7y\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave\",\"col\":4}},{\"id\":\"wszmmrBe3a\",\"type\":\"card\",\"data\":{\"card_name\":\"Advance\",\"col\":4}},{\"id\":\"G6_ivmuQCM\",\"type\":\"card\",\"data\":{\"card_name\":\"Recruitment\",\"col\":4}},{\"id\":\"epHnr-50QH\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Setting\",\"col\":4}}]",
  "creation": "2024-08-12 00:22:29.997674",
  "custom_blocks": [],
  "docstatus": 0,
@@ -9,7 +9,7 @@
  "hide_custom": 0,
  "icon": "hr",
  "idx": 0,
- "indicator_color": "green",
+ "indicator_color": "",
  "is_hidden": 0,
  "label": "HR Addon",
  "links": [
@@ -309,45 +309,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Report",
-   "link_count": 3,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Daily Employee Attendance",
-   "link_count": 0,
-   "link_to": "Daily Employee Attendance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Daily Attendance Summary",
-   "link_count": 0,
-   "link_to": "Daily Attendance Summary",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Employee Individual Attendance",
-   "link_count": 0,
-   "link_to": "Employee Individual Attendance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Attendance",
    "link_count": 3,
    "link_type": "DocType",
@@ -434,17 +395,17 @@
    "type": "Link"
   }
  ],
- "modified": "2024-09-26 16:53:01.402952",
+ "modified": "2024-09-30 16:53:32.886579",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
  "number_cards": [],
  "owner": "Administrator",
- "parent_page": "HR",
+ "parent_page": "",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 11.0,
+ "sequence_id": 17.0,
  "shortcuts": [
   {
    "color": "Grey",
@@ -457,10 +418,24 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "Daily Attendance Summary",
+   "link_to": "Daily Attendance Summary",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "Employee",
    "link_to": "Employee",
    "stats_filter": "[[\"Employee\",\"status\",\"=\",\"Active\",false]]",
    "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Daily Employee Attendance",
+   "link_to": "Daily Employee Attendance",
+   "type": "Report"
   },
   {
    "color": "Grey",
@@ -473,10 +448,24 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "Attendance Register",
+   "link_to": "Attendance Register",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "Salary Increment",
    "link_to": "Salary Increments",
    "stats_filter": "[]",
    "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Employee Individual Attendance",
+   "link_to": "Employee Individual Attendance",
+   "type": "Report"
   }
  ],
  "title": "HR Addon"
