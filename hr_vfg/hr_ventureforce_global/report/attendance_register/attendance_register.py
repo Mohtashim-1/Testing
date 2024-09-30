@@ -164,16 +164,18 @@ def get_datas(filters=None):
                 check_in_out_data[f'check_out_{day}'] = child.check_out_1
                 
                 # Check for late, absent, leave status
-                status = "Present"  # Default status
-                if getattr(child, 'late', False):
+                if child.late:
                     status = "Late"
-                    late_count += 1
-                elif getattr(child, 'absent', False):
+                elif child.absent:
                     status = "Absent"
-                    absent_count += 1
-                elif getattr(child, 'mark_leave', False):
+                elif child.mark_leave:
                     status = "Leave"
-                    leave_count += 1
+                elif child.check_in_1 or child.check_out_1:  # Mark as present if check-in is available
+                    status = "Present"
+                else:
+                    status = "Absent"  # Default status if no check-in info is found
+
+                
 
                 check_in_out_data[f'status_{day}'] = status
 
