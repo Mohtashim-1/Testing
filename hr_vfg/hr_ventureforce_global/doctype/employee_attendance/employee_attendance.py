@@ -93,6 +93,7 @@ class EmployeeAttendance(Document):
         total_seconds3 = 0
         total_seconds_approved_eot = 0
         total_seconds_approved_ot1 = 0
+        total_seconds_approved_ot2 = 0
 
         if self.table1:
             first_date = self.table1[0].date  
