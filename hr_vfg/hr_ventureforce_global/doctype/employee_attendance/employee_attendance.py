@@ -1617,20 +1617,20 @@ class EmployeeAttendance(Document):
                 #     if log:  # Check if log is not empty
                 #         data.check_out_1 = log[0].attendance_time
 
-                if data.check_out_1 is None or data.check_out_1 is not None or data.check_in_1 is not None:
+                # if data.check_out_1 is None or data.check_out_1 is not None or data.check_in_1 is not None:
                     
-                    formatted_date = frappe.utils.formatdate(data.check_in_1, "yyyy-mm-dd")
+                #     formatted_date = frappe.utils.formatdate(data.check_in_1, "yyyy-mm-dd")
                     
-                    log = frappe.db.sql("""
-                        SELECT attendance_time 
-                        FROM `tabAttendance Logs`
-                        WHERE attendance_date = %s
-                        AND `type` = 'Check Out'
-                    """, (formatted_date,))  # Ensure the date format is 'YYYY-MM-DD'
+                #     log = frappe.db.sql("""
+                #         SELECT attendance_time 
+                #         FROM `tabAttendance Logs`
+                #         WHERE attendance_date = %s
+                #         AND `type` = 'Check Out'
+                #     """, (formatted_date,))  # Ensure the date format is 'YYYY-MM-DD'
 
 
-                    if log:  # Check if log is not empty
-                        data.check_out_1 = log[0][0]  # Since frappe.db.sql returns a list of tuples
+                #     if log:  # Check if log is not empty
+                #         data.check_out_1 = log[0][0]  # Since frappe.db.sql returns a list of tuples
                 
                 
                 check_sanwich_after_holiday(self,previous,data,hr_settings,index)

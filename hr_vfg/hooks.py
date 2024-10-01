@@ -113,9 +113,9 @@ scheduler_events = {
     # "all": [
     #     "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
     # ],
-    "hourly": [
-        "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-    ]
+    # "hourly": [
+    #     "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+    # ]
 }
 
 
