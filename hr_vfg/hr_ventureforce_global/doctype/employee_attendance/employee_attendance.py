@@ -193,7 +193,7 @@ class EmployeeAttendance(Document):
                 print(f"approved_ot1 is None or empty for row")
             
             # total of approved early ot 
-            
+
             if data.approved_eot:
                 try:
                     time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]
@@ -814,7 +814,7 @@ class EmployeeAttendance(Document):
                         shift_data = shift1[0]
                         # data.early_ot = "90:00:00"
                         child_table_records = frappe.db.sql("""
-                        select name, day, start_time, end_time, shift_end, over_time_slab
+                        select name, day, start_time, end_time, over_time_slab
                                                             FROM `tabShift Day`
                                                             WHERE parent = %s
                         """,(shift_data['name'],), as_dict=True)
