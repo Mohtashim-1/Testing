@@ -40,7 +40,7 @@
   },
   {
    "fieldname": "late_sitting",
-   "fieldtype": "Time",
+   "fieldtype": "Data",
    "in_filter": 1,
    "in_list_view": 1,
    "in_preview": 1,
@@ -116,7 +116,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-09 18:42:20.873434",
+ "modified": "2024-10-01 16:59:26.143045",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Over Time Employee Wise CT",
