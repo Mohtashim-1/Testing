@@ -94,6 +94,7 @@ class EmployeeAttendance(Document):
         total_seconds_approved_eot = 0
         total_seconds_approved_ot1 = 0
         total_seconds_approved_ot2 = 0
+        time_seconds_approved_eot1 = 0
 
         if self.table1:
             first_date = self.table1[0].date  
@@ -192,7 +193,7 @@ class EmployeeAttendance(Document):
                 print(f"approved_ot1 is None or empty for row")
             
             # total of approved early ot 
-
+            
             if data.approved_eot:
                 try:
                     time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]

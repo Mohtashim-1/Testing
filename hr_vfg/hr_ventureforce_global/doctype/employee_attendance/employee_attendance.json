@@ -186,6 +186,7 @@
   {
    "fieldname": "late_sitting_hours",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Late Sitting Hours"
   },
   {
@@ -286,6 +287,7 @@
   {
    "fieldname": "approved_ot",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Approved Over Time - L"
   },
   {
@@ -428,11 +430,13 @@
   {
    "fieldname": "approved_early_over_time_hour",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Approved Over Time - E"
   },
   {
    "fieldname": "early_ot",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Early OT",
    "precision": "2"
   },
@@ -448,6 +452,7 @@
   {
    "fieldname": "total_overtime",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Total Overtime"
   },
   {
@@ -457,6 +462,7 @@
   {
    "fieldname": "approved_overtime_le",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Approved Overtime - LE"
   },
   {
@@ -567,7 +573,7 @@
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-10-01 11:48:20.517713",
+ "modified": "2024-10-01 12:34:55.184223",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
