@@ -1046,7 +1046,13 @@ class EmployeeAttendance(Document):
                                                 time_difference_multiplied = time_difference_delta * record.per_hour_calculation
                                                 time_difference_result = time_difference_multiplied.total_seconds()
                                                 final_timedelta = timedelta(seconds=time_difference_result)
-                                                data.estimated_late = final_timedelta
+                                                time_delta_difference = int(final_timedelta.total_seconds())
+                                                hours = time_delta_difference // 3600
+                                                minutes = (time_delta_difference % 3600) // 60
+                                                seconds = time_delta_difference % 60
+                                                difference_str1 = f"{hours}:{minutes}:{seconds}"
+                                                data.estimated_late = difference_str1
+
                                         else:
                                             if data.over_time_type == "Weekly Off":
                                                 if time_difference_delta >= threshould:
