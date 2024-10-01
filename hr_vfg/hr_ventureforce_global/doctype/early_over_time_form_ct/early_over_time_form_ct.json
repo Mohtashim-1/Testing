@@ -71,10 +71,6 @@
   {
    "fieldname": "check_in_1",
    "fieldtype": "Data",
-   "in_filter": 1,
-   "in_list_view": 1,
-   "in_preview": 1,
-   "in_standard_filter": 1,
    "label": "Check In"
   },
   {
@@ -89,13 +85,17 @@
   {
    "fieldname": "date",
    "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
    "label": "Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-12 01:27:50.288855",
+ "modified": "2024-10-01 18:23:18.467141",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Early Over Time Form CT",

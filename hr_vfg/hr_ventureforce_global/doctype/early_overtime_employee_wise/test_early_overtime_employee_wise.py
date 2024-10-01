@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestEarlyCompensation(FrappeTestCase):
+class TestEarlyOvertimeEmployeeWise(FrappeTestCase):
 	pass

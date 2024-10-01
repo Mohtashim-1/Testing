@@ -9,9 +9,11 @@ class EarlyOverTimeForm(Document):
 	@frappe.whitelist()
 	def get_data(self):
 		rec = frappe.db.sql("""
-		SELECT p.employee,p.employee_name,c.shift_start,c.date, c.check_in_1, c.estimate_early, c.early_over_time, c.name as child_name, p.name as parent_name FROM `tabEmployee Attendance` p
+		SELECT p.employee,p.employee_name,c.shift_start,c.date, c.check_in_1, c.estimate_early, c.approved_eot, c.early_over_time, c.name as child_name, p.name as parent_name FROM `tabEmployee Attendance` p
 		LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
-		where c.date=%s and c.estimate_early is not null and c.approved_eot is null """,
+		where c.date=%s and c.estimate_early is not null and
+		(c.approved_eot IS NULL OR c.approved_eot = '') 
+		""",
 		# where p.month=%s and p.year=%s and c.date=%s and c.early_ot is not null and c.early_over_time is not null and c.check_in_1 is not null and c.approved_eot is null and c.early_ot > %s """,
 		(self.date),as_dict=1)
 
