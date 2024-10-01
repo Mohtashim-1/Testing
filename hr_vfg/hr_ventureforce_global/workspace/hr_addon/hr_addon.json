@@ -398,7 +398,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
-   "link_count": 4,
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -409,16 +409,6 @@
    "label": "Monthly Attendance Register",
    "link_count": 0,
    "link_to": "Attendance Register",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Daily Attendance Summary",
-   "link_count": 0,
-   "link_to": "Daily Attendance Summary",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -444,7 +434,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-10-01 11:32:15.369533",
+ "modified": "2024-10-01 11:35:03.857014",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
