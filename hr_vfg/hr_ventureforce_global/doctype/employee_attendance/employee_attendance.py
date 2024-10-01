@@ -197,7 +197,7 @@ class EmployeeAttendance(Document):
             if data.approved_eot:
                 try:
                     time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]
-                    if len(time_parts3) == 3:
+                    if len(time_parts4) == 3:
                         time_seconds_approved_eot1 = time_parts4[0] * 3600 + time_parts4[1] * 60 + time_parts4[2]
                         total_seconds_approved_eot += time_seconds_approved_eot
                     else:
