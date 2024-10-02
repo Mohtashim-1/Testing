@@ -118,117 +118,7 @@ class EmployeeAttendance(Document):
 
         # Loop through table1 rows
         for data in self.table1:
-            # Sum early_ot
-            if data.early_ot:
-                try:
-                    time_parts = [int(part) for part in data.early_ot.split(':')]
-                    if len(time_parts) == 3:
-                        time_seconds1 = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
-                        total_seconds1 += time_seconds1
-                        print(f"Added {time_seconds1} seconds from {data.early_ot}")
-                    else:
-                        print(f"Invalid time format in early_ot: {data.early_ot}")
-                except ValueError:
-                    print(f"Error processing time format in early_ot: {data.early_ot}")
-            else:
-                print(f"early_ot is None or empty for row")
-
-            # Sum estimated_late
-            if data.estimated_late:
-                try:
-                    time_parts1 = [int(part) for part in data.estimated_late.split(':')]
-                    if len(time_parts1) == 3:
-                        time_seconds2 = time_parts1[0] * 3600 + time_parts1[1] * 60 + time_parts1[2]
-                        total_seconds2 += time_seconds2
-                        print(f"Added {time_seconds2} seconds from {data.estimated_late}")
-                    else:
-                        print(f"Invalid time format in estimated_late: {data.estimated_late}")
-                except ValueError:
-                    print(f"Error processing time format in estimated_late: {data.estimated_late}")
-            else:
-                print(f"estimated_late is None or empty for row")
-
-            # Sum estimate_early (fixed variable and print statement)
-            if data.estimate_early:
-                try:
-                    time_parts2 = [int(part) for part in data.estimate_early.split(':')]
-                    if len(time_parts2) == 3:
-                        time_seconds3 = time_parts2[0] * 3600 + time_parts2[1] * 60 + time_parts2[2]
-                        total_seconds3 += time_seconds3
-                        print(f"Added {time_seconds3} seconds from {data.estimate_early}")
-                    else:
-                        print(f"Invalid time format in estimate_early: {data.estimate_early}")
-                except ValueError:
-                    print(f"Error processing time format in estimate_early: {data.estimate_early}")
-            else:
-                print(f"estimate_early is None or empty for row")
-            
-            # Sum approved_eot
-            if data.approved_eot:
-                try:
-                    time_parts = [int(part) for part in data.approved_eot.split(':')]
-                    if len(time_parts) == 3:
-                        time_seconds_approved_eot = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
-                        total_seconds_approved_eot += time_seconds_approved_eot
-                        print(f"Added {time_seconds_approved_eot} seconds from {data.approved_eot}")
-                    else:
-                        print(f"Invalid time format in approved_eot: {data.approved_eot}")
-                except ValueError:
-                    print(f"Error processing time format in approved_eot: {data.approved_eot}")
-            else:
-                print(f"approved_eot is None or empty for row")
-
-            # total of late sitting approved 
-            if data.approved_ot1:
-                try:
-                    time_parts3 = [int(parts) for parts in data.approved_ot1.split(':')]
-                    if len(time_parts3) == 3:
-                        time_seconds_approved_ot1 = time_parts3[0] * 3600 + time_parts3[1] * 60 + time_parts3[2]
-                        total_seconds_approved_ot1 += time_seconds_approved_ot1
-                    else:
-                        print(f"Invalid time format in approved_ot1 : {data.approved_ot1}")
-                except ValueError:
-                    print(f"Error processing time format in approved_ot1: {data.approved_ot1}")
-            else:
-                print(f"approved_ot1 is None or empty for row")
-            
-            # total of approved early ot 
-
-            if data.approved_eot:
-                try:
-                    time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]
-                    if len(time_parts4) == 3:
-                        time_seconds_approved_eot1 = time_parts4[0] * 3600 + time_parts4[1] * 60 + time_parts4[2]
-                        total_seconds_approved_eot += time_seconds_approved_eot
-                    else:
-                        print(f"Invalid time format in approved_eot : {data.approved_eot}")
-                except ValueError:
-                    print(f"Error processing time format in approved_eot: {data.approved_eot}")
-            else:
-                print(f"approved_eot is None or empty for row")
-
-
-        # Calculate total hours after loop
-        self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
-        self.late_sitting = "{:.2f}".format(total_seconds2 / 3600.0)
-        self.early_sitting = "{:.2f}".format(total_seconds3 / 3600.0)
-        self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
-
-        print(f"Total seconds accumulated for approved_eot: {total_seconds_approved_eot}")
-
-        # total of late sitting and early sitting 
-        total_sitting = float(self.late_sitting) + float(self.early_sitting)
-        self.total_sitting = "{:.2f}".format(total_sitting)
-
-        # total of approved ot1
-        self.approved_late_sitting =  "{:.2f}".format(total_seconds_approved_ot1 / 3600.0)
-
-        # total of approved_eot 
-        self.approved_early_sitting = "{:.2f}".format(time_seconds_approved_eot1 / 3600.0)
-
-        # approved total sitting
-        approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
-        self.approved_total_sitting = approved_total_sitting
+            pass
 
         for data in self.table1:
             first_in_time = timedelta(hours=1,minutes=0,seconds=0)
@@ -757,11 +647,118 @@ class EmployeeAttendance(Document):
                     data.day_type = "Weekday"
                 elif data.public_holiday == 1:
                     data.day_type = "Public Holiday"
-                    
-                    
-            
 
-                    
+                if data.early_ot:
+                    try:
+                        time_parts = [int(part) for part in data.early_ot.split(':')]
+                        if len(time_parts) == 3:
+                            time_seconds1 = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                            total_seconds1 += time_seconds1
+                            print(f"Added {time_seconds1} seconds from {data.early_ot}")
+                        else:
+                            print(f"Invalid time format in early_ot: {data.early_ot}")
+                    except ValueError:
+                        print(f"Error processing time format in early_ot: {data.early_ot}")
+                else:
+                    print(f"early_ot is None or empty for row")
+
+                # Sum estimated_late
+                if data.estimated_late:
+                    try:
+                        time_parts1 = [int(part) for part in data.estimated_late.split(':')]
+                        if len(time_parts1) == 3:
+                            time_seconds2 = time_parts1[0] * 3600 + time_parts1[1] * 60 + time_parts1[2]
+                            total_seconds2 += time_seconds2
+                            print(f"Added {time_seconds2} seconds from {data.estimated_late}")
+                        else:
+                            print(f"Invalid time format in estimated_late: {data.estimated_late}")
+                    except ValueError:
+                        print(f"Error processing time format in estimated_late: {data.estimated_late}")
+                else:
+                    print(f"estimated_late is None or empty for row")
+
+                # Sum estimate_early (fixed variable and print statement)
+                if data.estimate_early:
+                    try:
+                        time_parts2 = [int(part) for part in data.estimate_early.split(':')]
+                        if len(time_parts2) == 3:
+                            time_seconds3 = time_parts2[0] * 3600 + time_parts2[1] * 60 + time_parts2[2]
+                            total_seconds3 += time_seconds3
+                            print(f"Added {time_seconds3} seconds from {data.estimate_early}")
+                        else:
+                            print(f"Invalid time format in estimate_early: {data.estimate_early}")
+                    except ValueError:
+                        print(f"Error processing time format in estimate_early: {data.estimate_early}")
+                else:
+                    print(f"estimate_early is None or empty for row")
+                
+                # Sum approved_eot
+                if data.approved_eot:
+                    try:
+                        time_parts = [int(part) for part in data.approved_eot.split(':')]
+                        if len(time_parts) == 3:
+                            time_seconds_approved_eot = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                            total_seconds_approved_eot += time_seconds_approved_eot
+                            print(f"Added {time_seconds_approved_eot} seconds from {data.approved_eot}")
+                        else:
+                            print(f"Invalid time format in approved_eot: {data.approved_eot}")
+                    except ValueError:
+                        print(f"Error processing time format in approved_eot: {data.approved_eot}")
+                else:
+                    print(f"approved_eot is None or empty for row")
+
+                # total of late sitting approved 
+                if data.approved_ot1:
+                    try:
+                        time_parts3 = [int(parts) for parts in data.approved_ot1.split(':')]
+                        if len(time_parts3) == 3:
+                            time_seconds_approved_ot1 = time_parts3[0] * 3600 + time_parts3[1] * 60 + time_parts3[2]
+                            total_seconds_approved_ot1 += time_seconds_approved_ot1
+                        else:
+                            print(f"Invalid time format in approved_ot1 : {data.approved_ot1}")
+                    except ValueError:
+                        print(f"Error processing time format in approved_ot1: {data.approved_ot1}")
+                else:
+                    print(f"approved_ot1 is None or empty for row")
+                
+                # total of approved early ot 
+
+                if data.approved_eot:
+                    try:
+                        time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]
+                        if len(time_parts4) == 3:
+                            time_seconds_approved_eot1 = time_parts4[0] * 3600 + time_parts4[1] * 60 + time_parts4[2]
+                            total_seconds_approved_eot += time_seconds_approved_eot
+                        else:
+                            print(f"Invalid time format in approved_eot : {data.approved_eot}")
+                    except ValueError:
+                        print(f"Error processing time format in approved_eot: {data.approved_eot}")
+                else:
+                    print(f"approved_eot is None or empty for row")
+
+
+                # Calculate total hours after loop
+                self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
+                self.late_sitting = "{:.2f}".format(total_seconds2 / 3600.0)
+                self.early_sitting = "{:.2f}".format(total_seconds3 / 3600.0)
+                self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
+
+                print(f"Total seconds accumulated for approved_eot: {total_seconds_approved_eot}")
+
+                # total of late sitting and early sitting 
+                total_sitting = float(self.late_sitting) + float(self.early_sitting)
+                self.total_sitting = "{:.2f}".format(total_sitting)
+
+                # total of approved ot1
+                self.approved_late_sitting =  "{:.2f}".format(total_seconds_approved_ot1 / 3600.0)
+
+                # total of approved_eot 
+                self.approved_early_sitting = "{:.2f}".format(time_seconds_approved_eot1 / 3600.0)
+
+                # approved total sitting
+                approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
+                self.approved_total_sitting = approved_total_sitting
+                 
                 # if data.check_in_1:
                 #         data.approved_ot1 = "00:00:00" 
                 # if data.check_in_1 == None:
