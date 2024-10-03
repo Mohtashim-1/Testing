@@ -16,7 +16,7 @@ class LateOverTimeEmployeeWise(Document):
 		LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
 		where p.month = %s and p.year = %s and p.employee=%s and 
 			(c.estimated_late IS NOT NULL AND c.estimated_late != '') and 
-			(c.approved_ot1 = '' or c.approved_ot1 is null)
+			(c.approved_ot1 = '' or c.approved_ot1 is null or c.approved_ot1 = '00:00:00')
 		ORDER BY c.date ASC  -- Sort by date in ascending order
 		LIMIT 50  -- Fetch only 50 records at a time
 		""", (self.month, self.year, self.employee), as_dict=1)
