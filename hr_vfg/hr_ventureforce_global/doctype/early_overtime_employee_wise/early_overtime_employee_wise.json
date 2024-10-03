@@ -16,23 +16,12 @@
   "get_data",
   "section_break_fypm",
   "early_over_time_form_ct",
-  "section_break_yqow",
-  "amended_from"
+  "section_break_yqow"
  ],
  "fields": [
   {
    "fieldname": "section_break_fc9a",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Early Compensation",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
   },
   {
    "fieldname": "month",
@@ -87,7 +76,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-12 02:11:34.961952",
+ "modified": "2024-10-04 03:58:40.379098",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Early Overtime Employee Wise",
