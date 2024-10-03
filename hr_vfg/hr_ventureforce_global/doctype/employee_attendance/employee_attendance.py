@@ -1616,6 +1616,8 @@ class EmployeeAttendance(Document):
                         data.weekly_off = 1
                     if data.day_type == "Public Holiday":
                         data.public_holiday = 1
+                    if data.day_type == "Weekday":
+                        data.weekday = 1
                 
                 # if data.check_out_1 is None:
                 #     log = frappe.get_all(
