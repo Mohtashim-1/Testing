@@ -929,6 +929,8 @@ class EmployeeAttendance(Document):
                                     
                             day_type = data.day_type 
 
+                            
+
                             over_time_slab_doc = frappe.db.sql("""
                             SELECT 
                                 ots.name,
@@ -1530,7 +1532,7 @@ class EmployeeAttendance(Document):
                     # data.check = result_time
 
                 
-
+                
                 if day_data and not holiday_flag:
                     if day_data.late_slab and data.late_coming_hours:
                         lsm = frappe.get_doc("Late Slab", day_data.late_slab)
@@ -1609,6 +1611,11 @@ class EmployeeAttendance(Document):
                     if data.late:
                         total_lates -= 1
                         data.late = 0
+
+                    if data.day_type == "Weekly Off":
+                        data.weekly_off = 1
+                    if data.day_type == "Public Holiday":
+                        data.public_holiday = 1
                 
                 # if data.check_out_1 is None:
                 #     log = frappe.get_all(
