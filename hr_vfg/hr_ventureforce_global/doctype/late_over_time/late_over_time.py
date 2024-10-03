@@ -11,7 +11,7 @@ class LateOverTime(Document):
 			select p.employee, p.employee_name, p.designation, c.estimated_late, c.approved_ot1, c.name as child_name, p.name as parent_name 
 			from `tabEmployee Attendance` p
 			LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
-			where c.date=%s and estimated_late is not null and (c.approved_ot1 = '' or c.approved_ot1 is null) 
+			where c.date=%s and estimated_late is not null and (c.approved_ot1 = '' or c.approved_ot1 is null or c.approved_ot1 = '00:00:00') 
 		""", (self.date, ), as_dict=1)  # Only pass self.date, not self.ot_frequency
 		
 		if rec:
