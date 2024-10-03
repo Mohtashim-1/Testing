@@ -50,7 +50,7 @@ class LateOverTime(Document):
 	
 	def on_cancel(self):
 		for r in self.details:
-			# Update the `approved_ot1` field in `Employee Attendance Table`
+			
 			frappe.db.sql("update `tabEmployee Attendance Table` set approved_ot1='' where name=%s", 
 						  (r.att_child_ref,))
 			frappe.db.commit()
@@ -60,7 +60,9 @@ class LateOverTime(Document):
 			child_row.approved_ot1 = ''
 			doc.save()
 
-			# Reload to verify update
+
 			doc.reload()
 			frappe.log_error(f"Updated approved_ot1: {child_row.approved_ot1}")
+			frappe.log_error(f"Updated approved_ot1: {child_row.approved_ot1}")
+
 
