@@ -26,6 +26,7 @@
   "difference1",
   "data",
   "fixed_hours",
+  "late_threshould",
   "column_break_zbnu",
   "over_time_type1",
   "early_ot",
@@ -465,6 +466,7 @@
    "options": "Weekly Off\nPublic Holiday\nWeekday"
   },
   {
+   "default": "19:00:00",
    "fieldname": "difference1",
    "fieldtype": "Data",
    "label": "Difference1"
@@ -503,11 +505,16 @@
    "fieldname": "fixed_hours",
    "fieldtype": "Data",
    "label": "Fixed Hours"
+  },
+  {
+   "fieldname": "late_threshould",
+   "fieldtype": "Data",
+   "label": "Late Threshould"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-10-06 01:45:09.547054",
+ "modified": "2024-10-06 22:46:45.220135",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
