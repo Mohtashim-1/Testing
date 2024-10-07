@@ -18,7 +18,8 @@
   "formula",
   "over_time_threshold",
   "per_hour_calculation",
-  "fixed_hour"
+  "fixed_hour",
+  "deduct_hours"
  ],
  "fields": [
   {
@@ -118,12 +119,18 @@
    "fieldname": "fixed_hour",
    "fieldtype": "Time",
    "label": "Fixed Hour"
+  },
+  {
+   "columns": 1,
+   "fieldname": "deduct_hours",
+   "fieldtype": "Time",
+   "label": "Deduct Hours"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-05 21:16:27.609225",
+ "modified": "2024-10-07 15:21:38.102399",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Over Time Slab CT",
