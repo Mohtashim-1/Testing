@@ -1463,7 +1463,7 @@ class EmployeeAttendance(Document):
                                 except ValueError as e:
                                     print(f"Error parsing time: {e}")
                             
-                            # frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
+                            frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
 
                             
                             
