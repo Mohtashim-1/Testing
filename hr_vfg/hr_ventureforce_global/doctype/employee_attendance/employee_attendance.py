@@ -1463,7 +1463,7 @@ class EmployeeAttendance(Document):
                                 except ValueError as e:
                                     print(f"Error parsing time: {e}")
                             
-                            frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
+                            # frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
 
                             
                             
@@ -2142,8 +2142,33 @@ class EmployeeAttendance(Document):
                     # data.early_over_time = result_time
                     # data.check = result_time
 
-                
-                
+                # calculate late and late coming 
+                if data.check_in_1 is not None and data.shift_in is not None:
+                    checkin = datetime.strptime(data.check_in_1, "%H:%M:%S").time()
+                    shiftin = (datetime.min + data.shift_in).time()
+                    checkin_datetime = datetime.combine(datetime.today(), checkin)
+                    shiftin_datetime = datetime.combine(datetime.today(), shiftin)
+                    late_coming = checkin_datetime - shiftin_datetime
+                    if checkin_datetime > shiftin_datetime:
+                        data.late = 1
+                        data.late_coming_hours = late_coming
+                    else:
+                        data.late = 0
+
+                # calculate early and early coming min 
+                if data.check_out_1 is not None and data.shift_out:
+                    checkout = datetime.strptime(data.check_out_1, "%H:%M:%S").time()
+                    shiftout = (datetime.min + data.shift_out).time()
+                    checkout_datetime = datetime.combine(datetime.today(), checkout)
+                    shiftout_datetime = datetime.combine(datetime.today(), shiftout)
+                    if checkout_datetime < shiftout_datetime:
+                        data.early_going_hours = shiftout_datetime - checkout_datetime
+                        data.early = 1
+                    else:
+                        data.late = 0
+                        data.early_going_hours = None
+
+
                 if day_data and not holiday_flag:
                     if day_data.late_slab and data.late_coming_hours:
                         lsm = frappe.get_doc("Late Slab", day_data.late_slab)
