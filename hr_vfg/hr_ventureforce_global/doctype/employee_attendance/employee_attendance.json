@@ -505,7 +505,8 @@
   {
    "fieldname": "fuel_allowance_rate",
    "fieldtype": "Float",
-   "label": "Fuel Allowance Rate"
+   "label": "Fuel Allowance Rate",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_foba",
@@ -514,7 +515,8 @@
   {
    "fieldname": "fuel_allowance_total",
    "fieldtype": "Float",
-   "label": "Fuel Allowance Total"
+   "label": "Fuel Allowance Total",
+   "read_only": 1
   },
   {
    "fieldname": "late_sitting",
@@ -573,7 +575,7 @@
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-10-01 12:34:55.184223",
+ "modified": "2024-10-09 16:58:46.388716",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
