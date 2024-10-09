@@ -116,8 +116,11 @@ class EmployeeAttendance(Document):
                     self.fuel_allowance_total = 0
             else:
                 self.fuel_allowance_rate = "0" 
+            
+            
 
         for data in self.table1:
+            
             # Sum early_ot
             if data.early_ot:
                 try:
@@ -537,7 +540,7 @@ class EmployeeAttendance(Document):
 
                                                                 # Check if checkout time is within the range
                                                                 # if check_in_1_time >= record.from_time and check_out_1_time <= record.to_time:
-                                                                frappe.log_error(f"{data.date}{check_out_1_time} {record.from_time}  {check_out_1_time} {record.to_time}")
+                                                                # frappe.log_error(f"{data.date}{check_out_1_time} {record.from_time}  {check_out_1_time} {record.to_time}")
                                                                 if check_out_1_time >= record.from_time or check_out_1_time <= record.to_time:
                                                                     # data.estimated_late = "day_type12"
                                                                     placeholder_date = data.date
@@ -561,7 +564,7 @@ class EmployeeAttendance(Document):
                                                                             # Create a threshold timedelta from float/int hours
                                                                             threshold_timedelta = timedelta(hours=threshould)
                                                                         else:
-                                                                            frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
+                                                                            # frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
                                                                             threshold_timedelta = timedelta(0)
 
                                                                         if record.fixed_hour is not None:
@@ -571,20 +574,22 @@ class EmployeeAttendance(Document):
                                                                             elif isinstance(record.fixed_hour, (float, int)):
                                                                                 fixed_hour_timedelta = timedelta(hours=record.fixed_hour)
                                                                             else:
-                                                                                frappe.log_error(f"Invalid fixed_hour value: {record.fixed_hour}", 'Timing Calculation')
+                                                                                # frappe.log_error(f"Invalid fixed_hour value: {record.fixed_hour}", 'Timing Calculation')
                                                                                 fixed_hour_timedelta = timedelta(0)
                                                                         else:
                                                                             
                                                                             fixed_hour_timedelta = timedelta(0)
                                                                         
-                                                                        frappe.log_error(f"{data.date}{fixed_hour_timedelta}")
+                                                                        # frappe.log_error(f"{data.date}{fixed_hour_timedelta}")
                                                                         data.fixed_hours = fixed_hour_timedelta
-                                                                        data.estimated_late = fixed_hour_timedelta
+                                                                        # data.estimated_late = fixed_hour_timedelta
 
                                                                         
-                                                                        time_difference_delta = timedelta(hours=0)  # Placeholder: replace with actual time difference calculation
+                                                                        # time_difference_delta = timedelta(hours=0)  # Placeholder: replace with actual time difference calculation
                                                                         time_difference_multiplied = test.total_seconds() * record.per_hour_calculation
-                                                                        # frappe.log_error(f"time_difference_delta    {time_difference_delta}")
+                                                                        data.estimated_late = "test.total_seconds()"
+                                                                        # frappe.log_error(f"time_difference_delta    {time_difference_delta}time_difference_multiplied{time_difference_multiplied}record.per_hour_calculation{record.per_hour_calculation}")
+                                                                        data.estimated_late = "fixed_hour_timedelta"
                                                                         
 
                                                                         # # Convert the result to a timedelta and add fixed_hour
@@ -604,7 +609,7 @@ class EmployeeAttendance(Document):
 
                                                                             
 
-                                                                        data.estimated_late = fixed_hour_timedelta
+                                                                        data.estimated_late = difference_str1
                                                                     # else:
                                                                     #     if check_out_1_datetime >= from_time_datetime or check_out_1_datetime <= to_time_datetime:  
                                                                     #         data.estimated_late = check_out_1_time
@@ -1255,6 +1260,18 @@ class EmployeeAttendance(Document):
                     data.day_type = "Weekday"
                 elif data.public_holiday == 1:
                     data.day_type = "Public Holiday"
+
+                employee = frappe.get_doc("Employee", self.employee)
+                if employee.custom_late_unmark == 1:
+                    #late
+                    self.total_lates = 0
+                    data.late = 0 
+                    # late coming 
+                if employee.custom_late_coming_unmark == 1:
+                    data.late_coming_hours = None
+                    data.short_hours = 0
+                
+                
                     
                     
             
@@ -2307,6 +2324,9 @@ class EmployeeAttendance(Document):
                             # late_sitting_timedelta = timedelta(hours=data.late_sitting.hour, minutes=data.late_sitting.minutes, seconds= data.late_sitting.seconds)
                         else:
                             late_sitting_timedelta = timedelta(0)
+
+                        # remove lates if in employee profile it is marked
+                        
                         
                         # if data.early_ot:
                         #     early_ot_timedelta = data.early_ot
@@ -2613,6 +2633,15 @@ class EmployeeAttendance(Document):
             efh = int(total_early/hr_settings.maximum_early_for_halfday) if total_early >= hr_settings.maximum_early_for_halfday else 0
         self.early_for_halfday = round(efh/2,1)
         self.total_early_going_hours = round(flt(total_early_going_hrs.total_seconds())/3600, 2)
+
+        employee = frappe.get_doc("Employee", self.employee)
+        if employee.custom_late_unmark == 1:
+            self.manual_absent = 0
+                                
+            self.total_lates = 0
+            data.late = 0 
+        else:
+            frappe.log_error(f"Total Lates for {self.employee}: {self.total_lates}", 'Late Attendance Calculation')
 
     def get_month_no(self, month):
         dict_={
