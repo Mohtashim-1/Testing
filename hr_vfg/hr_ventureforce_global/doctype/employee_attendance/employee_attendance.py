@@ -8,7 +8,7 @@ from frappe.model.document import Document
 from frappe.model.naming import make_autoname
 from frappe import msgprint, _
 from datetime import datetime
-from datetime import timedelta, datetime, time
+from datetime import timedelta
 from datetime import date as dt
 import datetime as special
 import time
@@ -30,6 +30,7 @@ class EmployeeAttendance(Document):
     def validate(self):
         total_early = 0
         total_lates = 0
+        total_lates1 = 0
         total_half_days = 0
         total_hr_worked = timedelta(hours=0, minutes=0, seconds=0)
         total_per_day_h = timedelta(hours=0, minutes=0, seconds=0)
@@ -116,9 +117,118 @@ class EmployeeAttendance(Document):
             else:
                 self.fuel_allowance_rate = "0" 
 
-        # Loop through table1 rows
         for data in self.table1:
-            pass
+            # Sum early_ot
+            if data.early_ot:
+                try:
+                    time_parts = [int(part) for part in data.early_ot.split(':')]
+                    if len(time_parts) == 3:
+                        time_seconds1 = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                        total_seconds1 += time_seconds1
+                        print(f"Added {time_seconds1} seconds from {data.early_ot}")
+                    else:
+                        print(f"Invalid time format in early_ot: {data.early_ot}")
+                except ValueError:
+                    print(f"Error processing time format in early_ot: {data.early_ot}")
+            else:
+                print(f"early_ot is None or empty for row")
+
+            # Sum estimated_late
+            if data.estimated_late:
+                try:
+                    time_parts1 = [int(part) for part in data.estimated_late.split(':')]
+                    if len(time_parts1) == 3:
+                        time_seconds2 = time_parts1[0] * 3600 + time_parts1[1] * 60 + time_parts1[2]
+                        total_seconds2 += time_seconds2
+                        print(f"Added {time_seconds2} seconds from {data.estimated_late}")
+                    else:
+                        print(f"Invalid time format in estimated_late: {data.estimated_late}")
+                except ValueError:
+                    print(f"Error processing time format in estimated_late: {data.estimated_late}")
+            else:
+                print(f"estimated_late is None or empty for row")
+
+            # Sum estimate_early (fixed variable and print statement)
+            if data.estimate_early:
+                try:
+                    time_parts2 = [int(part) for part in data.estimate_early.split(':')]
+                    if len(time_parts2) == 3:
+                        time_seconds3 = time_parts2[0] * 3600 + time_parts2[1] * 60 + time_parts2[2]
+                        total_seconds3 += time_seconds3
+                        print(f"Added {time_seconds3} seconds from {data.estimate_early}")
+                    else:
+                        print(f"Invalid time format in estimate_early: {data.estimate_early}")
+                except ValueError:
+                    print(f"Error processing time format in estimate_early: {data.estimate_early}")
+            else:
+                print(f"estimate_early is None or empty for row")
+            
+            # Sum approved_eot
+            if data.approved_eot:
+                try:
+                    time_parts = [int(part) for part in data.approved_eot.split(':')]
+                    if len(time_parts) == 3:
+                        time_seconds_approved_eot = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                        total_seconds_approved_eot += time_seconds_approved_eot
+                        print(f"Added {time_seconds_approved_eot} seconds from {data.approved_eot}")
+                    else:
+                        print(f"Invalid time format in approved_eot: {data.approved_eot}")
+                except ValueError:
+                    print(f"Error processing time format in approved_eot: {data.approved_eot}")
+            else:
+                print(f"approved_eot is None or empty for row")
+
+            # total of late sitting approved 
+            if data.approved_ot1:
+                try:
+                    time_parts3 = [int(parts) for parts in data.approved_ot1.split(':')]
+                    if len(time_parts3) == 3:
+                        time_seconds_approved_ot1 = time_parts3[0] * 3600 + time_parts3[1] * 60 + time_parts3[2]
+                        total_seconds_approved_ot1 += time_seconds_approved_ot1
+                    else:
+                        print(f"Invalid time format in approved_ot1 : {data.approved_ot1}")
+                except ValueError:
+                    print(f"Error processing time format in approved_ot1: {data.approved_ot1}")
+            else:
+                print(f"approved_ot1 is None or empty for row")
+            
+            # total of approved early ot 
+
+            if data.approved_eot:
+                try:
+                    time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]
+                    if len(time_parts4) == 3:
+                        time_seconds_approved_eot1 = time_parts4[0] * 3600 + time_parts4[1] * 60 + time_parts4[2]
+                        total_seconds_approved_eot += time_seconds_approved_eot
+                    else:
+                        print(f"Invalid time format in approved_eot : {data.approved_eot}")
+                except ValueError:
+                    print(f"Error processing time format in approved_eot: {data.approved_eot}")
+            else:
+                print(f"approved_eot is None or empty for row")
+
+
+        # Calculate total hours after loop
+        self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
+        self.late_sitting = "{:.2f}".format(total_seconds2 / 3600.0)
+        self.early_sitting = "{:.2f}".format(total_seconds3 / 3600.0)
+        self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
+
+        print(f"Total seconds accumulated for approved_eot: {total_seconds_approved_eot}")
+
+        # total of late sitting and early sitting 
+        total_sitting = float(self.late_sitting) + float(self.early_sitting)
+        self.total_sitting = "{:.2f}".format(total_sitting)
+
+        # total of approved ot1
+        self.approved_late_sitting =  "{:.2f}".format(total_seconds_approved_ot1 / 3600.0)
+
+        # total of approved_eot 
+        self.approved_early_sitting = "{:.2f}".format(time_seconds_approved_eot1 / 3600.0)
+
+        # approved total sitting
+        approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
+        self.approved_total_sitting = approved_total_sitting
 
         for data in self.table1:
             first_in_time = timedelta(hours=1,minutes=0,seconds=0)
@@ -146,436 +256,7 @@ class EmployeeAttendance(Document):
                     index+=1
                     continue
             
-            if data.day_type == "Weekly Off":
-                    shift_out_str = data.shift_out  # Example: "18:00:00"
-                    check_out_1_str = data.check_out_1  # Example: "19:30:00"
-                    shift_in_str = data.shift_in
-                    check_in_1_str = data.check_in_1
-                                        
-                    # difference1 = timedelta()
-
-                    # Handle the case where `shift_out_str` is a timedelta
-                    if isinstance(shift_out_str, timedelta):
-                        # Convert timedelta to a time string
-                        shift_out_time = (datetime.min + shift_out_str).time()
-                        shift_out_str = shift_out_time.strftime("%H:%M:%S")
-                                            
-                    if isinstance(shift_in_str, timedelta):
-                        shift_in_time = (datetime.min + shift_in_str).time()
-                        shift_in_str = shift_in_time.strftime("%H:%M:%S")
-                                        
-                    if isinstance(check_in_1_str, timedelta):
-                        check_in_1_time = (datetime.min + check_in_1_str).time()
-                        check_in_1_str = check_in_1_time.strftime("%H:%M:%S")
-                                        
-                    if isinstance(check_out_1_str, timedelta):
-                        check_out_1_time = (datetime.min + check_out_1_time).time()
-                        check_out_1_str = check_out_1_time.strftime("%H:%M:%S")
-
-                    if isinstance(check_in_1_str, str) and isinstance(check_out_1_str, str):
-                        try:
-                            check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S")
-                            check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")                   
-                            difference1 = timedelta()
-                                                
-                            if check_out_1_time < check_in_1_time:
-                                check_out_1_time += timedelta(days=1)
-                            difference1 = check_out_1_time - check_in_1_time
-                            
-                            total_seconds = int(difference1.total_seconds())
-                            hours = total_seconds // 3600
-                            minutes = (total_seconds % 3600) // 60
-                            seconds = total_seconds % 60
-                                                
-                            difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
-                            data.difference1 = difference_str  # Assign the formatted difference to the data object
-                            # data.difference1 = difference1
-                        except ValueError as e:
-                            pass
-
-
-                    day_type = data.day_type 
-
-                            
-
-                    over_time_slab_doc = frappe.db.sql("""
-                            SELECT 
-                                ots.name,
-                                otc.name as otc_name,
-                                otc.type,
-                                otc.from_time,
-                                otc.to_time,
-                                otc.type,
-                                otc.formula,
-                                otc.per_hour_calculation,
-                                otc.over_time_threshold,
-                                otc.fixed_hour
-                            FROM 
-                                `tabOver Time Slab` as ots
-                            LEFT JOIN 
-                                `tabOver Time Slab CT` as otc 
-                            ON 
-                                otc.parent = ots.name
-                            WHERE 
-                                otc.type = %s 
-                        """, (day_type,), as_dict=True)
-                            
-                    over_time_slab_doc_1 = frappe.db.sql("""
-                            SELECT 
-                                ots.name,
-                                otc.from_time,
-                                otc.to_time,
-                                otc.type,
-                                otc.formula,
-                                otc.per_hour_calculation,
-                                otc.per_hour_calculation
-                            FROM 
-                                `tabOver Time Slab` as ots
-                            LEFT JOIN 
-                                `tabEarly Overtime Slab` as otc 
-                            ON 
-                                otc.parent = ots.name
-                            WHERE 
-                                otc.type = %s 
-                        """, (day_type,), as_dict=True)
-
-                        
-                        # Ensure `check_out_1_str` and `shift_out_str` are not None and are strings
-                        # Ensure `shift_out_str` and `check_out_1_str` are strings and handle other types
-                    shift_in_str_1 = data.shift_in
-                    shift_out_str = data.shift_out
-                    check_in_1_str = data.check_in_1
-                    check_out_1_str = data.check_out_1
-                        
-
-
-                        
-
-                        # Initialize check_out_1_time and shift_out_time
-                    time_difference_delta = timedelta(0)
-                    check_out_1_time = None
-                    shift_out_time = None
-                    check_in_1_time = None
-                    shift_in_time_1 = None
-
-                    # Convert to string if they are of type datetime.timedelta
-                    if isinstance(shift_out_str, timedelta):
-                        shift_out_str = str(shift_out_str)
-                    if isinstance(check_out_1_str, timedelta):
-                        check_out_1_str = str(check_out_1_str)
-                    if isinstance(shift_in_str_1, timedelta):
-                        shift_in_str_1 = str(shift_in_str_1)
-                    if isinstance(check_in_1_str, timedelta):
-                        check_in_1_str = str(check_in_1_str)
-
-                    # Check if the strings are valid
-                    if isinstance(check_out_1_str, str) and isinstance(data.difference1, str):
-                        try:
-                            # shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
-                            check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
-                            time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
-                            time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
-                            
-                        except ValueError as e:
-                            print(f"Error parsing time: {e}")
-                    else:
-                        print("Error: shift_out_str or check_out_1_str is not a valid string.")
-                        
-                    if isinstance(check_in_1_str, str):
-                        try:
-                           
-                            check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
-
-                        except ValueError as e:
-                            print(f"Error parsing time: {e}")
-
-                    if isinstance(check_in_1_str, str) and isinstance(data.early_difference1, str):
-                        try:
-                            # shift_in_time_1 = datetime.strptime(shift_in_str_1, "%H:%M:%S").time()
-                            check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
-                            time_difference1 = datetime.strptime(data.early_difference1, "%H:%M:%S")
-                            time_difference_delta1 = timedelta(hours=time_difference1.hour, minutes=time_difference1.minute, seconds=time_difference1.second)
-
-                        except ValueError as e:
-                            print(f"Error parsing time: {e}")
-                    
-                    # frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
-
-                    
-                    
-                    if over_time_slab_doc:
-                        for record in over_time_slab_doc:
-                            data.over_time_type = record.type
-                            data.per_hours_calculation = record.per_hour_calculation
-                            data.over_time_amount = record.formula
-                            threshould = record.over_time_threshold
-                            data.late_threshold = threshould
-
-                            if record.get('fixed_hour') is not None:
-                                data.fixed_hours = record['fixed_hour']
-                            else:
-                                data.fixed_hours = record.fixed_hour
-                            # data.fixed_hours = record.fixed_hour
-
-                            if isinstance(record.from_time, timedelta):
-                                record.from_time = (datetime.min + record.from_time).time()
-
-                            if isinstance(record.to_time, timedelta):
-                                record.to_time = (datetime.min + record.to_time).time()
-
-                            # frappe.log_error('checking456')
-                            if data.check_out_1 is not None:
-                                # if record.type == data.day_type:
-                                # frappe.log_error(f"{data.date} {data.day_type}")
-                                if data.day_type == "Weekly Off":
-
-                                    if record.from_time < record.to_time:
-                                        
-                                        # Shift crosses midnight
-                                        # data.estimated_late = "difference_str2"
-                                        # frappe.log_error('Condition met:') # this is working
-        
-                                        # frappe.log_error(f"data{data.date}checkout{data.check_out_1}checkout_time{check_out_1_time}record.from_time{record.from_time}record.to_time{record.to_time}")
-                                        if check_out_1_time is not None and check_in_1_time is not None:
-                                            # Log the initial condition
-                                            # frappe.log_error('Condition: All times are not None', 'Timing Validation')
-                                            # frappe.log_error(f"{check_out_1_time}{record.from_time}{record.to_time}")
-
-                                            # Check if checkout time is within the range
-                                            # if check_in_1_time >= record.from_time and check_out_1_time <= record.to_time:
-                                            if check_out_1_time >= record.from_time and check_out_1_time <= record.to_time:
-                                                placeholder_date = data.date
-
-                                            # Convert time to datetime objects
-                                                check_out_1_datetime = datetime.combine(placeholder_date, check_out_1_time)
-                                                from_time_datetime = datetime.combine(placeholder_date, record.from_time)
-                                                to_time_datetime = datetime.combine(placeholder_date, record.to_time)
-
-                                                # Now, perform the comparison and subtraction
-                                                if from_time_datetime <= check_out_1_datetime <= to_time_datetime:
-                                                    # Subtract datetime objects to get a timedelta
-                                                    test = check_out_1_datetime - from_time_datetime
-                                                    if isinstance(threshould, timedelta):
-                                                    # If threshould is already a timedelta, you can use it directly
-                                                        threshold_timedelta = threshould
-                                                    elif isinstance(threshould, (float, int)):
-                                                        # Create a threshold timedelta from float/int hours
-                                                        threshold_timedelta = timedelta(hours=threshould)
-                                                    else:
-                                                        frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
-                                                        threshold_timedelta = timedelta(0)
-
-                                                    if record.fixed_hour is not None:
-                                                        # Check if fixed_hour is a timedelta object
-                                                        if isinstance(record.fixed_hour, timedelta):
-                                                            fixed_hour_timedelta = record.fixed_hour
-                                                            # frappe.log_error(f"Fixed hour timedelta used directly: {fixed_hour_timedelta}", 'Timing Calculation')
-                                                        else:
-                                                            # If it's not a timedelta, default to 0
-                                                            fixed_hour_timedelta = timedelta(0)
-                                                            # frappe.log_error("fixed_hour is not a timedelta object, defaulting to 0", 'Timing Calculation')
-                                                    else:
-                                                        fixed_hour_timedelta = timedelta(0)
-
-                                                    
-                                                    time_difference_delta = timedelta(hours=1)  # Placeholder: replace with actual time difference calculation
-                                                    time_difference_multiplied = test.total_seconds() * record.per_hour_calculation
-                                                    # frappe.log_error(f"time_difference_delta    {time_difference_delta}")
-                                                    
-
-                                                    # # Convert the result to a timedelta and add fixed_hour
-                                                    time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
-
-                                                    # # Log the calculated time difference
-                                                    # # frappe.log_error(f"Calculated time difference result: {time_difference_result}", 'Timing Calculation')
-
-                                                    # # Convert back to total seconds for formatting
-                                                    time_delta_difference = int(time_difference_result.total_seconds())
-                                                    hours = time_delta_difference // 3600
-                                                    minutes = (time_delta_difference % 3600) // 60
-                                                    seconds = time_delta_difference % 60
-
-                                                    # # Format the result as a string in hh:mm:ss format
-                                                    difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
-
-                                                        
-
-                                                    data.estimated_late = difference_str1
-
-
-                                                    # frappe.log_error(f"{data.date} {test} {threshold_timedelta} {fixed_hour_timedelta} {difference_str1}")
-                                                # frappe.log_error(f"check_in_1_time{check_in_1_time}record.from_time{record.from_time}check_out_1_time{check_out_1_time}record.from_time{record.from_time}record.to_time{record.to_time}")
-                                                # Log that the condition is met
-                                                # frappe.log_error('Condition met: check_out_1_time within range', 'Timing Validation')
-
-                                                # Create a threshold timedelta
-                                                # threshold_timedelta = timedelta(hours=float(threshould))
-
-                                                # if isinstance(threshould, timedelta):
-                                                #     # If threshould is already a timedelta, you can use it directly
-                                                #     threshold_timedelta = threshould
-                                                # elif isinstance(threshould, (float, int)):
-                                                #     # Create a threshold timedelta from float/int hours
-                                                #     threshold_timedelta = timedelta(hours=threshould)
-                                                # else:
-                                                #     frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
-                                                #     threshold_timedelta = timedelta(0)
-
-                                                # # Assign some values to the data
-                                                # # data.estimated_late = "1234"  # Placeholder for the actual late time
-                                                # frappe.log_error(f"threshould value: {threshould} (type: {type(threshould)})")
-                                                # data.late_threshold = threshould
-                                                #     data.data = record.otc_name
-
-                                                #     # Ensure record.fixed_hour is a valid timedelta object
-                                                #     if record.fixed_hour is not None:
-                                                #         # Check if fixed_hour is a timedelta object
-                                                #         if isinstance(record.fixed_hour, timedelta):
-                                                #             fixed_hour_timedelta = record.fixed_hour
-                                                #             # frappe.log_error(f"Fixed hour timedelta used directly: {fixed_hour_timedelta}", 'Timing Calculation')
-                                                #         else:
-                                                #             # If it's not a timedelta, default to 0
-                                                #             fixed_hour_timedelta = timedelta(0)
-                                                #             # frappe.log_error("fixed_hour is not a timedelta object, defaulting to 0", 'Timing Calculation')
-                                                #     else:
-                                                #         fixed_hour_timedelta = timedelta(0)
-                                                #     # frappe.log_error("fixed_hour is None, defaulting to 0", 'Timing Calculation')
-                                                # # frappe.log_error('testing...')
-
-                                                # # Assuming time_difference_delta is calculated somewhere
-                                                # # You should calculate the actual time difference here, ensure it's a valid timedelta
-                                                # # time_difference_delta = timedelta(hours=1)  # Placeholder: replace with actual time difference calculation
-                                                #     time_difference_multiplied = time_difference_delta.total_seconds() * record.per_hour_calculation
-                                                #     # frappe.log_error(f"time_difference_delta    {time_difference_delta}")
-                                                    
-
-                                                #     # Convert the result to a timedelta and add fixed_hour
-                                                #     time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
-
-                                                #     # Log the calculated time difference
-                                                #     # frappe.log_error(f"Calculated time difference result: {time_difference_result}", 'Timing Calculation')
-
-                                                #     # Convert back to total seconds for formatting
-                                                #     time_delta_difference = int(time_difference_result.total_seconds())
-                                                #     hours = time_delta_difference // 3600
-                                                #     minutes = (time_delta_difference % 3600) // 60
-                                                #     seconds = time_delta_difference % 60
-
-                                                #     # Format the result as a string in hh:mm:ss format
-                                                #     difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
-
-
-                                                #     # Assign the formatted result to the estimated_late field
-                                                #     data.estimated_late = difference_str1
-
-                                                # Log the final estimated late time
-                                                # frappe.log_error(f"if Final Estimated Late Time: {difference_str1}", 'Timing Calculation')
-
-                                            else:
-                                                pass
-                                                # frappe.log_error('Condition not met: check_out_1_time not within range', 'Timing Validation')
-                                        else:
-                                            pass
-                                            # frappe.log_error('One or more times are None', 'Timing Validation')
-
-                                                    # frappe.log_error(f"Calculated Estimated Late: {difference_str1}")
-                                                    # log_message = (
-                                                    #     f"{data.date} "
-                                                    #     f"Fixed Hour: {fixed_hour_timedelta.total_seconds() / 3600:.2f} hours, "
-                                                    #     f"Total Hours (Before Calculation): {time_difference_delta.total_seconds() / 3600:.2f} hours, "
-                                                    #     f"Estimated Late Calculation: {data.estimated_late}"
-                                                    # )
-
-                                                    # Log the combined message
-                                                    # frappe.log_error(log_message)
-                                            # elif check_out_1_time >= record.to_time:
-                                            #     data.estimated_late = "difference_str1"
-
-                                        # elif check_out_1_time > record.from_time:
-                                        #         data.estimated_late = "str1"
-                                    else:
-                                        # Handle the case where the shift does not cross midnight
-                                        # frappe.log_error('Condition:') # this is working 
-                                        if check_out_1_time is not None and record.from_time is not None and record.to_time is not None and check_in_1_time is not None:
-                                            # frappe.log_error('Condition1')
-                                            # if check_in_1_time >= record.from_time and check_out_1_time <= record.to_time:
-                                            if check_out_1_time >= record.from_time and check_out_1_time <= record.to_time:
-                                                # frappe.log_error('Condition metty:')
-                                                # frappe.log_error(f"thresoulh{threshould}")
-                                                # data.data = "909090"
-                                                data.late_threshould = threshould
-
-                                                if isinstance(threshould, timedelta):
-                                                    # Convert to total hours
-                                                    threshold_hours = threshould.total_seconds() / 3600
-                                                    threshold_timedelta = timedelta(hours=threshold_hours)
-                                                else:
-                                                    threshold_timedelta = timedelta(hours=float(threshould))
-
-                                                # if threshould is not None:
-                                                #     threshold_timedelta = timedelta(hours=threshould)
-                                                # else:
-                                                #     threshold_timedelta = timedelta(0)
-                                                
-                                                
-
-                                                if time_difference_delta >= threshold_timedelta:
-                                                    # Store OTC name
-                                                    data.data = record.otc_name
-
-                                                    # Handle fixed hour logic dynamically
-                                                    # frappe.log_error(f"Value of fixed_hour: {record.fixed_hour} (Type: {type(record.fixed_hour)})")
-
-                                                    # Ensure fixed_hour is not None and is a valid value
-                                                    if record.fixed_hour is not None:
-                                                        # Check if fixed_hour is a timedelta object
-                                                        if isinstance(record.fixed_hour, timedelta):
-                                                            fixed_hour_timedelta = record.fixed_hour  # Use it directly as it's already timedelta
-                                                            # frappe.log_error(f"Fixed hour timedelta used directly: {fixed_hour_timedelta}")
-                                                        else:
-                                                            # frappe.log_error(f"fixed_hour is not a timedelta object, defaulting to 0")
-                                                            fixed_hour_timedelta = timedelta(0)  # Default to 0 if it's not a timedelta
-                                                    else:
-                                                        pass
-                                                        # frappe.log_error(f"fixed_hour is None, defaulting to 0")
-                                                        fixed_hour_timedelta = timedelta(0)
-
-
-                                                    # Evaluate per hour calculation
-                                                    if isinstance(record.per_hour_calculation, str):
-                                                        eval_expression = record.per_hour_calculation.replace('time_difference_delta', str(time_difference_delta.total_seconds() / 3600))
-                                                        try:
-                                                            time_difference_multiplied = eval(eval_expression)
-                                                        except Exception as e:
-                                                            # frappe.log_error(f"Error evaluating formula: {e}")
-                                                            time_difference_multiplied = 0.0
-                                                    else:
-                                                        time_difference_multiplied = time_difference_delta.total_seconds() / 3600 * record.per_hour_calculation
-
-                                                    # Convert total_hours back to timedelta
-                                                    final_timedelta = timedelta(hours=time_difference_multiplied) + fixed_hour_timedelta
-                                                    # frappe.log_error(f"final_timedelta{final_timedelta}")
-
-                                                    # Calculate hours, minutes, and seconds
-                                                    time_delta_difference = int(final_timedelta.total_seconds())
-                                                    hours = time_delta_difference // 3600
-                                                    minutes = (time_delta_difference % 3600) // 60
-                                                    seconds = time_delta_difference % 60
-
-                                                    # Format the time as hh:mm:ss
-                                                    difference_str1 = f"{hours:02}:{minutes:02}:{seconds:02}"
-                                                    data.estimated_late = difference_str1
-                                                    # frappe.log_error(f"else final estimate{difference_str1}")
-                                                    
-                                                    # Combined log message
-                                                    # log_message = (
-                                                    #     f"{data.date} "
-                                                    #     f"Fixed Hour: {fixed_hour_timedelta.total_seconds() / 3600:.2f} hours, "
-                                                    #     f"Total Hours (Before Calculation): {time_difference_delta.total_seconds() / 3600:.2f} hours, "
-                                                    #     f"Estimated Late Calculation: {data.estimated_late}"
-                                                    # )
-                                else:
-                                    pass
+            
 
             if str(getdate(data.date)) in [str(d.holiday_date) for d in holidays]:
                         holiday_flag = True
@@ -632,22 +313,22 @@ class EmployeeAttendance(Document):
                 #     data.check_out_1 = timedelta(hours=int(str(data.check_in_1).split(":")[0]),
                 #                               minutes=int(str(data.check_in_1).split(":")[1])+1)
              
-                # if data.approved_ot1:
-                #     total_approved_ot+= timedelta(hours=int(str(data.approved_ot1).split(":")[0]),minutes=int(str(data.approved_ot1).split(":")[1]))
-                # if data.check_in_1 and data.check_out_1 and data.check_in_1 != data.check_out_1:
-                #     first_in_time = timedelta(hours=int(str(data.check_in_1).split(":")[0]),
-                #                               minutes=int(str(data.check_in_1).split(":")[1]))
-                #     first_out_time = timedelta(hours=int(str(data.check_out_1).split(":")[0]),
-                #                               minutes=int(str(data.check_out_1).split(":")[1]))
+                if data.approved_ot1:
+                    total_approved_ot+= timedelta(hours=int(str(data.approved_ot1).split(":")[0]),minutes=int(str(data.approved_ot1).split(":")[1]))
+                if data.check_in_1 and data.check_out_1 and data.check_in_1 != data.check_out_1:
+                    first_in_time = timedelta(hours=int(str(data.check_in_1).split(":")[0]),
+                                              minutes=int(str(data.check_in_1).split(":")[1]))
+                    first_out_time = timedelta(hours=int(str(data.check_out_1).split(":")[0]),
+                                              minutes=int(str(data.check_out_1).split(":")[1]))
                    
-                #     diff = str(first_out_time - first_in_time)
-                #     if "day" in diff:
-                #         diff = diff.split("day, ")[1].split(":")
-                #         diff = timedelta(hours=float(diff[0]), minutes=float(
-                #             diff[1]), seconds=float(diff[2]))
-                #     else:
-                #         diff = first_out_time - first_in_time
-                    # total_time = total_time + diff if total_time else diff
+                    diff = str(first_out_time - first_in_time)
+                    if "day" in diff:
+                        diff = diff.split("day, ")[1].split(":")
+                        diff = timedelta(hours=float(diff[0]), minutes=float(
+                            diff[1]), seconds=float(diff[2]))
+                    else:
+                        diff = first_out_time - first_in_time
+                    total_time = total_time + diff if total_time else diff
                    
                 if data.check_in_1 and data.check_in_1 != data.check_out_1:
                     shift = None
@@ -691,9 +372,503 @@ class EmployeeAttendance(Document):
                         #settings required
                         if total_time:
                             total_holiday_hours += total_time
+
+                    if data.day_type == "Weekly Off":
+                        # data.estimated_late = total_time
+                        shift1 = None
+                        shift_ass = frappe.get_all("Shift Assignment", 
+                                                filters={'employee': self.employee,
+                                                    'start_date': ["<=", getdate(data.date)],
+                                                    'status' : 'Active',
+                                                    # 'start_date': ["<=", '2024-06-01']
+                                                    }, 
+                                                    fields=['*'])
+                        # if data.day == "Monday":
+                        #     data.early_ot = "90:90:90"
+                        shift1 = None
+                    
+                        if shift_ass:
+                            first_shift_ass = shift_ass[0]
+                        
+                            # shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
+                            shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
+                            if shift1 and len(shift1) > 0:
+                                shift_data = shift1[0]
+                                if shift_data.custom_slab:
+                                    # data.estimated_late = "difference_str5"
+                                    shift_slab = shift_data.custom_slab
+
+                                    child_table_records = frappe.db.sql("""
+                                    select name, day,over_time_slab, start_time, end_time, over_time_slab
+                                                                        FROM `tabShift Day`
+                                                                        WHERE parent = %s
+                                    """,(shift_slab,), as_dict=True)
+                                    # data.estimated_late = shift_slab
+                                    if shift_slab and len(shift_slab) > 0:
+                                        # data.estimated_late = "day_type1"
+                                        day_type = data.day_type
+                                        # data.estimated_late = day_type
+                                        over_time_slab_doc = frappe.db.sql("""
+                                            SELECT 
+                                                ots.name,
+                                                otc.name as otc_name,
+                                                otc.type,
+                                                otc.from_time,
+                                                otc.to_time,
+                                                otc.type,
+                                                otc.formula,
+                                                otc.per_hour_calculation,
+                                                otc.over_time_threshold,
+                                                otc.fixed_hour
+                                            FROM 
+                                                `tabOver Time Slab` as ots
+                                            LEFT JOIN 
+                                                `tabOver Time Slab CT` as otc 
+                                            ON 
+                                                otc.parent = ots.name
+                                            WHERE 
+                                                otc.type = %s 
+                                            """, (day_type,), as_dict=True)
+                                        
+                                        shift_in_str_1 = data.shift_in
+                                        shift_out_str = data.shift_out
+                                        check_in_1_str = data.check_in_1
+                                        check_out_1_str = data.check_out_1
+                                            
+
+
+                                            
+
+                                            # Initialize check_out_1_time and shift_out_time
+                                        time_difference_delta = timedelta(0)
+                                        check_out_1_time = None
+                                        shift_out_time = None
+                                        check_in_1_time = None
+                                        shift_in_time_1 = None
+
+                                        # Convert to string if they are of type datetime.timedelta
+                                        if isinstance(shift_out_str, timedelta):
+                                            shift_out_str = str(shift_out_str)
+                                        if isinstance(check_out_1_str, timedelta):
+                                            check_out_1_str = str(check_out_1_str)
+                                        if isinstance(shift_in_str_1, timedelta):
+                                            shift_in_str_1 = str(shift_in_str_1)
+                                        if isinstance(check_in_1_str, timedelta):
+                                            check_in_1_str = str(check_in_1_str)
+
+                                        # Check if the strings are valid
+                                        if isinstance(check_out_1_str, str) and isinstance(data.difference1, str):
+                                            try:
+                                                # shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
+                                                check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
+                                                time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
+                                                time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
+                                                
+                                            except ValueError as e:
+                                                print(f"Error parsing time: {e}")
+                                        else:
+                                            print("Error: shift_out_str or check_out_1_str is not a valid string.")
+                                            
+                                        if isinstance(check_in_1_str, str):
+                                            try:
+                                            
+                                                check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
+
+                                            except ValueError as e:
+                                                print(f"Error parsing time: {e}")
+
+                                        if isinstance(check_in_1_str, str) and isinstance(data.early_difference1, str):
+                                            try:
+                                                # shift_in_time_1 = datetime.strptime(shift_in_str_1, "%H:%M:%S").time()
+                                                check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
+                                                time_difference1 = datetime.strptime(data.early_difference1, "%H:%M:%S")
+                                                time_difference_delta1 = timedelta(hours=time_difference1.hour, minutes=time_difference1.minute, seconds=time_difference1.second)
+
+                                            except ValueError as e:
+                                                print(f"Error parsing time: {e}")
+                                            
+                                        # data.estimated_late = "day_type2"
+                                        if over_time_slab_doc:
+                                            # data.estimated_late = "day_type3"
+                                            for record in over_time_slab_doc:
+                                                data.over_time_type = record.type
+                                                data.per_hours_calculation = record.per_hour_calculation
+                                                data.over_time_amount = record.formula
+                                                threshould = record.over_time_threshold
+                                                data.late_threshold = threshould
+                                                # data.estimated_late = "day_type4"
+
+                                                if record.get('fixed_hour') is not None:
+                                                    data.fixed_hours = record['fixed_hour']
+                                                    # data.estimated_late = "day_type5"
+                                                else:
+                                                    data.fixed_hours = record.fixed_hour
+                                                # data.fixed_hours = record.fixed_hour
+
+                                                if isinstance(record.from_time, timedelta):
+                                                    record.from_time = (datetime.min + record.from_time).time()
+                                                    # data.estimated_late = "day_type6"
+
+                                                if isinstance(record.to_time, timedelta):
+                                                    record.to_time = (datetime.min + record.to_time).time()
+                                                    # data.estimated_late = "day_type7"
+
+                                                # frappe.log_error('checking456')
+                                                if data.check_out_1 is not None:
+                                                    # data.estimated_late = "day_type8"
+                                                    # if record.type == data.day_type:
+                                                    # frappe.log_error(f"{data.date} {data.day_type}")
+                                                    if data.day_type == "Weekly Off":
+                                                        # data.estimated_late = "day_type9"
+
+                                                        if record.from_time < record.to_time:
+                                                            # data.estimated_late = "day_type10"
+                                                            
+                                                            # Shift crosses midnight
+                                                            # data.estimated_late = "difference_str2"
+                                                            # frappe.log_error('Condition met:') # this is working
                             
+                                                            # frappe.log_error(f"data{data.date}checkout{data.check_out_1}checkout_time{check_out_1_time}record.from_time{record.from_time}record.to_time{record.to_time}")
+                                                            if check_out_1_time is not None and check_in_1_time is not None:
+                                                                # data.estimated_late = "day_type11"
+                                                                # Log the initial condition
+                                                                # frappe.log_error('Condition: All times are not None', 'Timing Validation')
+                                                                # frappe.log_error(f"{check_out_1_time}{record.from_time}{record.to_time}")
+
+                                                                # Check if checkout time is within the range
+                                                                # if check_in_1_time >= record.from_time and check_out_1_time <= record.to_time:
+                                                                frappe.log_error(f"{data.date}{check_out_1_time} {record.from_time}  {check_out_1_time} {record.to_time}")
+                                                                if check_out_1_time >= record.from_time or check_out_1_time <= record.to_time:
+                                                                    # data.estimated_late = "day_type12"
+                                                                    placeholder_date = data.date
+
+                                                                # Convert time to datetime objects
+                                                                    check_out_1_datetime = datetime.combine(placeholder_date, check_out_1_time)
+                                                                    from_time_datetime = datetime.combine(placeholder_date, record.from_time)
+                                                                    to_time_datetime = datetime.combine(placeholder_date, record.to_time)
+                                                                    # data.estimated_late = "day_type13"
+
+                                                                    # Now, perform the comparison and subtraction
+                                                                    if from_time_datetime <= check_out_1_datetime <= to_time_datetime:
+                                                                        data.estimated_late = check_out_1_time
+                                                                        # Subtract datetime objects to get a timedelta
+                                                                        test = check_out_1_datetime - from_time_datetime
+                                                                        if isinstance(threshould, timedelta):
+                                                                        # If threshould is already a timedelta, you can use it directly
+                                                                            threshold_timedelta = threshould
+                                                                            # data.estimated_late = "day_type15"
+                                                                        elif isinstance(threshould, (float, int)):
+                                                                            # Create a threshold timedelta from float/int hours
+                                                                            threshold_timedelta = timedelta(hours=threshould)
+                                                                        else:
+                                                                            frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
+                                                                            threshold_timedelta = timedelta(0)
+
+                                                                        if record.fixed_hour is not None:
+                                                                            # Check if fixed_hour is a timedelta object
+                                                                            if isinstance(record.fixed_hour, timedelta):
+                                                                                fixed_hour_timedelta = record.fixed_hour
+                                                                            elif isinstance(record.fixed_hour, (float, int)):
+                                                                                fixed_hour_timedelta = timedelta(hours=record.fixed_hour)
+                                                                            else:
+                                                                                frappe.log_error(f"Invalid fixed_hour value: {record.fixed_hour}", 'Timing Calculation')
+                                                                                fixed_hour_timedelta = timedelta(0)
+                                                                        else:
+                                                                            
+                                                                            fixed_hour_timedelta = timedelta(0)
+                                                                        
+                                                                        frappe.log_error(f"{data.date}{fixed_hour_timedelta}")
+                                                                        data.fixed_hours = fixed_hour_timedelta
+                                                                        data.estimated_late = fixed_hour_timedelta
+
+                                                                        
+                                                                        time_difference_delta = timedelta(hours=0)  # Placeholder: replace with actual time difference calculation
+                                                                        time_difference_multiplied = test.total_seconds() * record.per_hour_calculation
+                                                                        # frappe.log_error(f"time_difference_delta    {time_difference_delta}")
+                                                                        
+
+                                                                        # # Convert the result to a timedelta and add fixed_hour
+                                                                        time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+
+                                                                        # # Log the calculated time difference
+                                                                        # # frappe.log_error(f"Calculated time difference result: {time_difference_result}", 'Timing Calculation')
+
+                                                                        # # Convert back to total seconds for formatting
+                                                                        time_delta_difference = int(time_difference_result.total_seconds())
+                                                                        hours = time_delta_difference // 3600
+                                                                        minutes = (time_delta_difference % 3600) // 60
+                                                                        seconds = time_delta_difference % 60
+
+                                                                        # # Format the result as a string in hh:mm:ss format
+                                                                        difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
+
+                                                                            
+
+                                                                        data.estimated_late = fixed_hour_timedelta
+                                                                    # else:
+                                                                    #     if check_out_1_datetime >= from_time_datetime or check_out_1_datetime <= to_time_datetime:  
+                                                                    #         data.estimated_late = check_out_1_time
+                                                                    #     # Subtract datetime objects to get a timedelta
+                                                                    #     test = check_out_1_datetime - from_time_datetime
+                                                                    #     if isinstance(threshould, timedelta):
+                                                                    #     # If threshould is already a timedelta, you can use it directly
+                                                                    #         threshold_timedelta = threshould
+                                                                    #         # data.estimated_late = "day_type15"
+                                                                    #     elif isinstance(threshould, (float, int)):
+                                                                    #         # Create a threshold timedelta from float/int hours
+                                                                    #         threshold_timedelta = timedelta(hours=threshould)
+                                                                    #     else:
+                                                                    #         frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
+                                                                    #         threshold_timedelta = timedelta(0)
+
+                                                                    #     if record.fixed_hour is not None:
+                                                                    #         # Check if fixed_hour is a timedelta object
+                                                                    #         if isinstance(record.fixed_hour, timedelta):
+                                                                    #             fixed_hour_timedelta = record.fixed_hour
+                                                                    #             # frappe.log_error(f"Fixed hour timedelta used directly: {fixed_hour_timedelta}", 'Timing Calculation')
+                                                                    #         else:
+                                                                    #             # If it's not a timedelta, default to 0
+                                                                    #             fixed_hour_timedelta = timedelta(0)
+                                                                    #             # frappe.log_error("fixed_hour is not a timedelta object, defaulting to 0", 'Timing Calculation')
+                                                                    #     else:
+                                                                    #         fixed_hour_timedelta = timedelta(0)
+
+                                                                        
+                                                                    #     time_difference_delta = timedelta(hours=0)  # Placeholder: replace with actual time difference calculation
+                                                                    #     time_difference_multiplied = test.total_seconds() * record.per_hour_calculation
+                                                                    #     # frappe.log_error(f"time_difference_delta    {time_difference_delta}")
+                                                                        
+
+                                                                    #     # # Convert the result to a timedelta and add fixed_hour
+                                                                    #     time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+
+                                                                    #     # # Log the calculated time difference
+                                                                    #     # # frappe.log_error(f"Calculated time difference result: {time_difference_result}", 'Timing Calculation')
+
+                                                                    #     # # Convert back to total seconds for formatting
+                                                                    #     time_delta_difference = int(time_difference_result.total_seconds())
+                                                                    #     hours = time_delta_difference // 3600
+                                                                    #     minutes = (time_delta_difference % 3600) // 60
+                                                                    #     seconds = time_delta_difference % 60
+
+                                                                    #     # # Format the result as a string in hh:mm:ss format
+                                                                    #     difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
+
+                                                                            
+
+                                                                    #     data.estimated_late = from_time_datetime
+                                                                    # else:
+                                                                    #     data.estimated_late = "day_type14"
+                                                                    #     # Subtract datetime objects to get a timedelta
+                                                                    #     test = check_out_1_datetime - from_time_datetime
+                                                                    #     if isinstance(threshould, timedelta):
+                                                                    #     # If threshould is already a timedelta, you can use it directly
+                                                                    #         threshold_timedelta = threshould
+                                                                    #         data.estimated_late = "day_type15"
+                                                                    #     elif isinstance(threshould, (float, int)):
+                                                                    #         # Create a threshold timedelta from float/int hours
+                                                                    #         threshold_timedelta = timedelta(hours=threshould)
+                                                                    #     else:
+                                                                    #         frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
+                                                                    #         threshold_timedelta = timedelta(0)
+
+                                                                    #     if record.fixed_hour is not None:
+                                                                    #         # Check if fixed_hour is a timedelta object
+                                                                    #         if isinstance(record.fixed_hour, timedelta):
+                                                                    #             fixed_hour_timedelta = record.fixed_hour
+                                                                    #             # frappe.log_error(f"Fixed hour timedelta used directly: {fixed_hour_timedelta}", 'Timing Calculation')
+                                                                    #         else:
+                                                                    #             # If it's not a timedelta, default to 0
+                                                                    #             fixed_hour_timedelta = timedelta(0)
+                                                                    #             # frappe.log_error("fixed_hour is not a timedelta object, defaulting to 0", 'Timing Calculation')
+                                                                    #     else:
+                                                                    #         fixed_hour_timedelta = timedelta(0)
+
+                                                                        
+                                                                    #     time_difference_delta = timedelta(hours=1)  # Placeholder: replace with actual time difference calculation
+                                                                    #     time_difference_multiplied = test.total_seconds() * record.per_hour_calculation
+                                                                    #     # frappe.log_error(f"time_difference_delta    {time_difference_delta}")
+                                                                        
+
+                                                                    #     # # Convert the result to a timedelta and add fixed_hour
+                                                                    #     time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+
+                                                                    #     # # Log the calculated time difference
+                                                                    #     # # frappe.log_error(f"Calculated time difference result: {time_difference_result}", 'Timing Calculation')
+
+                                                                    #     # # Convert back to total seconds for formatting
+                                                                    #     time_delta_difference = int(time_difference_result.total_seconds())
+                                                                    #     hours = time_delta_difference // 3600
+                                                                    #     minutes = (time_delta_difference % 3600) // 60
+                                                                    #     seconds = time_delta_difference % 60
+
+                                                                    #     # # Format the result as a string in hh:mm:ss format
+                                                                    #     difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
+
+                                                                            
+
+                                                                    #     data.estimated_late = difference_str1
+
+                                                # else:
+                                                #     print("Error: shift_out_str or check_out_1_str is not a valid string.")
+                                                #     # frappe.log_error(f"{data.date}{check_out_1_time}{record.from_time}")
+
+                                                #     if check_out_1_time is not None:
+
+                                                #         data.estimated_late = "shadi4"
+                                                #         frappe.log_error(f"{data.date}{check_out_1_time}{record.from_time}")
+                                                #         if check_out_1_time >= record.from_time or check_out_1_time <= record.to_time:
+                                                #                     data.estimated_late = "12ka4"
+                                                #                     if isinstance(threshould, timedelta):
+                                                #                         hours = threshould.total_seconds() / 3600  # Convert seconds to hours
+                                                #                     else:
+                                                #                         hours = threshould
+                                                                    
+                                                #                     threshold_timedelta = timedelta(hours=hours)
+                                                #                     data.estimated_late = difference_str1
+                                                                    
+                                                #                     # Assuming a condition to proceed
+                                                #                     if total_time is not None:
+                                                #                         data.late_threshold = 0  # or some other logic
+                                                #                         data.data = None
+                                                #                     else:
+                                                #                         if total_time is not None:
+                                                #                             frappe.log_error(f"total_time{total_time}")
+                                                #                             if total_time >= threshold_timedelta:
+                                                #                                 data.late_threshold = threshould
+                                                #                                 data.data = record.otc_name
+                                                #                                 frappe.log_error(f"record.otc_name{record.otc_name}")
+
+                                                #                                 if record.fixed_hour is not None:
+                                                #                                     # Check if fixed_hour is a timedelta object
+                                                #                                     if isinstance(record.fixed_hour, timedelta):
+                                                #                                         fixed_hour_timedelta = record.fixed_hour 
+                                                #                                     else:
+                                                #                                         fixed_hour_timedelta = timedelta(0) 
+                                                #                                 else:
+                                                #                                     pass
+                                                #                                     # frappe.log_error(f"fixed_hour is None, defaulting to 0")
+                                                #                                     fixed_hour_timedelta = timedelta(0)  # Default to 0 if None
+                                                #                                 frappe.log_error(f"fixed_hour_timedelta{fixed_hour_timedelta}")
+
+                                                #                                 # Calculate total time difference in seconds and apply per hour calculation
+                                                #                                 time_difference_multiplied = (total_time.total_seconds() * record.per_hour_calculation)
+                                                #                                 data.estimated_late = "time_difference_multiplied"
+
+                                                #                                 # Convert the result to a timedelta and add fixed_hour
+                                                #                                 time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+                                                #                                 frappe.log_error(f"time_difference_result{time_difference_result}")
+
+                                                #                                 # Convert back to total seconds for formatting
+                                                #                                 time_delta_difference = int(time_difference_result.total_seconds())
+                                                #                                 hours = time_delta_difference // 3600
+                                                #                                 minutes = (time_delta_difference % 3600) // 60
+                                                #                                 seconds = time_delta_difference % 60
+
+                                                #                                 # Format the result as a string in hh:mm:ss format
+                                                #                                 difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
+                                                #                                 data.estimated_late = difference_str1
+                                                    #     else:
+                                                    #         data.estimated_late = "if-check"
+                                                    # else:
+                                                    #     data.estimated_late = "shadi5"
+
+
+
+                                                # else:
+                                                #     data.estimated_late = "difference_str5"
+
+                                                
+                                                
+                                                            
+                                                    #         else:
+                                                    #             data.estimated_late = "shadi"
+                                                    # else:
+                                                    #     data.estimated_late = "jano"
+                                                        
+
+
+                                                # data.estimated_late = "3456"
+
+
+                                        #     #  calculating difference b/w shift out and check in 
+                                        #     shift_out_str = data.shift_out  # Example: "18:00:00"
+                                        #     check_out_1_str = data.check_out_1  # Example: "19:30:00"
+                                        #     shift_in_str = data.shift_in
+                                        #     check_in_1_str = data.check_in_1
+                                            
+                                        #     # difference1 = timedelta()
+
+
+                                        #     # Handle the case where `shift_out_str` is a timedelta
+                                        #     if isinstance(shift_out_str, timedelta):
+                                        #         # Convert timedelta to a time string
+                                        #         shift_out_time = (datetime.min + shift_out_str).time()
+                                        #         shift_out_str = shift_out_time.strftime("%H:%M:%S")
+                                                
+                                        #     if isinstance(shift_in_str, timedelta):
+                                        #         shift_in_time = (datetime.min + shift_in_str).time()
+                                        #         shift_in_str = shift_in_time.strftime("%H:%M:%S")
+                                            
+                                        #     if isinstance(check_in_1_str, timedelta):
+                                        #         check_in_1_time = (datetime.min + check_in_1_str).time()
+                                        #         check_in_1_str = check_in_1_time.strftime("%H:%M:%S")
+                                            
+                                        #     if isinstance(check_out_1_str, timedelta):
+                                        #         check_out_1_time = (datetime.min + check_out_1_time).time()
+                                        #         check_out_1_str = check_out_1_time.strftime("%H:%M:%S")
+                                                
+                                        #     # else:
+                                        #     #     shift_in_str = data.shift_in
+                                                
+                                        #     # Ensure both are strings and `check_out_1_str` is not None
+                                        #     if isinstance(check_in_1, str) and isinstance(check_out_1_str, str):
+                                        #         try:
+                                        #             # Convert the string times to datetime objects
+                                        #             shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S")
+                                        #             check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")
+                                        #             shift_in_time = datetime.strptime(shift_in_str, "%H:%M:%S")
+                                                    
+                                        #             difference1 = timedelta()
+                                                    
+                                        #             if check_out_1_time < shift_out_time and data.over_time_type != "Weekly Off":
+                                        #                 check_out_1_time += timedelta(days=1)
+                                        #                 difference1 = check_out_1_time - shift_out_time
+                                                    
+                                        #             if check_out_1_time > shift_out_time:
+                                        #                 difference1 = check_out_1_time - shift_out_time
+                                        #             if data.over_time_type == "Weekly Off":
+                                        #                 # difference1 = timedelta(hours=10, minutes=10, seconds=10)
+                                        #                 difference1 = total_time
+                                        #             else:
+                                        #                 data.difference1 = "chacha"
+
+                                                    
+                                        #             # # Get the total difference in seconds and break it down into hours, minutes, and seconds
+                                        #             total_seconds = int(difference1.total_seconds())
+                                        #             hours = total_seconds // 3600
+                                        #             minutes = (total_seconds % 3600) // 60
+                                        #             seconds = total_seconds % 60
+                                                    
+                                        #             # Format the time difference as HH:MM:SS
+                                        #             difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
+                                        #             data.difference1 = difference_str  # Assign the formatted difference to the data object
+                                        #             # data.difference1 = difference1
+                                        #         except ValueError as e:
+                                        #             pass
+                                        #             # Log the error in case the string-to-time conversion fails
+                                        #             # frappe.log_error(f"Error converting time: {e}", "Time Conversion Error")
+                                        #     else:
+                                        #         data.difference1 = "bhai"
+                                        # else:   
+                                        #     data.difference1 = "newton bhai"
+                                # else:
+                                #     data.difference1 = "chacha bhai"
+
+
                     if not day_data:
                         data.difference = total_time
+                        data.difference1 = total_time
                         check_sanwich_after_holiday(self,previous,data,hr_settings,index)
                         previous = data
                         index+=1
@@ -721,6 +896,8 @@ class EmployeeAttendance(Document):
                                 present_days+=1
                         
                         continue
+
+                    
                     
                     if day_data.end_time > first_out_time:
                         per_day_h = first_out_time - first_in_time
@@ -958,8 +1135,6 @@ class EmployeeAttendance(Document):
 
                 if total_time:    
                     total_hr_worked = total_hr_worked + total_time
-
-                
                     
                 
                 
@@ -1080,118 +1255,11 @@ class EmployeeAttendance(Document):
                     data.day_type = "Weekday"
                 elif data.public_holiday == 1:
                     data.day_type = "Public Holiday"
+                    
+                    
+            
 
-                if data.early_ot:
-                    try:
-                        time_parts = [int(part) for part in data.early_ot.split(':')]
-                        if len(time_parts) == 3:
-                            time_seconds1 = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
-                            total_seconds1 += time_seconds1
-                            print(f"Added {time_seconds1} seconds from {data.early_ot}")
-                        else:
-                            print(f"Invalid time format in early_ot: {data.early_ot}")
-                    except ValueError:
-                        print(f"Error processing time format in early_ot: {data.early_ot}")
-                else:
-                    print(f"early_ot is None or empty for row")
-
-                # Sum estimated_late
-                if data.estimated_late:
-                    try:
-                        time_parts1 = [int(part) for part in data.estimated_late.split(':')]
-                        if len(time_parts1) == 3:
-                            time_seconds2 = time_parts1[0] * 3600 + time_parts1[1] * 60 + time_parts1[2]
-                            total_seconds2 += time_seconds2
-                            print(f"Added {time_seconds2} seconds from {data.estimated_late}")
-                        else:
-                            print(f"Invalid time format in estimated_late: {data.estimated_late}")
-                    except ValueError:
-                        print(f"Error processing time format in estimated_late: {data.estimated_late}")
-                else:
-                    print(f"estimated_late is None or empty for row")
-
-                # Sum estimate_early (fixed variable and print statement)
-                if data.estimate_early:
-                    try:
-                        time_parts2 = [int(part) for part in data.estimate_early.split(':')]
-                        if len(time_parts2) == 3:
-                            time_seconds3 = time_parts2[0] * 3600 + time_parts2[1] * 60 + time_parts2[2]
-                            total_seconds3 += time_seconds3
-                            print(f"Added {time_seconds3} seconds from {data.estimate_early}")
-                        else:
-                            print(f"Invalid time format in estimate_early: {data.estimate_early}")
-                    except ValueError:
-                        print(f"Error processing time format in estimate_early: {data.estimate_early}")
-                else:
-                    print(f"estimate_early is None or empty for row")
-                
-                # Sum approved_eot
-                if data.approved_eot:
-                    try:
-                        time_parts = [int(part) for part in data.approved_eot.split(':')]
-                        if len(time_parts) == 3:
-                            time_seconds_approved_eot = time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
-                            total_seconds_approved_eot += time_seconds_approved_eot
-                            print(f"Added {time_seconds_approved_eot} seconds from {data.approved_eot}")
-                        else:
-                            print(f"Invalid time format in approved_eot: {data.approved_eot}")
-                    except ValueError:
-                        print(f"Error processing time format in approved_eot: {data.approved_eot}")
-                else:
-                    print(f"approved_eot is None or empty for row")
-
-                # total of late sitting approved 
-                if data.approved_ot1:
-                    try:
-                        time_parts3 = [int(parts) for parts in data.approved_ot1.split(':')]
-                        if len(time_parts3) == 3:
-                            time_seconds_approved_ot1 = time_parts3[0] * 3600 + time_parts3[1] * 60 + time_parts3[2]
-                            total_seconds_approved_ot1 += time_seconds_approved_ot1
-                        else:
-                            print(f"Invalid time format in approved_ot1 : {data.approved_ot1}")
-                    except ValueError:
-                        print(f"Error processing time format in approved_ot1: {data.approved_ot1}")
-                else:
-                    print(f"approved_ot1 is None or empty for row")
-                
-                # total of approved early ot 
-
-                if data.approved_eot:
-                    try:
-                        time_parts4 = [int(parts) for parts in data.approved_eot.split(':')]
-                        if len(time_parts4) == 3:
-                            time_seconds_approved_eot1 = time_parts4[0] * 3600 + time_parts4[1] * 60 + time_parts4[2]
-                            total_seconds_approved_eot += time_seconds_approved_eot
-                        else:
-                            print(f"Invalid time format in approved_eot : {data.approved_eot}")
-                    except ValueError:
-                        print(f"Error processing time format in approved_eot: {data.approved_eot}")
-                else:
-                    print(f"approved_eot is None or empty for row")
-
-
-                # Calculate total hours after loop
-                self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
-                self.late_sitting = "{:.2f}".format(total_seconds2 / 3600.0)
-                self.early_sitting = "{:.2f}".format(total_seconds3 / 3600.0)
-                self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
-
-                print(f"Total seconds accumulated for approved_eot: {total_seconds_approved_eot}")
-
-                # total of late sitting and early sitting 
-                total_sitting = float(self.late_sitting) + float(self.early_sitting)
-                self.total_sitting = "{:.2f}".format(total_sitting)
-
-                # total of approved ot1
-                self.approved_late_sitting =  "{:.2f}".format(total_seconds_approved_ot1 / 3600.0)
-
-                # total of approved_eot 
-                self.approved_early_sitting = "{:.2f}".format(time_seconds_approved_eot1 / 3600.0)
-
-                # approved total sitting
-                approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
-                self.approved_total_sitting = approved_total_sitting
-                 
+                    
                 # if data.check_in_1:
                 #         data.approved_ot1 = "00:00:00" 
                 # if data.check_in_1 == None:
@@ -1224,8 +1292,6 @@ class EmployeeAttendance(Document):
                 #     data.early_ot = "90:90:90"
                 shift1 = None
 
-
-
                 shift_ass = frappe.get_all("Shift Assignment", 
                                            filters={'employee': self.employee,
                                             'start_date': ["<=", getdate(data.date)],
@@ -1246,12 +1312,15 @@ class EmployeeAttendance(Document):
                         shift_data = shift1[0]
                         # data.early_ot = "90:00:00"
                         child_table_records = frappe.db.sql("""
-                        select name, day,over_time_slab, start_time, end_time, over_time_slab
+                        select name, day, start_time, end_time, over_time_slab
                                                             FROM `tabShift Day`
                                                             WHERE parent = %s
                         """,(shift_data['name'],), as_dict=True)
+                        
+                        
 
                         
+                       
                         
                         if child_table_records and len(child_table_records) > 0:
                             child_table = child_table_records[0]
@@ -1287,9 +1356,56 @@ class EmployeeAttendance(Document):
                                     if isinstance(check_out_1_str, timedelta):
                                         check_out_1_time = (datetime.min + check_out_1_time).time()
                                         check_out_1_str = check_out_1_time.strftime("%H:%M:%S")
+                                    
+                                    if data.over_time_type == "Weekly Off":
+                                        shift_out_str = data.shift_out  # Example: "18:00:00"
+                                        check_out_1_str = data.check_out_1  # Example: "19:30:00"
+                                        shift_in_str = data.shift_in
+                                        check_in_1_str = data.check_in_1
+                                                            
+                                        # difference1 = timedelta()
+
+                                        # Handle the case where `shift_out_str` is a timedelta
+                                        if isinstance(shift_out_str, timedelta):
+                                            # Convert timedelta to a time string
+                                            shift_out_time = (datetime.min + shift_out_str).time()
+                                            shift_out_str = shift_out_time.strftime("%H:%M:%S")
+                                                                
+                                        if isinstance(shift_in_str, timedelta):
+                                            shift_in_time = (datetime.min + shift_in_str).time()
+                                            shift_in_str = shift_in_time.strftime("%H:%M:%S")
+                                                            
+                                        if isinstance(check_in_1_str, timedelta):
+                                            check_in_1_time = (datetime.min + check_in_1_str).time()
+                                            check_in_1_str = check_in_1_time.strftime("%H:%M:%S")
+                                                            
+                                        if isinstance(check_out_1_str, timedelta):
+                                            check_out_1_time = (datetime.min + check_out_1_time).time()
+                                            check_out_1_str = check_out_1_time.strftime("%H:%M:%S")
+
                                         
-                                    # else:
-                                    #     shift_in_str = data.shift_in
+
+                                        if isinstance(check_in_1_str, str) and isinstance(check_out_1_str, str):
+                                            try:
+                                                check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S")
+                                                check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")                   
+                                                difference1 = timedelta()
+                                                                    
+                                                if check_out_1_time < check_in_1_time:
+                                                    check_out_1_time += timedelta(days=1)
+                                                difference1 = check_out_1_time - check_in_1_time
+                                                
+                                                total_seconds = int(difference1.total_seconds())
+                                                hours = total_seconds // 3600
+                                                minutes = (total_seconds % 3600) // 60
+                                                seconds = total_seconds % 60
+                                                                    
+                                                difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
+                                                data.difference1 = "cecking1"  # Assign the formatted difference to the data object
+                                                # data.difference1 = difference1
+                                            except ValueError as e:
+                                                pass
+                                       
                                         
                                     # Ensure both are strings and `check_out_1_str` is not None
                                     if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(shift_in_str, str):
@@ -1323,8 +1439,6 @@ class EmployeeAttendance(Document):
                                             # data.difference1 = difference1
                                         except ValueError as e:
                                             pass
-                                            # Log the error in case the string-to-time conversion fails
-                                            # frappe.log_error(f"Error converting time: {e}", "Time Conversion Error")
                                     
                                     if isinstance(shift_in_str, str) and isinstance(check_in_1_str, str):
                                         try:
@@ -1361,145 +1475,142 @@ class EmployeeAttendance(Document):
                                             print(f"Error parsing time strings: {e}")
 
                                     
-                                day_type = data.day_type 
+                            day_type = data.day_type 
 
-                                # if child_table.over_time_slab is not None:
-                                    # frappe.log_error(f"{data.date}{data.day}{child_table.over_time_slab}")
-
+                            over_time_slab_doc = frappe.db.sql("""
+                            SELECT 
+                                ots.name,
+                                otc.from_time,
+                                otc.to_time,
+                                otc.type,
+                                otc.formula,
+                                otc.per_hour_calculation,
+                                otc.over_time_threshold,
+                                otc.fixed_hour
+                            FROM 
+                                `tabOver Time Slab` as ots
+                            LEFT JOIN 
+                                `tabOver Time Slab CT` as otc 
+                            ON 
+                                otc.parent = ots.name
+                            WHERE 
+                                otc.type = %s 
+                        """, (day_type,), as_dict=True)
                             
+                            over_time_slab_doc_1 = frappe.db.sql("""
+                            SELECT 
+                                ots.name,
+                                otc.from_time,
+                                otc.to_time,
+                                otc.type,
+                                otc.formula,
+                                otc.per_hour_calculation
+                            FROM 
+                                `tabOver Time Slab` as ots
+                            LEFT JOIN 
+                                `tabEarly Overtime Slab` as otc 
+                            ON 
+                                otc.parent = ots.name
+                            WHERE 
+                                otc.type = %s 
+                        """, (day_type,), as_dict=True)
 
-                                over_time_slab_doc = frappe.db.sql("""
-                                SELECT 
-                                    ots.name,
-                                    otc.name as otc_name,
-                                    otc.type,
-                                    otc.from_time,
-                                    otc.to_time,
-                                    otc.type,
-                                    otc.formula,
-                                    otc.per_hour_calculation,
-                                    otc.over_time_threshold,
-                                    otc.fixed_hour
-                                FROM 
-                                    `tabOver Time Slab` as ots
-                                LEFT JOIN 
-                                    `tabOver Time Slab CT` as otc 
-                                ON 
-                                    otc.parent = ots.name
-                                WHERE 
-                                    otc.type = %s 
-                            """, (day_type,), as_dict=True)
+                        
+                        # Ensure `check_out_1_str` and `shift_out_str` are not None and are strings
+                        # Ensure `shift_out_str` and `check_out_1_str` are strings and handle other types
+                        shift_in_str_1 = data.shift_in
+                        shift_out_str = data.shift_out
+                        check_in_1_str = data.check_in_1
+                        check_out_1_str = data.check_out_1
+
+
+                        
+
+                        # Initialize check_out_1_time and shift_out_time
+                        time_difference_delta = timedelta(0)
+                        check_out_1_time = None
+                        shift_out_time = None
+                        check_in_1_time = None
+                        shift_in_time_1 = None
+
+                        # Convert to string if they are of type datetime.timedelta
+                        if isinstance(shift_out_str, timedelta):
+                            shift_out_str = str(shift_out_str)
+                        if isinstance(check_out_1_str, timedelta):
+                            check_out_1_str = str(check_out_1_str)
+                        if isinstance(shift_in_str_1, timedelta):
+                            shift_in_str_1 = str(shift_in_str_1)
+                        if isinstance(check_in_1_str, timedelta):
+                            check_in_1_str = str(check_in_1_str)
+
+                        # Check if the strings are valid
+                        if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(data.difference1, str):
+                            try:
+                                shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
+                                check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
+                                time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
+                                time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
                                 
-                                over_time_slab_doc_1 = frappe.db.sql("""
-                                SELECT 
-                                    ots.name,
-                                    otc.from_time,
-                                    otc.to_time,
-                                    otc.type,
-                                    otc.formula,
-                                    otc.per_hour_calculation,
-                                    otc.per_hour_calculation
-                                FROM 
-                                    `tabOver Time Slab` as ots
-                                LEFT JOIN 
-                                    `tabEarly Overtime Slab` as otc 
-                                ON 
-                                    otc.parent = ots.name
-                                WHERE 
-                                    otc.type = %s 
-                            """, (day_type,), as_dict=True)
+                            except ValueError as e:
+                                print(f"Error parsing time: {e}")
+                        else:
+                            print("Error: shift_out_str or check_out_1_str is not a valid string.")
+                        
 
+
+                        if isinstance(shift_in_str_1, str) and isinstance(check_in_1_str, str) and isinstance(data.early_difference1, str):
+                            try:
+                                shift_in_time_1 = datetime.strptime(shift_in_str_1, "%H:%M:%S").time()
+                                check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
+                                time_difference1 = datetime.strptime(data.early_difference1, "%H:%M:%S")
+                                time_difference_delta1 = timedelta(hours=time_difference1.hour, minutes=time_difference1.minute, seconds=time_difference1.second)
+
+                            except ValueError as e:
+                                print(f"Error parsing time: {e}")
+                        
+                        # frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
+
+                        if isinstance(check_out_1_time, datetime):
+                            check_out_1_time = check_out_1_time.time()
+                        
+                        if over_time_slab_doc:
+                            for record in over_time_slab_doc:
+                                data.over_time_type = record.type
+                                data.per_hours_calculation = record.per_hour_calculation
+                                data.over_time_amount = record.formula
+                                threshould = record.over_time_threshold
+
+                                if isinstance(record.from_time, timedelta):
+                                    record.from_time = (datetime.min + record.from_time).time()
+
+                                if isinstance(record.to_time, timedelta):
+                                    record.to_time = (datetime.min + record.to_time).time()
                             
-                            # Ensure `check_out_1_str` and `shift_out_str` are not None and are strings
-                            # Ensure `shift_out_str` and `check_out_1_str` are strings and handle other types
-                            shift_in_str_1 = data.shift_in
-                            shift_out_str = data.shift_out
-                            check_in_1_str = data.check_in_1
-                            check_out_1_str = data.check_out_1
-                            
-
-
-                            
-
-                            # Initialize check_out_1_time and shift_out_time
-                            time_difference_delta = timedelta(0)
-                            check_out_1_time = None
-                            shift_out_time = None
-                            check_in_1_time = None
-                            shift_in_time_1 = None
-
-                            # Convert to string if they are of type datetime.timedelta
-                            if isinstance(shift_out_str, timedelta):
-                                shift_out_str = str(shift_out_str)
-                            if isinstance(check_out_1_str, timedelta):
-                                check_out_1_str = str(check_out_1_str)
-                            if isinstance(shift_in_str_1, timedelta):
-                                shift_in_str_1 = str(shift_in_str_1)
-                            if isinstance(check_in_1_str, timedelta):
-                                check_in_1_str = str(check_in_1_str)
-
-                            # Check if the strings are valid
-                            if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(data.difference1, str):
-                                try:
-                                    shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
-                                    check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
-                                    time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
-                                    time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
-                                    
-                                except ValueError as e:
-                                    print(f"Error parsing time: {e}")
-                            else:
-                                print("Error: shift_out_str or check_out_1_str is not a valid string.")
-                            
-
-
-                            if isinstance(shift_in_str_1, str) and isinstance(check_in_1_str, str) and isinstance(data.early_difference1, str):
-                                try:
-                                    shift_in_time_1 = datetime.strptime(shift_in_str_1, "%H:%M:%S").time()
-                                    check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
-                                    time_difference1 = datetime.strptime(data.early_difference1, "%H:%M:%S")
-                                    time_difference_delta1 = timedelta(hours=time_difference1.hour, minutes=time_difference1.minute, seconds=time_difference1.second)
-
-                                except ValueError as e:
-                                    print(f"Error parsing time: {e}")
-                            
-                            # frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
-
-                            
-                            
-                            if over_time_slab_doc:
-                                for record in over_time_slab_doc:
-                                    data.over_time_type = record.type
-                                    data.per_hours_calculation = record.per_hour_calculation
-                                    data.over_time_amount = record.formula
-                                    threshould = record.over_time_threshold
-                                    data.late_threshold = threshould
-
-                                    if record.get('fixed_hour') is not None:
-                                        data.fixed_hours = record['fixed_hour']
-                                    else:
-                                        data.fixed_hours = record.fixed_hour
-                                    # data.fixed_hours = record.fixed_hour
-
-                                    if isinstance(record.from_time, timedelta):
-                                        record.from_time = (datetime.min + record.from_time).time()
-
-                                    if isinstance(record.to_time, timedelta):
-                                        record.to_time = (datetime.min + record.to_time).time()
-                                
-                                    if check_out_1_time is not None:
-                                        # if record.type == data.day_type:
-                                        if record.type == "Weekday":
+                                if check_out_1_time is not None:
+                                    # check_out_1_time_only = check_out_1_time.time()
+                                    if record.type == "Weekday":
+                                        
 
                                             if record.from_time > record.to_time:
                                                 # Shift crosses midnight
-                                                data.estimated_late = "difference_str2"
+                                                check_out_1_time = check_out_1_time.time()
                                                 if check_out_1_time >= record.from_time or check_out_1_time <= record.to_time:
-                                                    threshold_timedelta = timedelta(hours=threshould)
-                                                    data.estimated_late = "difference_str1"
+                                                    if isinstance(threshould, timedelta):
+                                                        threshold_timedelta = threshould
+                                                    else:
+                                                        threshold_timedelta = timedelta(hours=float(threshould))
+
+                                                    # data.estimated_late = "difference_str1"
                                                     
-                                                    # Assuming a condition to proceed
+                                                    log_message = (f"Date: {data.date}, Difference: {time_difference_delta}, "
+                                                    f"Threshold: {threshold_timedelta}")
+
+                                                    # Log with a short title
+                                                    # Use the first argument for the log message and specify the title keyword argument correctly.
+                                                    frappe.log_error(message=log_message[:140], title=str(data.date))
+
                                                     if time_difference_delta >= threshold_timedelta:
+                                                        frappe.log_error(f"Time difference: {time_difference_delta} exceeds threshold: {threshold_timedelta}")
                                                         data.late_threshold = threshould
                                                         data.data = record.otc_name
 
@@ -1525,6 +1636,7 @@ class EmployeeAttendance(Document):
 
                                                         # Convert the result to a timedelta and add fixed_hour
                                                         time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+                                                        frappe.log_error(f"{fixed_hour_timedelta}{time_difference_multiplied}")
 
                                                         # Convert back to total seconds for formatting
                                                         time_delta_difference = int(time_difference_result.total_seconds())
@@ -1552,16 +1664,30 @@ class EmployeeAttendance(Document):
                                             # elif check_out_1_time > record.from_time:
                                             #         data.estimated_late = "str1"
                                             else:
+                                                if isinstance(check_out_1_time, datetime):
+                                                    check_out_1_time = check_out_1_time.time()
+                                                # check_out_1_time = check_out_1_time.time()
                                                 # Handle the case where the shift does not cross midnight
                                                 if check_out_1_time >= record.from_time and check_out_1_time <= record.to_time:
-                                                    data.late_threshould = threshould
-
-                                                    if isinstance(threshould, timedelta):
-                                                        # Convert to total hours
-                                                        threshold_hours = threshould.total_seconds() / 3600
-                                                        threshold_timedelta = timedelta(hours=threshold_hours)
+                                                    if threshould is None:
+                                                        threshold_timedelta = timedelta(hours=0)  # Default to zero hours if None
+                                                    elif isinstance(threshould, timedelta):
+                                                        threshold_timedelta = threshould  # Already a timedelta, no need to convert
                                                     else:
                                                         threshold_timedelta = timedelta(hours=float(threshould))
+
+
+
+                                                    if isinstance(threshould, timedelta):
+                                                        # Convert timedelta to total hours
+                                                        threshold_hours = threshould.total_seconds() / 3600
+                                                        threshold_timedelta = timedelta(hours=threshold_hours)
+                                                    elif isinstance(threshould, (int, float, str)) and threshould != '':
+                                                        # Convert string/int/float to timedelta
+                                                        threshold_timedelta = timedelta(hours=float(threshould))
+                                                    else:
+                                                        # Handle None or invalid values
+                                                        threshold_timedelta = timedelta(hours=0)
 
                                                     # if threshould is not None:
                                                     #     threshold_timedelta = timedelta(hours=threshould)
@@ -1623,103 +1749,426 @@ class EmployeeAttendance(Document):
                                                             f"Total Hours (Before Calculation): {time_difference_delta.total_seconds() / 3600:.2f} hours, "
                                                             f"Estimated Late Calculation: {data.estimated_late}"
                                                         )
-                                        else:
-                                            pass
+                                    else:
+                                        pass
 
-                                                # else:
-                                                #     data.data = "record.otc_name"
-
-                                                    # Log the combined message
-                                                    # frappe.log_error(log_message)
-                
-                                                    # frappe.log_error(f"Estimated Late: {difference_str1} (without crossing midnight, with static value added)")
                                     
-                                    # elif record.type == "Weekly Off":
-                                    #     data.estimated_late = "test"
-                                    # else:
-                                    #     data.estimate_late = "123"
+
+                                    # if data.day_type == "Weekly Off":
+                                    #     shift_out_str = data.shift_out  # Example: "18:00:00"
+                                    #     check_out_1_str = data.check_out_1  # Example: "19:30:00"
+                                    #     shift_in_str = data.shift_in
+                                    #     check_in_1_str = data.check_in_1
+                                                            
+                                    #     # difference1 = timedelta()
+
+                                    #     # Handle the case where `shift_out_str` is a timedelta
+                                    #     if isinstance(shift_out_str, timedelta):
+                                    #         # Convert timedelta to a time string
+                                    #         shift_out_time = (datetime.min + shift_out_str).time()
+                                    #         shift_out_str = shift_out_time.strftime("%H:%M:%S")
+                                                                
+                                    #     if isinstance(shift_in_str, timedelta):
+                                    #         shift_in_time = (datetime.min + shift_in_str).time()
+                                    #         shift_in_str = shift_in_time.strftime("%H:%M:%S")
+                                                            
+                                    #     if isinstance(check_in_1_str, timedelta):
+                                    #         check_in_1_time = (datetime.min + check_in_1_str).time()
+                                    #         check_in_1_str = check_in_1_time.strftime("%H:%M:%S")
+                                                            
+                                    #     if isinstance(check_out_1_str, timedelta):
+                                    #         check_out_1_time = (datetime.min + check_out_1_time).time()
+                                    #         check_out_1_str = check_out_1_time.strftime("%H:%M:%S")
+
+                                    #     if isinstance(check_in_1_str, str) and isinstance(check_out_1_str, str):
+                                    #         try:
+                                    #             check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S")
+                                    #             check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S")                   
+                                    #             difference1 = timedelta()
+                                                                    
+                                    #             if check_out_1_time < check_in_1_time:
+                                    #                 check_out_1_time += timedelta(days=1)
+                                    #             difference1 = check_out_1_time - check_in_1_time
+                                                
+                                    #             total_seconds = int(difference1.total_seconds())
+                                    #             hours = total_seconds // 3600
+                                    #             minutes = (total_seconds % 3600) // 60
+                                    #             seconds = total_seconds % 60
+                                                                    
+                                    #             difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
+                                    #             data.difference1 = difference_str  # Assign the formatted difference to the data object
+                                    #             # data.difference1 = difference1
+                                    #         except ValueError as e:
+                                    #             pass
 
 
+                                        # day_type = data.day_type 
+
+                                                
+
+                                        # over_time_slab_doc = frappe.db.sql("""
+                                        #         SELECT 
+                                        #             ots.name,
+                                        #             otc.name as otc_name,
+                                        #             otc.type,
+                                        #             otc.from_time,
+                                        #             otc.to_time,
+                                        #             otc.type,
+                                        #             otc.formula,
+                                        #             otc.per_hour_calculation,
+                                        #             otc.over_time_threshold,
+                                        #             otc.fixed_hour
+                                        #         FROM 
+                                        #             `tabOver Time Slab` as ots
+                                        #         LEFT JOIN 
+                                        #             `tabOver Time Slab CT` as otc 
+                                        #         ON 
+                                        #             otc.parent = ots.name
+                                        #         WHERE 
+                                        #             otc.type = %s 
+                                        #     """, (day_type,), as_dict=True)
+                                                
+                                        # over_time_slab_doc_1 = frappe.db.sql("""
+                                        #         SELECT 
+                                        #             ots.name,
+                                        #             otc.from_time,
+                                        #             otc.to_time,
+                                        #             otc.type,
+                                        #             otc.formula,
+                                        #             otc.per_hour_calculation,
+                                        #             otc.per_hour_calculation
+                                        #         FROM 
+                                        #             `tabOver Time Slab` as ots
+                                        #         LEFT JOIN 
+                                        #             `tabEarly Overtime Slab` as otc 
+                                        #         ON 
+                                        #             otc.parent = ots.name
+                                        #         WHERE 
+                                        #             otc.type = %s 
+                                        #     """, (day_type,), as_dict=True)
+
+                                            
+                                        #     # Ensure `check_out_1_str` and `shift_out_str` are not None and are strings
+                                        #     # Ensure `shift_out_str` and `check_out_1_str` are strings and handle other types
+                                        # shift_in_str_1 = data.shift_in
+                                        # shift_out_str = data.shift_out
+                                        # check_in_1_str = data.check_in_1
+                                        # check_out_1_str = data.check_out_1
+                                            
 
 
-                                        # elif check_out_1_time >= record.from_time or check_out_1_time <= record.to_time:
-                                        #     if time_difference_delta >= threshold_timedelta:
-                                        #     # if time_difference_delta >= threshould:
-                                        #         # time_difference_multiplied = time_difference_delta * record.per_hour_calculation
-                                        #         time_difference_multiplied = time_difference_delta * 8
-                                        #         time_difference_result = time_difference_multiplied.total_seconds()
-                                        #         final_timedelta = timedelta(seconds=time_difference_result)
-                                        #         time_delta_difference = int(final_timedelta.total_seconds())
-                                        #         hours = time_delta_difference // 3600
-                                        #         minutes = (time_delta_difference % 3600) // 60
-                                        #         seconds = time_delta_difference % 60
-                                        #         difference_str1 = f"{hours}:{minutes}:{seconds}"
-                                        #         data.estimated_late = difference_str1
+                                            
 
+                                        #     # Initialize check_out_1_time and shift_out_time
+                                        # time_difference_delta = timedelta(0)
+                                        # check_out_1_time = None
+                                        # shift_out_time = None
+                                        # check_in_1_time = None
+                                        # shift_in_time_1 = None
 
+                                        # # Convert to string if they are of type datetime.timedelta
+                                        # if isinstance(shift_out_str, timedelta):
+                                        #     shift_out_str = str(shift_out_str)
+                                        # if isinstance(check_out_1_str, timedelta):
+                                        #     check_out_1_str = str(check_out_1_str)
+                                        # if isinstance(shift_in_str_1, timedelta):
+                                        #     shift_in_str_1 = str(shift_in_str_1)
+                                        # if isinstance(check_in_1_str, timedelta):
+                                        #     check_in_1_str = str(check_in_1_str)
 
+                                        # # Check if the strings are valid
+                                        # if isinstance(check_out_1_str, str) and isinstance(data.difference1, str):
+                                        #     try:
+                                        #         # shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
+                                        #         check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
+                                        #         time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
+                                        #         time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
+                                                
+                                        #     except ValueError as e:
+                                        #         print(f"Error parsing time: {e}")
                                         # else:
-                                        #     if data.over_time_type == "Weekly Off":
-                                        #         threshold_timedelta = timedelta(hours=threshould)
-                                        #         if time_difference_delta >= threshold_timedelta:
-                                        #         # if time_difference_delta >= threshould:
-                                        #             time_difference_multiplied = time_difference_delta * record.per_hour_calculation
-                                        #             time_difference_result = time_difference_multiplied.total_seconds()
-                                        #             final_timedelta = timedelta(seconds=time_difference_result)
-                                        #             time_delta_difference = int(final_timedelta.total_seconds())
-                                        #             hours = time_delta_difference // 3600
-                                        #             minutes = (time_delta_difference % 3600) // 60
-                                        #             seconds = time_delta_difference % 60
-                                        #             difference_str1 = f"{hours}:{minutes}:{seconds}"
-                                        #             data.estimated_late = difference_str1
+                                        #     print("Error: shift_out_str or check_out_1_str is not a valid string.")
+                                            
+                                        # if isinstance(check_in_1_str, str):
+                                        #     try:
+                                            
+                                        #         check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
+
+                                        #     except ValueError as e:
+                                        #         print(f"Error parsing time: {e}")
+
+                                        # if isinstance(check_in_1_str, str) and isinstance(data.early_difference1, str):
+                                        #     try:
+                                        #         # shift_in_time_1 = datetime.strptime(shift_in_str_1, "%H:%M:%S").time()
+                                        #         check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
+                                        #         time_difference1 = datetime.strptime(data.early_difference1, "%H:%M:%S")
+                                        #         time_difference_delta1 = timedelta(hours=time_difference1.hour, minutes=time_difference1.minute, seconds=time_difference1.second)
+
+                                        #     except ValueError as e:
+                                        #         print(f"Error parsing time: {e}")
+                                        
+                                        # # frappe.log_error(f"Check-out time: {check_out_1_time}, Shift out time: {shift_out_time}, Time difference: {time_difference_delta}")
+
+                                        
+                                        
+                                        # if over_time_slab_doc:
+                                        #     for record in over_time_slab_doc:
+                                        #         data.over_time_type = record.type
+                                        #         data.per_hours_calculation = record.per_hour_calculation
+                                        #         data.over_time_amount = record.formula
+                                        #         threshould = record.over_time_threshold
+                                        #         data.late_threshold = threshould
+
+                                        #         if record.get('fixed_hour') is not None:
+                                        #             data.fixed_hours = record['fixed_hour']
+                                        #         else:
+                                        #             data.fixed_hours = record.fixed_hour
+                                        #         # data.fixed_hours = record.fixed_hour
+
+                                        #         if isinstance(record.from_time, timedelta):
+                                        #             record.from_time = (datetime.min + record.from_time).time()
+
+                                        #         if isinstance(record.to_time, timedelta):
+                                        #             record.to_time = (datetime.min + record.to_time).time()
+
+                                        #         # frappe.log_error('checking456')
+                                        #         if data.check_out_1 is not None:
+                                        #             # if record.type == data.day_type:
+                                        #             # frappe.log_error(f"{data.date} {data.day_type}")
+                                        #             if data.day_type == "Weekly Off":
+
+                                        #                 if record.from_time < record.to_time:
+                                                            
+                                        #                     # Shift crosses midnight
+                                        #                     # data.estimated_late = "difference_str2"
+                                        #                     # frappe.log_error('Condition met:') # this is working
+                            
+                                        #                     # frappe.log_error(f"data{data.date}checkout{data.check_out_1}checkout_time{check_out_1_time}record.from_time{record.from_time}record.to_time{record.to_time}")
+                                        #                     if check_out_1_time is not None and check_in_1_time is not None:
+                                        #                         # Log the initial condition
+                                        #                         # frappe.log_error('Condition: All times are not None', 'Timing Validation')
+                                        #                         # frappe.log_error(f"{check_out_1_time}{record.from_time}{record.to_time}")
+
+                                        #                         # Check if checkout time is within the range
+                                        #                         # if check_in_1_time >= record.from_time and check_out_1_time <= record.to_time:
+                                        #                         if check_out_1_time >= record.from_time and check_out_1_time <= record.to_time:
+                                        #                             placeholder_date = data.date
+
+                                        #                         # Convert time to datetime objects
+                                        #                             check_out_1_datetime = datetime.combine(placeholder_date, check_out_1_time)
+                                        #                             from_time_datetime = datetime.combine(placeholder_date, record.from_time)
+                                        #                             to_time_datetime = datetime.combine(placeholder_date, record.to_time)
+
+                                        #                             # Now, perform the comparison and subtraction
+                                        #                             if from_time_datetime <= check_out_1_datetime <= to_time_datetime:
+                                        #                                 # Subtract datetime objects to get a timedelta
+                                        #                                 test = check_out_1_datetime - from_time_datetime
+                                        #                                 if isinstance(threshould, timedelta):
+                                        #                                 # If threshould is already a timedelta, you can use it directly
+                                        #                                     threshold_timedelta = threshould
+                                        #                                 elif isinstance(threshould, (float, int)):
+                                        #                                     # Create a threshold timedelta from float/int hours
+                                        #                                     threshold_timedelta = timedelta(hours=threshould)
+                                        #                                 else:
+                                        #                                     frappe.log_error(f"Invalid threshould value: {threshould}", 'Timing Validation')
+                                        #                                     threshold_timedelta = timedelta(0)
+
+                                        #                                 if record.fixed_hour is not None:
+                                        #                                     # Check if fixed_hour is a timedelta object
+                                        #                                     if isinstance(record.fixed_hour, timedelta):
+                                        #                                         fixed_hour_timedelta = record.fixed_hour
+                                        #                                         # frappe.log_error(f"Fixed hour timedelta used directly: {fixed_hour_timedelta}", 'Timing Calculation')
+                                        #                                     else:
+                                        #                                         # If it's not a timedelta, default to 0
+                                        #                                         fixed_hour_timedelta = timedelta(0)
+                                        #                                         # frappe.log_error("fixed_hour is not a timedelta object, defaulting to 0", 'Timing Calculation')
+                                        #                                 else:
+                                        #                                     fixed_hour_timedelta = timedelta(0)
+
+                                                                        
+                                        #                                 time_difference_delta = timedelta(hours=1)  # Placeholder: replace with actual time difference calculation
+                                        #                                 time_difference_multiplied = test.total_seconds() * record.per_hour_calculation
+                                        #                                 # frappe.log_error(f"time_difference_delta    {time_difference_delta}")
+                                                                        
+
+                                        #                                 # # Convert the result to a timedelta and add fixed_hour
+                                        #                                 time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+
+                                        #                                 # # Log the calculated time difference
+                                        #                                 # # frappe.log_error(f"Calculated time difference result: {time_difference_result}", 'Timing Calculation')
+
+                                        #                                 # # Convert back to total seconds for formatting
+                                        #                                 time_delta_difference = int(time_difference_result.total_seconds())
+                                        #                                 hours = time_delta_difference // 3600
+                                        #                                 minutes = (time_delta_difference % 3600) // 60
+                                        #                                 seconds = time_delta_difference % 60
+
+                                        #                                 # # Format the result as a string in hh:mm:ss format
+                                        #                                 difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
+
+                                                                            
+
+                                        #                                 data.estimated_late = difference_str1
+
+
+                                                
+
+                                        #     else:
+                                        #         pass
+                                        #         # frappe.log_error('Condition not met: check_out_1_time not within range', 'Timing Validation')
+                                        # else:
+                                        #     pass
+                                          
+                                    # else:
+                                    #     # Handle the case where the shift does not cross midnight
+                                    #     # frappe.log_error('Condition:') # this is working 
+                                    #     if check_out_1_time is not None and record.from_time is not None and record.to_time is not None and check_in_1_time is not None:
+                                    #         # frappe.log_error('Condition1')
+                                    #         # if check_in_1_time >= record.from_time and check_out_1_time <= record.to_time:
+                                    #         if check_out_1_time >= record.from_time and check_out_1_time <= record.to_time:
+                                    #             # frappe.log_error('Condition metty:')
+                                    #             # frappe.log_error(f"thresoulh{threshould}")
+                                    #             # data.data = "909090"
+                                    #             data.late_threshould = threshould
+
+                                    #             if isinstance(threshould, timedelta):
+                                    #                 # Convert to total hours
+                                    #                 threshold_hours = threshould.total_seconds() / 3600
+                                    #                 threshold_timedelta = timedelta(hours=threshold_hours)
+                                    #             else:
+                                    #                 threshold_timedelta = timedelta(hours=float(threshould))
+
+                                                # if threshould is not None:
+                                                #     threshold_timedelta = timedelta(hours=threshould)
+                                                # else:
+                                                #     threshold_timedelta = timedelta(0)
+                                                
+                                                
+
+                                                # if time_difference_delta >= threshold_timedelta:
+                                                #     # Store OTC name
+                                                #     data.data = record.otc_name
+
+                                                #     # Handle fixed hour logic dynamically
+                                                #     # frappe.log_error(f"Value of fixed_hour: {record.fixed_hour} (Type: {type(record.fixed_hour)})")
+
+                                                #     # Ensure fixed_hour is not None and is a valid value
+                                                #     if record.fixed_hour is not None:
+                                                #         # Check if fixed_hour is a timedelta object
+                                                #         if isinstance(record.fixed_hour, timedelta):
+                                                #             fixed_hour_timedelta = record.fixed_hour  # Use it directly as it's already timedelta
+                                                #             # frappe.log_error(f"Fixed hour timedelta used directly: {fixed_hour_timedelta}")
+                                                #         else:
+                                                #             # frappe.log_error(f"fixed_hour is not a timedelta object, defaulting to 0")
+                                                #             fixed_hour_timedelta = timedelta(0)  # Default to 0 if it's not a timedelta
+                                                #     else:
+                                                #         pass
+                                                #         # frappe.log_error(f"fixed_hour is None, defaulting to 0")
+                                                #         fixed_hour_timedelta = timedelta(0)
+
+
+                                                #     # Evaluate per hour calculation
+                                                #     if isinstance(record.per_hour_calculation, str):
+                                                #         eval_expression = record.per_hour_calculation.replace('time_difference_delta', str(time_difference_delta.total_seconds() / 3600))
+                                                #         try:
+                                                #             time_difference_multiplied = eval(eval_expression)
+                                                #         except Exception as e:
+                                                #             # frappe.log_error(f"Error evaluating formula: {e}")
+                                                #             time_difference_multiplied = 0.0
+                                                #     else:
+                                                #         time_difference_multiplied = time_difference_delta.total_seconds() / 3600 * record.per_hour_calculation
+
+                                                #     # Convert total_hours back to timedelta
+                                                #     final_timedelta = timedelta(hours=time_difference_multiplied) + fixed_hour_timedelta
+                                                #     # frappe.log_error(f"final_timedelta{final_timedelta}")
+
+                                                #     # Calculate hours, minutes, and seconds
+                                                #     time_delta_difference = int(final_timedelta.total_seconds())
+                                                #     hours = time_delta_difference // 3600
+                                                #     minutes = (time_delta_difference % 3600) // 60
+                                                #     seconds = time_delta_difference % 60
+
+                                                #     # Format the time as hh:mm:ss
+                                                #     difference_str1 = f"{hours:02}:{minutes:02}:{seconds:02}"
+                                                #     data.estimated_late = difference_str1
+                                                    # frappe.log_error(f"else final estimate{difference_str1}")
+                                                    
+                                                    # Combined log message
+                                                    # log_message = (
+                                                    #     f"{data.date} "
+                                                    #     f"Fixed Hour: {fixed_hour_timedelta.total_seconds() / 3600:.2f} hours, "
+                                                    #     f"Total Hours (Before Calculation): {time_difference_delta.total_seconds() / 3600:.2f} hours, "
+                                                    #     f"Estimated Late Calculation: {data.estimated_late}"
+                                                    # )
+                                # else:
+                                #     pass
+
+                                    
+                                    
+                                    
                                                 
                                         
                                 # frappe.log_error(f"Estimated Late: {data.date} - {data.estimated_late}")
-                        # if over_time_slab_doc_1:
-                        #     for record_1 in over_time_slab_doc_1:
-                        #         data.over_time_type1 = record_1.type
-                        #         data.early_per_hours_calculation = record_1.per_hour_calculation
-                        #         data.early_over_time_amount = record_1.formula
-                        #         threshould1 = record_1.per_hour_calculation
+                        if over_time_slab_doc_1:
+                            for record_1 in over_time_slab_doc_1:
+                                data.over_time_type1 = record_1.type
+                                data.early_per_hours_calculation = record_1.per_hour_calculation
+                                data.early_over_time_amount = record_1.formula
+                                threshould1 = record_1.over_time_threshold
 
-                        #         if isinstance(record_1.from_time, timedelta):
-                        #             record_1.from_time = (datetime.min + record_1.from_time).time()
+                                if isinstance(record_1.from_time, timedelta):
+                                    record_1.from_time = (datetime.min + record_1.from_time).time()
 
-                        #         if isinstance(record_1.to_time, timedelta):
-                        #             record_1.to_time = (datetime.min + record_1.to_time).time()
+                                if isinstance(record_1.to_time, timedelta):
+                                    record_1.to_time = (datetime.min + record_1.to_time).time()
                             
-                        #         if data.check_in_1:
-                        #             if record_1.from_time < record_1.to_time:
-                        #                 # Shift crosses midnight
-                        #                 if check_in_1_time < record_1.to_time:
-                        #                     if time_difference_delta1 > threshould:
-                        #                         time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
-                        #                         time_difference_result = time_difference_multiplied.total_seconds()
-                        #                         final_timedelta = timedelta(seconds=time_difference_result)
-                        #                         time_delta_difference = int(final_timedelta.total_seconds())
-                        #                         hours = time_delta_difference // 3600
-                        #                         minutes = (time_delta_difference % 3600) // 60
-                        #                         seconds = time_delta_difference % 60
-                        #                         difference_str1 = f"{hours}:{minutes}:{seconds}"
-                        #                         data.estimate_early = final_timedelta
+                                if data.check_in_1:
+                                    if record_1.from_time < record_1.to_time:
+                                        if isinstance(check_in_1_time, datetime):
+                                            check_in_1_time = check_in_1_time.time()  # Convert to time
+                                        # Shift crosses midnight
+                                        if check_in_1_time < record_1.to_time:
+                                            if threshould is not None:
+                                                # Convert threshould from float (hours) to timedelta
+                                                if isinstance(threshould, float):
+                                                    threshold_timedelta = timedelta(hours=threshould)
+                                                elif isinstance(threshould, timedelta):
+                                                    threshold_timedelta = threshould
+                                                # else:
+                                                #     raise ValueError("threshould must be a float or a timedelta")
 
+                                                
+                                                if time_difference_delta1 > threshold_timedelta:
+                                                    time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
+                                                    time_difference_result = time_difference_multiplied.total_seconds()
 
-                        #########################################
-                                    #     else:
-                                    #         if data.over_time_type == "Weekly Off":
-                                    #             if time_difference_delta1 > threshould:
-                                    #                 time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
-                                    #                 time_difference_result = time_difference_multiplied.total_seconds()
-                                    #                 final_timedelta = timedelta(seconds=time_difference_result)
-                                    #                 time_delta_difference = int(final_timedelta.total_seconds())
-                                    #                 hours = time_delta_difference // 3600
-                                    #                 minutes = (time_delta_difference % 3600) // 60
-                                    #                 seconds = time_delta_difference % 60
-                                    #                 difference_str1 = f"{hours}:{minutes}:{seconds}"
-                                    #                 data.estimate_early = difference_str1
+                                                    final_timedelta = timedelta(seconds=time_difference_result)
+                                                    time_delta_difference = int(final_timedelta.total_seconds())
+                                                    hours = time_delta_difference // 3600
+                                                    minutes = (time_delta_difference % 3600) // 60
+                                                    seconds = time_delta_difference % 60
+                                                    difference_str1 = f"{hours}:{minutes}:{seconds}"
+
+                                                    # Store the estimated early time in your data object
+                                                    data.estimate_early = final_timedelta
+
+                                                    # You can also log the difference if needed
+                                                    print(f"Estimated Early Time: {difference_str1}")
+                                        else:
+                                            if data.over_time_type == "Weekly Off":
+                                                if time_difference_delta1 > threshould:
+                                                    time_difference_multiplied = time_difference_delta1 * record_1.per_hour_calculation
+                                                    time_difference_result = time_difference_multiplied.total_seconds()
+                                                    final_timedelta = timedelta(seconds=time_difference_result)
+                                                    time_delta_difference = int(final_timedelta.total_seconds())
+                                                    hours = time_delta_difference // 3600
+                                                    minutes = (time_delta_difference % 3600) // 60
+                                                    seconds = time_delta_difference % 60
+                                                    difference_str1 = f"{hours}:{minutes}:{seconds}"
+                                                    data.estimate_early = difference_str1
                                                     
-                                    # else:
-                                    #     pass
+                                    else:
+                                        pass
                                         # Shift crosses midnight
                                         # if check_in_1_time >= record_1.from_time or check_in_1_time <= record_1.to_time:
                                         #     if time_difference_delta1 < threshould:
@@ -1732,157 +2181,6 @@ class EmployeeAttendance(Document):
                                         #         seconds = time_delta_difference % 60
                                         #         difference_str1 = f"{hours}:{minutes}:{seconds}"
                                         #         data.estimate_early = "09:09:09"
-
-
-                                
-                        # if hasattr(data, 'estimated_late'):
-                        #     frappe.log_error(f"Final Estimated Late: {data.estimated_late}")
-                        # else:
-                        #     frappe.log_error("No estimated late time calculated.")
-
-                        # frappe.log_error(f"Record processed: {record}")
-
-                            # Usage Example
-                            # day_type = data.day_type  # Assuming day_type is available in your data
-                            # overtime_data = get_overtime_slab_data(day_type)
-
-                            # if overtime_data:
-                            #     print("Overtime Slab Data for", day_type)
-                            #     for slab in overtime_data:
-                            #         data.over_time_type = slab.get('type')
-                            #         frappe.log(f"No.: {slab.get('name')}")
-                            #         # ... Process other data
-                            # else:
-                            #     frappe.log(f"No overtime slab found for day type: {day_type}")
-                            
-                            # data.early_ot = over_time_slab_doc
-                            # Fetch only necessary columns, add relevant filters
-                            
-                            # over_time_slab_doc = frappe.db.sql("""
-                            #     SELECT ots.name, otc.from_time, otc.to_time, otc.total_hours
-                            #     FROM `tabOver Time Slab` AS ots
-                            #     LEFT JOIN `tabOver Time Slab CT` AS otc ON otc.parent = ots.name
-                            #     WHERE otc.from_time IS NOT NULL AND otc.to_time IS NOT NULL
-                            # """, as_dict=True)
-
-                            # # Process logic
-                            # time_format = "%H:%M:%S"
-
-                            # # Function to convert timedelta to time
-                            # def timedelta_to_time(td):
-                            #     if isinstance(td, timedelta):
-                            #         # Convert timedelta to total seconds and then to time
-                            #         return (datetime.min + td).time()
-                            #     return td
-
-                            # # Function to handle time spans that go past midnight
-                            # def is_within_time_span(check_time, from_time, to_time):
-                            #     if from_time > to_time:  # Time span crosses midnight
-                            #         return check_time >= from_time or check_time <= to_time
-                            #     else:  # Regular time span
-                            #         return from_time <= check_time <= to_time
-
-                            # Iterate through the overtime slabs
-                            # for row in over_time_slab_doc.get("Over Time Slab CT"):
-                            # for ot in over_time_slab_doc:
-                                # if data.weekday == 1:
-                                #     data.over_time_type = ot.get("type")
-                                # else:
-                                #     data.over_time_type = "test"
-                                # if data.day_type == "Weekday":
-                                #     if ot.type == "Weekday":
-                                #         data.over_time_type = "1"
-                                # elif data.day_type == "Weekly Off":
-                                #     if ot.type == "Weekly Off":
-                                #         data.over_time_type = "2"
-                                    
-                                
-                                    
-                                # data.early_ot = '3'
-                                # Check if it's not a weekly off (i.e., working day)
-                                # if data.weekly_off == 0:
-                                    # data.early_ot = '2'
-                                    # Check if overtime type exists
-                                    # if data.weekday == 1:
-                                    
-                                    
-                                    # if data.weekly_off == 1:
-                                        # data.early_ot = '1'
-                                        # Ensure `data[4].check_out_1`, `ot.from_time`, and `ot.to_time` are non-empty and valid
-                                        # if data.check_out_1 and ot.from_time and ot.to_time:
-                                            # print("Row Index:", ot.idx)
-                                            # print("Type:", ot.type)
-                                            # print("From Time:", ot.from_time)
-                                            # print("To Time:", ot.to_time)
-                                            
-                                            # data.over_time_type = ot.type
-                                            # data.over_time_amount = ot.formula
-                                            # data.per_hours_calculation = ot.per_hour_calculation
-                                            # data.early_ot = ot.per_hour_calculation
-                                            # if data.late_sitting is not None:
-                                                
-                                            #     late_sitting_obj = datetime.strptime(data.check_out_1, '%H:%M:%S')
-                                            #     # data.estimated_late = late_sitting_obj
-                                            #     late_sitting_time_delta = timedelta(hours=late_sitting_obj.hour, minutes=late_sitting_obj.minute, seconds=late_sitting_obj.second)
-                                            #     # data.estimated_late = 1
-                                            #     expected_late_sitting = late_sitting_time_delta * data.per_hours_calculation
-                                            #     data.estimated_late = expected_late_sitting
-                                            # else:
-                                            #     data.estimated_late = 0
-                                    
-                                                
-                                            
-                                            
-                            #                 # Convert `data[4].check_out_1` to `datetime.time` if it's a string
-                            #                 if isinstance(data.check_out_1, str):
-                            #                     data.check_out_1 = datetime.strptime(data.check_out_1, time_format).time()
-                            #                     data.early_ot = '6'
-
-                            #                 # # Convert `from_time` and `to_time` to `datetime.time`, handling potential `timedelta`
-                            #                 ot.from_time = timedelta_to_time(ot.from_time)
-                            #                 ot.to_time = timedelta_to_time(ot.to_time)
-                            #                 data.early_ot = ot.per_hour_calculation
-                                            
-                                            
-
-                                            # # Check if `check_out_1` is within the overtime slab range
-                                            # if is_within_time_span(data.check_out_1, ot.from_time, ot.to_time):
-                                            #     # data.early_ot = ot.total_hours 
-                                            #     # Example time string and float value
-                                            #     time_string = data.late_sitting  # Time in HH:MM:SS format
-                                            #     multiplier = ot.per_hour_calculation          # Float value to multiply by
-
-                                            #     # Step 1: Convert the time string to a `datetime` object
-                                            #     time_format = "%H:%M:%S"
-                                            #     time_obj = datetime.strptime(time_string, time_format)
-
-                                            #     # Step 2: Convert the `datetime` object to `timedelta`
-                                            #     time_delta = timedelta(hours=time_obj.hour, minutes=time_obj.minute, seconds=time_obj.second)
-
-                                            #     # Step 3: Convert `timedelta` to total seconds
-                                            #     total_seconds = time_delta.total_seconds()
-
-                                            #     # Step 4: Multiply the total seconds by the float
-                                            #     new_total_seconds = total_seconds * multiplier
-
-                                            #     # Step 5: Convert the result back to `timedelta`
-                                            #     new_time_delta = timedelta(seconds=new_total_seconds)
-
-                                            #     # Step 6: Optionally convert `timedelta` back to `HH:MM:SS` format
-                                            #     new_time_string = str(new_time_delta)
-                                            #     data.early_ot = new_time_string
-                                                
-                                # else:
-                                #     # If it's a weekly off or holiday, set early overtime to 0
-                                #     data.early_ot = 0
-                            
-                            
-
-                            # Execute the SQL query
-                            # result = frappe.db.sql(query, (shift_data['name'],), as_dict=True)
-
-                            # data.early_ot = over_time_slab_doc.name
-                            
 
                     
                         def time_to_seconds(time_string):
@@ -2142,32 +2440,7 @@ class EmployeeAttendance(Document):
                     # data.early_over_time = result_time
                     # data.check = result_time
 
-                # calculate late and late coming 
-                if data.check_in_1 is not None and data.shift_in is not None:
-                    checkin = datetime.strptime(data.check_in_1, "%H:%M:%S").time()
-                    shiftin = (datetime.min + data.shift_in).time()
-                    checkin_datetime = datetime.combine(datetime.today(), checkin)
-                    shiftin_datetime = datetime.combine(datetime.today(), shiftin)
-                    late_coming = checkin_datetime - shiftin_datetime
-                    if checkin_datetime > shiftin_datetime:
-                        data.late = 1
-                        data.late_coming_hours = late_coming
-                    else:
-                        data.late = 0
-
-                # calculate early and early coming min 
-                if data.check_out_1 is not None and data.shift_out:
-                    checkout = datetime.strptime(data.check_out_1, "%H:%M:%S").time()
-                    shiftout = (datetime.min + data.shift_out).time()
-                    checkout_datetime = datetime.combine(datetime.today(), checkout)
-                    shiftout_datetime = datetime.combine(datetime.today(), shiftout)
-                    if checkout_datetime < shiftout_datetime:
-                        data.early_going_hours = shiftout_datetime - checkout_datetime
-                        data.early = 1
-                    else:
-                        data.late = 0
-                        data.early_going_hours = None
-
+                
 
                 if day_data and not holiday_flag:
                     if day_data.late_slab and data.late_coming_hours:
@@ -2247,13 +2520,6 @@ class EmployeeAttendance(Document):
                     if data.late:
                         total_lates -= 1
                         data.late = 0
-
-                    if data.day_type == "Weekly Off":
-                        data.weekly_off = 1
-                    if data.day_type == "Public Holiday":
-                        data.public_holiday = 1
-                    if data.day_type == "Weekday":
-                        data.weekday = 1
                 
                 # if data.check_out_1 is None:
                 #     log = frappe.get_all(
