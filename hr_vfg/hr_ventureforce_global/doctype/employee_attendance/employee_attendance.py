@@ -120,7 +120,9 @@ class EmployeeAttendance(Document):
             
 
         for data in self.table1:
-            
+            if data.day_type == "Weekly Off":
+                data.weekly_off = 1
+
             # Sum early_ot
             if data.early_ot:
                 try:
@@ -1260,6 +1262,9 @@ class EmployeeAttendance(Document):
                     data.day_type = "Weekday"
                 elif data.public_holiday == 1:
                     data.day_type = "Public Holiday"
+                
+                if data.day_type == "Weekly Off":
+                    data.weekly_off = 1
 
                 employee = frappe.get_doc("Employee", self.employee)
                 if employee.custom_late_unmark == 1:
@@ -1569,9 +1574,11 @@ class EmployeeAttendance(Document):
                                 time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
                                 
                             except ValueError as e:
-                                print(f"Error parsing time: {e}")
+                                # print(f"Error parsing time: {e}")
+                                pass
                         else:
-                            print("Error: shift_out_str or check_out_1_str is not a valid string.")
+                            pass
+                            # print("Error: shift_out_str or check_out_1_str is not a valid string.")
                         
 
 
