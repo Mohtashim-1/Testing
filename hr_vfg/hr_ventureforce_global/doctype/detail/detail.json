@@ -1,0 +1,91 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-10 17:29:11.765896",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "type",
+  "column_break_ovnf",
+  "contractor",
+  "column_break_glql",
+  "department",
+  "column_break_gwiu",
+  "quantity"
+ ],
+ "fields": [
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "Contractor\nEmployee",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.type==\"Contractor\"",
+   "fieldname": "contractor",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Contractor",
+   "mandatory_depends_on": "eval:doc.type==\"Contractor\"",
+   "options": "Contractor"
+  },
+  {
+   "depends_on": "eval:doc.type==\"Employee\"",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Department",
+   "mandatory_depends_on": "eval:doc.type==\"Employee\"",
+   "options": "Department"
+  },
+  {
+   "fieldname": "column_break_ovnf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_glql",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gwiu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Quantity",
+   "non_negative": 1,
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-10 17:40:30.274504",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
