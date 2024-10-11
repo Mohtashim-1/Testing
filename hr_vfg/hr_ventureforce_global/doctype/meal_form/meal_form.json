@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:MF-{YY}-{MM}-{DD}-{###}",
  "creation": "2024-10-10 17:01:29.622576",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -70,12 +71,14 @@
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-10 18:17:33.495963",
+ "modified": "2024-10-11 18:13:25.380557",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Meal Form",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

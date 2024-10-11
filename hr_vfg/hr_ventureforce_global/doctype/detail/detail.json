@@ -16,6 +16,7 @@
  ],
  "fields": [
   {
+   "default": "Contractor",
    "fieldname": "type",
    "fieldtype": "Select",
    "in_filter": 1,
@@ -23,7 +24,7 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Type",
-   "options": "Contractor\nEmployee",
+   "options": "Contractor",
    "reqd": 1
   },
   {
@@ -41,16 +42,16 @@
   },
   {
    "depends_on": "eval:doc.type==\"Employee\"",
+   "fetch_from": "contractor.department",
    "fieldname": "department",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_filter": 1,
    "in_global_search": 1,
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Department",
-   "mandatory_depends_on": "eval:doc.type==\"Employee\"",
-   "options": "Department"
+   "mandatory_depends_on": "eval:doc.type==\"Employee\""
   },
   {
    "fieldname": "column_break_ovnf",
@@ -79,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-10 17:40:30.274504",
+ "modified": "2024-10-11 18:04:13.317014",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Detail",

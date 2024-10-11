@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:contractor_name",
  "creation": "2024-10-10 17:22:03.796139",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -11,8 +12,11 @@
  "fields": [
   {
    "fieldname": "contractor_name",
-   "fieldtype": "Data",
-   "label": "Contractor Name"
+   "fieldtype": "Link",
+   "label": "Contractor Name",
+   "link_filters": "[[\"Supplier\",\"supplier_group\",\"=\",\"Contractor\"]]",
+   "options": "Supplier",
+   "unique": 1
   },
   {
    "fieldname": "department",
@@ -23,10 +27,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-10 17:23:13.000786",
+ "modified": "2024-10-11 18:17:05.414415",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Contractor",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
