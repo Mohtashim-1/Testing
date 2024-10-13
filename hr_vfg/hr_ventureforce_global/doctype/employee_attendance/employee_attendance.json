@@ -26,6 +26,7 @@
   "present_days",
   "total_lates",
   "early_for_absents",
+  "early_going",
   "column_break_jkru",
   "total_absents",
   "lates_for_halfday",
@@ -571,11 +572,16 @@
   {
    "fieldname": "column_break_tfkt",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "early_going",
+   "fieldtype": "Float",
+   "label": "Early Going"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-10-09 16:58:46.388716",
+ "modified": "2024-10-13 21:20:22.358689",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

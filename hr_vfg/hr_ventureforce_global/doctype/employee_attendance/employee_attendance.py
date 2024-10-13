@@ -96,10 +96,41 @@ class EmployeeAttendance(Document):
         total_seconds_approved_ot1 = 0
         total_seconds_approved_ot2 = 0
         time_seconds_approved_eot1 = 0
+        early_going_count = 0
+        total_early_going_time = timedelta()  # Use timedelta for time calculations
+        total_early_hours = 0
+        total_early_goings = 0
+        total_early_going_hours = timedelta()
+
+        for data in self.table1:
+            # Check if the 'early' checkbox is marked (1 means it's checked)
+            if data.early == 1:
+                total_early_goings += 1
+            
+            if data.early_going_hours:
+                # If the value is a string (in 'HH:MM:SS' format), convert it to timedelta
+                if isinstance(data.early_going_hours, str):
+                    hours, minutes, seconds = map(int, data.early_going_hours.split(':'))
+                    early_going_duration = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+                elif isinstance(data.early_going_hours, timedelta):
+                    early_going_duration = data.early_going_hours
+                else:
+                    continue  # Skip if not a valid type
+
+                # Add to total early going hours
+                total_early_going_hours += early_going_duration
+
+        
+        # Store the count of marked checkboxes in the parent doctype
+        self.early_going = total_early_goings
+        self.manual_absent = str(total_early_going_hours)
+
+
 
         if self.table1:
             first_date = self.table1[0].date  
-            last_date = self.table1[-1].date  
+            last_date = self.table1[-1].date 
+             
 
             # Fetch fuel rate
             fuel = frappe.get_list("Fuel Rate", filters={
@@ -117,9 +148,10 @@ class EmployeeAttendance(Document):
             else:
                 self.fuel_allowance_rate = "0" 
             
-            
 
         for data in self.table1:
+            
+            
             if data.day_type == "Weekly Off":
                 data.weekly_off = 1
 
@@ -397,6 +429,25 @@ class EmployeeAttendance(Document):
                         
                             # shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
                             shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
+                            # holiday = shift1[0].get('holiday_list')
+                            # frappe.log_error(holiday)
+                            
+                            # if holiday:
+                            #     holiday_doc = frappe.get_doc("Holiday List", holiday)
+                            #     holiday_list = holiday_doc.holidays
+                                
+                            #     # Check each holiday in the list
+                            #     for holiday_item in holiday_list:
+                            #         start_date = holiday_item.start_date  # Assuming holiday_item has a start_date
+                            #         end_date = holiday_item.end_date      # Assuming holiday_item has an end_date
+                                    
+                            #         if (data.date >= start_date) and (data.date <= end_date):
+                            #             data.public_holiday = 1  # Mark as public holiday
+                            #             data.weekly_off = 1      # Mark as weekly off
+                            #             break  # No need to check further if we found a match
+                            # else:
+                            #     frappe.log_error("No holiday list found for the given shift type.")
+
                             if shift1 and len(shift1) > 0:
                                 shift_data = shift1[0]
                                 if shift_data.custom_slab:
@@ -535,7 +586,12 @@ class EmployeeAttendance(Document):
                                                                     # frappe.log_error(f"Type of check_out_1_time: {type(check_out_1_time)}, from_time: {type(record.from_time)}, to_time: {type(record.to_time)}")
 
                                                                     placeholder_date = data.date
-                                                                    placeholder_date = datetime.strptime(placeholder_date, '%Y-%m-%d').date() 
+                                                                    if isinstance(placeholder_date, str):
+                                                                        # Only parse if it's a string
+                                                                        placeholder_date = datetime.strptime(placeholder_date, '%Y-%m-%d').date()
+                                                                    elif isinstance(placeholder_date, datetime):
+                                                                        # If it's already a datetime object, convert to date
+                                                                        placeholder_date = placeholder_date.date() 
 
                                                                     # frappe.log_error(f"placeholder_date: {placeholder_date}, check_out_1_time: {check_out_1_time}")
 
@@ -546,7 +602,7 @@ class EmployeeAttendance(Document):
                                                                     check_out_1_datetime = datetime.combine(placeholder_date, check_out_1_time)
                                                                     from_time_datetime = datetime.combine(placeholder_date, record.from_time)
                                                                     to_time_datetime = datetime.combine(placeholder_date, record.to_time)
-                                                                    frappe.log_error("Reached conversion section")
+                                                                    # frappe.log_error("Reached conversion section")
                                                                     data.estimated_late = "day_type13"
 
                                                                     # Now, perform the comparison and subtraction
@@ -982,7 +1038,12 @@ class EmployeeAttendance(Document):
                     data.day_type = "Weekly Off"
                 elif data.weekday == 1:
                     data.day_type = "Weekday"
-                elif data.public_holiday == 1:
+                
+                if data.day_type == "Public Holiday":
+                    data.public_holiday = 1
+                
+
+                if data.public_holiday == 1:
                     data.day_type = "Public Holiday"
                 
                 if data.day_type == "Weekly Off":
@@ -1126,6 +1187,7 @@ class EmployeeAttendance(Document):
                                         if isinstance(check_out_1_str, timedelta):
                                             check_out_1_time = (datetime.min + check_out_1_time).time()
                                             check_out_1_str = check_out_1_time.strftime("%H:%M:%S")
+                                            
 
                                         
 
@@ -1311,6 +1373,7 @@ class EmployeeAttendance(Document):
                                 time_difference1 = datetime.strptime(data.early_difference1, "%H:%M:%S")
                                 time_difference_delta1 = timedelta(hours=time_difference1.hour, minutes=time_difference1.minute, seconds=time_difference1.second)
 
+
                             except ValueError as e:
                                 print(f"Error parsing time: {e}")
                         
@@ -1332,6 +1395,13 @@ class EmployeeAttendance(Document):
                                 if isinstance(record.to_time, timedelta):
                                     record.to_time = (datetime.min + record.to_time).time()
 
+                                if data.shift_out is not None:
+                                    if isinstance(data.shift_out, str):
+                                        shift_time = datetime.strptime(data.shift_out, "%H:%M:%S").time()
+                                    elif isinstance(data.shift_out, timedelta):
+                                        shift_time = (datetime.min + data.shift_out).time()
+                                
+
                                 if check_out_1_time is not None:
                                     # print(f"Type of check_out_1_time: {type(check_out_1_time)}")
                                     # frappe.log_error(f"Type of check_out_1_time: {type(check_out_1_time)}")
@@ -1346,14 +1416,21 @@ class EmployeeAttendance(Document):
                                         # Convert timedelta to time
                                         check_out_1_time = (datetime.min + check_out_1_time).time()
                                     
-                                    # print(f"Type of check_out_1_time after conversion: {type(check_out_1_time)}")
-                                    # frappe.log_error(f"Type of check_out_1_time after conversion: {type(check_out_1_time)}")
-
-
-
 
                                     # if isinstance(check_out_1_time, time):   
                                     if record.type == "Weekday":
+                                            if check_out_1_time < shift_time:
+                                                data.early = 1
+                                                # Convert both times to datetime objects to calculate the difference
+                                                check_out_datetime = datetime.combine(datetime.today(), check_out_1_time)
+                                                shift_datetime = datetime.combine(datetime.today(), shift_time)
+                                                
+                                                # Calculate the early going hours as a timedelta
+                                                early_going_timedelta = shift_datetime - check_out_datetime
+                                                
+                                                # Store the result as hours, minutes, and seconds in early_going_hours
+                                                data.early_going_hours = str(early_going_timedelta)
+
                                         
 
                                             if record.from_time > record.to_time:
@@ -2241,17 +2318,50 @@ class EmployeeAttendance(Document):
                     else:
                         if data.late_coming_hours:
                             total_late_coming_hours = total_late_coming_hours + data.late_coming_hours
+
+
+
+                    # if day_data.early_slab and data.early_going_hours:
+                    #     esm = frappe.get_doc("Early Slab", day_data.early_slab)
+                    #     if data.early_going_hours > timedelta(hours=0,minutes=int(esm.early_slab_minutes)):
+                    #         data.early_going_hours = data.early_going_hours - timedelta(hours=0,minutes=int(esm.early_slab_minutes))
+                    #         prev_hours = None
+                    #         for lb in esm.early_details:
+                    #             l_hrs = str(lb.actual_hours).split(".")[0]
+                    #             l_mnt = str(lb.actual_hours).split(".")[1]
+                    #             l_mnt  = "."+l_mnt
+                    #             l_mnt = float(l_mnt)*60
+                    #             l_actual_hours = timedelta(hours=int(l_hrs),minutes=int(l_mnt))
+                    #             if data.early_going_hours > l_actual_hours:
+                    #                 prev_hours = lb.counted_hours
+                    #             elif data.early_going_hours == l_actual_hours:
+                    #                 prev_hours = lb.counted_hours
+                    #                 break
+                    #             else:
+                    #                 break
+                    #         if prev_hours:
+                    #             l_hrs = str(prev_hours).split(".")[0]
+                    #             l_mnt = str(prev_hours).split(".")[1]
+                    #             l_mnt  = "."+l_mnt
+                    #             l_mnt = float(l_mnt)*60
+                    #             l_counted_hours = timedelta(hours=int(l_hrs),minutes=int(l_mnt))
+                    #             data.early_going_hours = l_counted_hours
+                    #         total_early_going_hrs = total_early_going_hrs + data.early_going_hours
+                    # else:
+                    #     if data.early_going_hours:
+                    #         total_early_going_hrs = total_early_going_hrs + data.early_going_hours
                     if day_data.early_slab and data.early_going_hours:
                         esm = frappe.get_doc("Early Slab", day_data.early_slab)
-                        if data.early_going_hours > timedelta(hours=0,minutes=int(esm.early_slab_minutes)):
-                            data.early_going_hours = data.early_going_hours - timedelta(hours=0,minutes=int(esm.early_slab_minutes))
+                        if data.early_going_hours > timedelta(hours=0, minutes=int(esm.early_slab_minutes)):
+                            data.early_going_hours -= timedelta(hours=0, minutes=int(esm.early_slab_minutes))
                             prev_hours = None
                             for lb in esm.early_details:
                                 l_hrs = str(lb.actual_hours).split(".")[0]
                                 l_mnt = str(lb.actual_hours).split(".")[1]
-                                l_mnt  = "."+l_mnt
-                                l_mnt = float(l_mnt)*60
-                                l_actual_hours = timedelta(hours=int(l_hrs),minutes=int(l_mnt))
+                                l_mnt = "." + l_mnt
+                                l_mnt = float(l_mnt) * 60
+                                l_actual_hours = timedelta(hours=int(l_hrs), minutes=int(l_mnt))
+                                
                                 if data.early_going_hours > l_actual_hours:
                                     prev_hours = lb.counted_hours
                                 elif data.early_going_hours == l_actual_hours:
@@ -2259,17 +2369,34 @@ class EmployeeAttendance(Document):
                                     break
                                 else:
                                     break
+
                             if prev_hours:
                                 l_hrs = str(prev_hours).split(".")[0]
                                 l_mnt = str(prev_hours).split(".")[1]
-                                l_mnt  = "."+l_mnt
-                                l_mnt = float(l_mnt)*60
-                                l_counted_hours = timedelta(hours=int(l_hrs),minutes=int(l_mnt))
+                                l_mnt = "." + l_mnt
+                                l_mnt = float(l_mnt) * 60
+                                l_counted_hours = timedelta(hours=int(l_hrs), minutes=int(l_mnt))
                                 data.early_going_hours = l_counted_hours
-                            total_early_going_hrs = total_early_going_hrs + data.early_going_hours
+                        
+                        # Ensure data.early_going_hours is a timedelta before adding
+                        if isinstance(data.early_going_hours, str):
+                            # Convert to timedelta from string format
+                            h, m, s = map(int, data.early_going_hours.split(':'))
+                            data.early_going_hours = timedelta(hours=h, minutes=m, seconds=s)
+                            
+                        total_early_going_hrs += data.early_going_hours
                     else:
                         if data.early_going_hours:
-                            total_early_going_hrs = total_early_going_hrs + data.early_going_hours
+                            # Ensure data.early_going_hours is a timedelta
+                            if isinstance(data.early_going_hours, str):
+                                # Convert to timedelta from string format
+                                h, m, s = map(int, data.early_going_hours.split(':'))
+                                data.early_going_hours = timedelta(hours=h, minutes=m, seconds=s)
+                            
+                            total_early_going_hrs += data.early_going_hours
+
+                # Store total early going hours in the parent doctype
+                self.total_early_going_hours = str(total_early_going_hrs)
                     
                 
                 if holiday_flag:
@@ -2469,6 +2596,6 @@ def get_holidays_for_employee(
 	if only_non_weekly:
 		filters["weekly_off"] = False
 
-	holidays = frappe.get_all("Holiday", fields=["description","public_holiday", "holiday_date"], filters=filters)
+	holidays = frappe.get_all("Holiday", fields=["description","public_holiday", "weekly_off","holiday_date"], filters=filters)
 
 	return holidays
