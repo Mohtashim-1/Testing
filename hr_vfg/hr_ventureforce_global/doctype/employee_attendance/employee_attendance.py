@@ -108,10 +108,26 @@ class EmployeeAttendance(Document):
                 total_early_goings += 1
             
             if data.early_going_hours:
-                # If the value is a string (in 'HH:MM:SS' format), convert it to timedelta
-                if isinstance(data.early_going_hours, str):
-                    hours, minutes, seconds = map(int, data.early_going_hours.split(':'))
+                # If the value is a float, convert it to hours, minutes, and seconds
+                if isinstance(data.early_going_hours, float):
+                    hours = int(data.early_going_hours)
+                    minutes = int((data.early_going_hours - hours) * 60)
+                    seconds = int((((data.early_going_hours - hours) * 60) - minutes) * 60)
                     early_going_duration = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+
+                # If the value is a string and represents a float, convert it to hours, minutes, and seconds
+                elif isinstance(data.early_going_hours, str):
+                    try:
+                        # Check if it can be converted to a float
+                        float_hours = float(data.early_going_hours)
+                        hours = int(float_hours)
+                        minutes = int((float_hours - hours) * 60)
+                        seconds = int((((float_hours - hours) * 60) - minutes) * 60)
+                        early_going_duration = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+                    except ValueError:
+                        continue  # Skip if the string cannot be converted to float
+                    
+                # If the value is already a timedelta, use it directly
                 elif isinstance(data.early_going_hours, timedelta):
                     early_going_duration = data.early_going_hours
                 else:
@@ -120,7 +136,6 @@ class EmployeeAttendance(Document):
                 # Add to total early going hours
                 total_early_going_hours += early_going_duration
 
-        
         # Store the count of marked checkboxes in the parent doctype
         self.early_going = total_early_goings
         self.manual_absent = str(total_early_going_hours)
