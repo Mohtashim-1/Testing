@@ -7,6 +7,8 @@
  "field_order": [
   "type",
   "column_break_njjy",
+  "employee",
+  "column_break_zxzk",
   "department",
   "column_break_jngf",
   "qty"
@@ -46,12 +48,28 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Qty"
+  },
+  {
+   "default": "Loader",
+   "fieldname": "employee",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Employee",
+   "options": "\nStaff\nLoader"
+  },
+  {
+   "fieldname": "column_break_zxzk",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-11 18:06:35.101737",
+ "modified": "2024-10-18 02:18:45.692101",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Detail Meal",
