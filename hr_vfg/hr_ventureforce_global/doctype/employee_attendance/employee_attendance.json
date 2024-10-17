@@ -31,10 +31,12 @@
   "total_absents",
   "lates_for_halfday",
   "total_early_goings",
+  "half_day_for_check_in",
   "cb18",
   "manual_absent",
   "lates_for_absent",
   "no_of_sundays",
+  "absent_for_check_in",
   "column_break_rpvn",
   "total_half_days",
   "late_comparision",
@@ -577,11 +579,21 @@
    "fieldname": "early_going",
    "fieldtype": "Float",
    "label": "Early Going"
+  },
+  {
+   "fieldname": "half_day_for_check_in",
+   "fieldtype": "Float",
+   "label": "Half Day For Check In"
+  },
+  {
+   "fieldname": "absent_for_check_in",
+   "fieldtype": "Float",
+   "label": "Absent For Check In "
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-10-13 21:20:22.358689",
+ "modified": "2024-10-18 00:18:26.032859",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

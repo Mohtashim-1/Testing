@@ -101,8 +101,45 @@ class EmployeeAttendance(Document):
         total_early_hours = 0
         total_early_goings = 0
         total_early_going_hours = timedelta()
+        self.half_day_for_check_in = 0
+        half_day_for_check_in = 0
+        mark_absent = 0
 
         for data in self.table1:
+            # set half day where check in not available
+            if data.check_in_1 is None:
+                if hr_settings.mark_half_day == 1:
+                    half_day_for_check_in += 1 
+                    self.half_day_for_check_in = half_day_for_check_in - hr_settings.threshould
+                else:
+                    self.half_day_for_check_in = 0
+                
+            # set absent where check in not available
+
+            if data.check_in_1 is None:
+                if hr_settings.mark_absent == 1:
+                    mark_absent += 1 
+                    self.absent_for_check_in = mark_absent - hr_settings.threshould
+                else:
+                    self.absent_for_check_in = 0
+            
+
+
+
+                # if hr_settings.mark_half_day == 1:
+                #     self.half_day_for_check_in += 1
+                # else:
+                #     self.half_day_for_check_in = 0
+
+            #     if hr_settings.mark_half_day == 1:
+            #         self.half_day_for_check_in += 1
+            #     else:
+            #         self.half_day_for_check_in = 1
+
+
+
+
+
             # Check if the 'early' checkbox is marked (1 means it's checked)
             if data.early == 1:
                 total_early_goings += 1
@@ -139,6 +176,8 @@ class EmployeeAttendance(Document):
         # Store the count of marked checkboxes in the parent doctype
         self.early_going = total_early_goings
         self.manual_absent = str(total_early_going_hours)
+        # self.present_days = 9
+    
 
 
 
@@ -918,6 +957,13 @@ class EmployeeAttendance(Document):
                     #     total_late_coming_hours = total_late_coming_hours + data.late_coming_hours
                 if data.half_day:
                     total_half_days += 1
+
+                # if data.check_in_1 is not None and data.check_in_1 != "":
+                #     if hr_settings.mark_half_day == 1:
+                #         total_half_days += 1
+
+                
+
               
                 if data.absent == 1:
                     self.total_absents +=1
@@ -925,13 +971,13 @@ class EmployeeAttendance(Document):
                     if data.absent == 1:
                         data.absent = 0
                         self.total_absents -=1
-                if data.absent == 0 and data.check_in_1:
+                
+                if data.absent == 0 and data.check_in_1 or data.check_out_1:
                     if holiday_flag:
                         if hr_settings.count_working_on_holiday_in_present_days == 1:
-                            present_days+=1
+                            present_days += 1
                     else:
-                     present_days+=1
-                
+                        present_days += 1
 
                 if total_time:    
                     total_hr_worked = total_hr_worked + total_time
@@ -1037,9 +1083,13 @@ class EmployeeAttendance(Document):
                     # data.approved_ot1 = None
                 if data.check_in_1 is None and data.check_out_1 is not None:
                     data.absent = 0
+                    self.total_absents -=1
+                    # self.present_days = 9
                     
                 if data.check_in_1 is not None and data.check_out_1 is None:
                     data.absent = 0
+                    # self.total_absents -=1
+                    # self.present_days +=1
                         
                 if data.weekly_off or data.public_holiday:
                     # If either is True, set weekly_off to 0 and weekday to 0
@@ -1979,11 +2029,12 @@ class EmployeeAttendance(Document):
                                 if isinstance(record_1.to_time, timedelta):
                                     record_1.to_time = (datetime.min + record_1.to_time).time()
                             
-                                if data.check_in_1:
+                                if data.check_in_1 and check_in_1_time is not None:
                                     if record_1.from_time < record_1.to_time:
                                         if isinstance(check_in_1_time, datetime):
                                             check_in_1_time = check_in_1_time.time()  # Convert to time
                                         # Shift crosses midnight
+
                                         if check_in_1_time < record_1.to_time:
                                             if threshould is not None:
                                                 # Convert threshould from float (hours) to timedelta
