@@ -65,6 +65,7 @@
   "night",
   "mark_absent",
   "extra_absent",
+  "holiday_adjustment",
   "column_break_29",
   "night_switch",
   "mark_half_day",
@@ -507,11 +508,17 @@
    "fieldname": "late_threshould",
    "fieldtype": "Data",
    "label": "Late Threshould"
+  },
+  {
+   "default": "0",
+   "fieldname": "holiday_adjustment",
+   "fieldtype": "Check",
+   "label": "Holiday Adjustment"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-10-13 19:02:58.188368",
+ "modified": "2024-10-18 16:13:28.793278",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
