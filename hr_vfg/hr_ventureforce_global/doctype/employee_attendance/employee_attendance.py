@@ -62,6 +62,7 @@ class EmployeeAttendance(Document):
         self.total_extra_duty_for_fullday = 0
         holidays = []
         hr_settings = frappe.get_single('V HR Settings')
+        compliance_settings = frappe.get_single('Compliance Settings')
         #try:
         month = self.get_month_no(self.month)
         year = int(self.year)
@@ -106,32 +107,34 @@ class EmployeeAttendance(Document):
         half_day_for_check_in = 0
         mark_absent = 0
 
-        def generate_random_time(shift_time, min_offset_minutes=5, max_offset_minutes=30):
-            """ 
-            Generates a random time by adding a random offset (in minutes) to the shift time.
-            The offset can be positive or negative to simulate early or late check-ins/outs.
-            """
-            if shift_time:  # Check if shift_time is not None or empty
-                shift_time_obj = datetime.strptime(shift_time, '%H:%M:%S')  # Convert string to datetime object
-                random_offset = random.randint(min_offset_minutes, max_offset_minutes) * random.choice([-1, 1])
-                random_time_obj = shift_time_obj + timedelta(minutes=random_offset)
-                
-                # Return time in the 'hh:mm:ss' format
-                return random_time_obj.strftime('%H:%M:%S')
-            else:
-                return None  # Return None if shift_time is not provided
 
-        # Inside your loop
-        for data in self.table1:
-            if data.check_in_1 is None or data.check_in_1 == "" or data.check_out_1 is None or data.check_out_1 == "":
-                # Generate random check-in and check-out times based on shift_in and shift_out
-                if data.shift_in:  # Check if shift_in is not None
-                    data.check_in_1 = generate_random_time(data.shift_in)
-                if data.shift_out:  # Check if shift_out is not None
-                    data.check_out_1 = generate_random_time(data.shift_out)
+        if compliance_settings.create_manual_check_in_and_check_out:
+            def generate_random_time(shift_time, min_offset_minutes=5, max_offset_minutes=30):
+                """ 
+                Generates a random time by adding a random offset (in minutes) to the shift time.
+                The offset can be positive or negative to simulate early or late check-ins/outs.
+                """
+                if shift_time:  # Check if shift_time is not None or empty
+                    shift_time_obj = datetime.strptime(shift_time, '%H:%M:%S')  # Convert string to datetime object
+                    random_offset = random.randint(min_offset_minutes, max_offset_minutes) * random.choice([-1, 1])
+                    random_time_obj = shift_time_obj + timedelta(minutes=random_offset)
+                    
+                    # Return time in the 'hh:mm:ss' format
+                    return random_time_obj.strftime('%H:%M:%S')
+                else:
+                    return None  # Return None if shift_time is not provided
 
-                # Log to ensure the logic is executing
-                frappe.log_error('Generated random times for check-in and check-out')
+            # Inside your loop
+            for data in self.table1:
+                if data.check_in_1 is None or data.check_in_1 == "" or data.check_out_1 is None or data.check_out_1 == "":
+                    # Generate random check-in and check-out times based on shift_in and shift_out
+                    if data.shift_in:  # Check if shift_in is not None
+                        data.check_in_1 = generate_random_time(data.shift_in)
+                    if data.shift_out:  # Check if shift_out is not None
+                        data.check_out_1 = generate_random_time(data.shift_out)
+
+                    # Log to ensure the logic is executing
+                    frappe.log_error('Generated random times for check-in and check-out')
 
         for data in self.table1:
             # set half day where check in not available
