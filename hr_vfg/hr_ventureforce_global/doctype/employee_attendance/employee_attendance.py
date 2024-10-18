@@ -889,7 +889,7 @@ class EmployeeAttendance(Document):
                                 data.early = 0 
                         elif (out_diff.total_seconds()/60) > float(day_data.max_half_day) and data.weekly_off==0 and data.public_holiday == 0:
                             if first_out_time < day_data.end_time:
-                                data.absent = 1
+                                data.absent = 0
                         else:
                             data.early = 0
                        
@@ -1119,6 +1119,8 @@ class EmployeeAttendance(Document):
                     data.absent = 0
                     self.total_absents -=1
                     # self.present_days = 9
+                
+                
                     
                 if data.check_in_1 is not None and data.check_out_1 is None:
                     data.absent = 0
@@ -1179,10 +1181,10 @@ class EmployeeAttendance(Document):
                 #         data.approved_ot1 = "00:00:00" 
                 # if data.check_in_1 == None:
                 #     data.approved_early_over_time = None
-                # if data.check_in_1 == None and data.check_out_1 != None:
-                #     data.absent = 0
-                # if data.check_in_1 != None and data.check_out_1 == None:
-                #     data.absent = 0
+                if data.check_in_1 == None and data.check_out_1 != None:
+                    data.absent = 0
+                if data.check_in_1 != None and data.check_out_1 == None:
+                    data.absent = 0
                 # if data.check_in_1:
                 #     data.approved_early_over_time = None
                 #     data.early_coming = None
