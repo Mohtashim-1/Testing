@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+import random
 from frappe.model.document import Document
 from frappe.model.naming import make_autoname
 from frappe import msgprint, _
@@ -104,6 +105,33 @@ class EmployeeAttendance(Document):
         self.half_day_for_check_in = 0
         half_day_for_check_in = 0
         mark_absent = 0
+
+        def generate_random_time(shift_time, min_offset_minutes=5, max_offset_minutes=30):
+            """ 
+            Generates a random time by adding a random offset (in minutes) to the shift time.
+            The offset can be positive or negative to simulate early or late check-ins/outs.
+            """
+            if shift_time:  # Check if shift_time is not None or empty
+                shift_time_obj = datetime.strptime(shift_time, '%H:%M:%S')  # Convert string to datetime object
+                random_offset = random.randint(min_offset_minutes, max_offset_minutes) * random.choice([-1, 1])
+                random_time_obj = shift_time_obj + timedelta(minutes=random_offset)
+                
+                # Return time in the 'hh:mm:ss' format
+                return random_time_obj.strftime('%H:%M:%S')
+            else:
+                return None  # Return None if shift_time is not provided
+
+        # Inside your loop
+        for data in self.table1:
+            if data.check_in_1 is None or data.check_in_1 == "" or data.check_out_1 is None or data.check_out_1 == "":
+                # Generate random check-in and check-out times based on shift_in and shift_out
+                if data.shift_in:  # Check if shift_in is not None
+                    data.check_in_1 = generate_random_time(data.shift_in)
+                if data.shift_out:  # Check if shift_out is not None
+                    data.check_out_1 = generate_random_time(data.shift_out)
+
+                # Log to ensure the logic is executing
+                frappe.log_error('Generated random times for check-in and check-out')
 
         for data in self.table1:
             # set half day where check in not available
@@ -420,6 +448,9 @@ class EmployeeAttendance(Document):
                     else:
                         diff = first_out_time - first_in_time
                     total_time = total_time + diff if total_time else diff
+                    
+
+            
                    
                 if data.check_in_1 and data.check_in_1 != data.check_out_1:
                     shift = None
@@ -1124,6 +1155,17 @@ class EmployeeAttendance(Document):
                     data.late_coming_hours = None
                     data.short_hours = 0
                 
+
+                
+                    
+                    
+                    
+
+                # for data in self.table1:  # Assuming 'dataset' contains your records
+                    # if (data.check_in_1 is None or data.check_in_1 == "") and (data.check_out_1 is None or data.check_out_1 == ""):
+                    #     # Generate random check-in and check-out times based on shift_in and shift_out
+                    #     data.check_in_1 = generate_random_time(data.shift_in)
+                    #     data.check_out_1 = generate_random_time(data.shift_out)
                 
                     
                     
@@ -1288,26 +1330,45 @@ class EmployeeAttendance(Document):
                                             
                                             difference1 = timedelta()
                                              
-                                            if check_out_1_time < shift_out_time and data.over_time_type != "Weekly Off":
-                                                check_out_1_time += timedelta(days=1)
-                                                difference1 = check_out_1_time - shift_out_time
-                                            
+                                            # if check_out_1_time < shift_out_time and data.over_time_type != "Weekly Off":
+                                            #     if data.early == 0:
+                                            #         # check_out_1_time += timedelta(days=1)
+                                            #         difference1 = check_out_1_time - shift_out_time
+                                            #     else:
+                                            #         difference1 = "1"
+                                            # case 1 # where checkout is greater than shift out
                                             if check_out_1_time > shift_out_time:
-                                                difference1 = check_out_1_time - shift_out_time
-                                            if data.over_time_type == "Weekly Off":
-                                                # difference1 = timedelta(hours=10, minutes=10, seconds=10)
-                                                difference1 = check_out_1_time - shift_in_time
+                                                data.difference1 = check_out_1_time - shift_out_time
+                                            elif check_out_1_time < shift_in_time:
+                                                check_out_1_time += timedelta(days=1)
+                                                data.difference1 = check_out_1_time - shift_out_time
+
+                                            else:
+                                                data.difference1 = ""
+
+
+
+                                                
+                                            # elif  data.early == 1:
+                                            #     difference1 = "123"
+
+                                            
+                                            # if check_out_1_time > shift_out_time:
+                                            #     difference1 = check_out_1_time - shift_out_time
+                                            # if data.over_time_type == "Weekly Off":
+                                            #     # difference1 = timedelta(hours=10, minutes=10, seconds=10)
+                                            #     difference1 = check_out_1_time - shift_in_time
                                             
                                             # # Get the total difference in seconds and break it down into hours, minutes, and seconds
-                                            total_seconds = int(difference1.total_seconds())
-                                            hours = total_seconds // 3600
-                                            minutes = (total_seconds % 3600) // 60
-                                            seconds = total_seconds % 60
+                                            # total_seconds = int(difference1.total_seconds())
+                                            # hours = total_seconds // 3600
+                                            # minutes = (total_seconds % 3600) // 60
+                                            # seconds = total_seconds % 60
                                             
-                                            # Format the time difference as HH:MM:SS
-                                            difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
-                                            data.difference1 = difference_str  # Assign the formatted difference to the data object
-                                            # data.difference1 = difference1
+                                            # # Format the time difference as HH:MM:SS
+                                            # difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
+                                            # data.difference1 = difference_str
+
                                         except ValueError as e:
                                             pass
                                     
