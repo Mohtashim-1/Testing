@@ -13,6 +13,7 @@
   "column_break_3",
   "check_in_1",
   "shift_in",
+  "total_time",
   "column_break_7",
   "check_out_1",
   "shift_out",
@@ -514,11 +515,16 @@
    "fieldname": "holiday_adjustment",
    "fieldtype": "Check",
    "label": "Holiday Adjustment"
+  },
+  {
+   "fieldname": "total_time",
+   "fieldtype": "Data",
+   "label": "Total Time"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-10-18 16:13:28.793278",
+ "modified": "2024-10-18 22:17:26.129777",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",

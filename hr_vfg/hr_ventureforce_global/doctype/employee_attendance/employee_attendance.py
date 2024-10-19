@@ -137,6 +137,7 @@ class EmployeeAttendance(Document):
                     frappe.log_error('Generated random times for check-in and check-out')
 
         for data in self.table1:
+            
             # set half day where check in not available
             if data.check_in_1 is None:
                 if hr_settings.mark_half_day == 1:
@@ -1344,12 +1345,15 @@ class EmployeeAttendance(Document):
                                             # case 1 # where checkout is greater than shift out
                                             if check_out_1_time > shift_out_time:
                                                 data.difference1 = check_out_1_time - shift_out_time
+                                                data.total_time = check_out_1_time - shift_out_time
                                             elif check_out_1_time < shift_in_time:
                                                 check_out_1_time += timedelta(days=1)
                                                 data.difference1 = check_out_1_time - shift_out_time
+                                                data.total_time = check_out_1_time - shift_out_time
 
                                             else:
                                                 data.difference1 = ""
+                                                data.total_time = check_out_1_time - shift_out_time
 
 
 
@@ -1376,6 +1380,8 @@ class EmployeeAttendance(Document):
 
                                         except ValueError as e:
                                             pass
+
+                                    
                                     
                                     if isinstance(shift_in_str, str) and isinstance(check_in_1_str, str):
                                         try:
