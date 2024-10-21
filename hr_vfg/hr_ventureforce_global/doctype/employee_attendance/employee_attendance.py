@@ -166,13 +166,13 @@ class EmployeeAttendance(Document):
                 
                 # Mark as absent due to threshold
                 if total_time_timedelta < absent_threshould_timedelta:
-                    data.absent_due_to_below_threshould = 1  
-                    data.half_day_due_to_below_threshould = 0
+                    data.absent_due_to_below_threshould = 0     
+                    data.half_day_due_to_below_threshould = 1
                     data.present_due_to_above_threshould = 0
                 # Mark half day due to threshold  
                 elif total_time_timedelta < half_day_timedelta:
-                    data.half_day_due_to_below_threshould = 1
-                    data.absent_due_to_below_threshould = 0 
+                    data.half_day_due_to_below_threshould = 0
+                    data.absent_due_to_below_threshould = 1 
                     data.present_due_to_above_threshould = 0 
                 # Mark  present due to threshold
                 elif total_time_timedelta >= present_timedelta:
