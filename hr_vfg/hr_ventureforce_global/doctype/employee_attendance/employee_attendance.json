@@ -41,14 +41,17 @@
   "total_half_days",
   "late_comparision",
   "early_for_halfday",
+  "half_day_threshould",
   "column_break_25",
   "no_of_nights",
   "total_working_days",
   "hours_worked",
+  "absent_threshould",
   "column_break_apit",
   "month_days",
   "total_working_hours",
   "total_weekly_off",
+  "present_threshould",
   "over_time_data_section",
   "early_ot",
   "early_sitting",
@@ -589,11 +592,26 @@
    "fieldname": "absent_for_check_in",
    "fieldtype": "Float",
    "label": "Absent For Check In "
+  },
+  {
+   "fieldname": "half_day_threshould",
+   "fieldtype": "Float",
+   "label": "Half Day Threshould"
+  },
+  {
+   "fieldname": "absent_threshould",
+   "fieldtype": "Float",
+   "label": "Absent Threshould"
+  },
+  {
+   "fieldname": "present_threshould",
+   "fieldtype": "Float",
+   "label": "Present Threshould"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-10-18 00:18:26.032859",
+ "modified": "2024-10-21 13:22:20.385336",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

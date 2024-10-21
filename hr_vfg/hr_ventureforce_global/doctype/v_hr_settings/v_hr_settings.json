@@ -19,6 +19,14 @@
   "double_overtime_after",
   "threshold_for_additional_hours",
   "working_day_fullday_overtime",
+  "attendance_threshould_section",
+  "absent_threshould",
+  "column_break_jwsc",
+  "half_day_threshould",
+  "column_break_foey",
+  "present_threshould",
+  "overtime_setting_section",
+  "overtime_round_off",
   "section_break_6",
   "auto_fetch_check_in",
   "8_column",
@@ -315,13 +323,52 @@
    "fieldname": "threshould_for_absent",
    "fieldtype": "Time",
    "label": "Threshould for Absent"
+  },
+  {
+   "fieldname": "attendance_threshould_section",
+   "fieldtype": "Section Break",
+   "label": "Attendance Threshould"
+  },
+  {
+   "fieldname": "absent_threshould",
+   "fieldtype": "Time",
+   "label": "Absent Threshould"
+  },
+  {
+   "fieldname": "half_day_threshould",
+   "fieldtype": "Time",
+   "label": "Half Day Threshould"
+  },
+  {
+   "fieldname": "present_threshould",
+   "fieldtype": "Time",
+   "label": "Present Threshould"
+  },
+  {
+   "fieldname": "column_break_jwsc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_foey",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overtime_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Overtime Setting"
+  },
+  {
+   "default": "0",
+   "fieldname": "overtime_round_off",
+   "fieldtype": "Check",
+   "label": "Overtime Round Off"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-18 22:13:59.378959",
+ "modified": "2024-10-21 17:02:23.537819",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "V HR Settings",
