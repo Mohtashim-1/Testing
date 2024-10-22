@@ -45,12 +45,16 @@
   "early_mark",
   "check_in_and_check_not_available_section",
   "check_not_marked",
+  "check_out_not_marked",
   "column_break_lplw",
   "threshould",
+  "check_out_threshould",
   "column_break_nyie",
   "mark_absent",
+  "mark_absent_check_out",
   "column_break_wewe",
   "mark_half_day",
+  "mark_half_day_check_out",
   "attendance_adjustment",
   "check_out_time_change",
   "short_leave_apply_on_halfday",
@@ -295,7 +299,7 @@
   {
    "fieldname": "threshould",
    "fieldtype": "Float",
-   "label": "Threshould"
+   "label": "Check In Threshould"
   },
   {
    "fieldname": "column_break_nyie",
@@ -305,7 +309,7 @@
    "default": "0",
    "fieldname": "mark_absent",
    "fieldtype": "Check",
-   "label": "Mark Absent",
+   "label": "Mark Absent Check In",
    "precision": "0"
   },
   {
@@ -316,7 +320,7 @@
    "default": "0",
    "fieldname": "mark_half_day",
    "fieldtype": "Check",
-   "label": "Mark Half Day",
+   "label": "Mark Half Day Check In",
    "precision": "0"
   },
   {
@@ -362,13 +366,38 @@
    "fieldname": "overtime_round_off",
    "fieldtype": "Check",
    "label": "Overtime Round Off"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_out_not_marked",
+   "fieldtype": "Check",
+   "label": "Check Out Not Marked"
+  },
+  {
+   "fieldname": "check_out_threshould",
+   "fieldtype": "Float",
+   "label": "Check Out Threshould "
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_absent_check_out",
+   "fieldtype": "Check",
+   "label": "Mark Absent Check Out ",
+   "precision": "0"
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_half_day_check_out",
+   "fieldtype": "Check",
+   "label": "Mark Half Day Check Out ",
+   "precision": "0"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-21 17:02:23.537819",
+ "modified": "2024-10-22 19:50:11.150958",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "V HR Settings",

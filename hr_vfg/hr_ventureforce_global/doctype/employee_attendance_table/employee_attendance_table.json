@@ -68,6 +68,14 @@
   "half_day_due_to_below_threshould",
   "column_break_matc",
   "present_due_to_above_threshould",
+  "check_in_and_check_out_missing_section",
+  "check_in_missing",
+  "half_day_mark_due_to_missing__check_in",
+  "absent_mark_due_to_missing_check_in",
+  "column_break_vcqt",
+  "check_out_missing",
+  "half_day_mark_due_to_missing_check_out",
+  "absent_mark_due_to_missing_check_out",
   "section_break_25",
   "night",
   "mark_absent",
@@ -556,11 +564,56 @@
   {
    "fieldname": "column_break_matc",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "check_in_and_check_out_missing_section",
+   "fieldtype": "Section Break",
+   "label": "Check In and Check Out Missing"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_in_missing",
+   "fieldtype": "Check",
+   "label": "Check In Missing"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_out_missing",
+   "fieldtype": "Check",
+   "label": "Check Out Missing "
+  },
+  {
+   "fieldname": "column_break_vcqt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "half_day_mark_due_to_missing__check_in",
+   "fieldtype": "Check",
+   "label": "Half Day Mark Due to Missing  Check In"
+  },
+  {
+   "default": "0",
+   "fieldname": "absent_mark_due_to_missing_check_in",
+   "fieldtype": "Check",
+   "label": "Absent Mark Due to Missing Check In "
+  },
+  {
+   "default": "0",
+   "fieldname": "half_day_mark_due_to_missing_check_out",
+   "fieldtype": "Check",
+   "label": "Half Day Mark Due to Missing Check Out"
+  },
+  {
+   "default": "0",
+   "fieldname": "absent_mark_due_to_missing_check_out",
+   "fieldtype": "Check",
+   "label": "Absent Mark Due to Missing Check Out"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-10-21 12:45:42.283995",
+ "modified": "2024-10-22 19:42:03.767639",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",

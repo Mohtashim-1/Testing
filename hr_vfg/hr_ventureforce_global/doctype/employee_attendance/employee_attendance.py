@@ -140,27 +140,33 @@ class EmployeeAttendance(Document):
                     # Log to ensure the logic is executing
                     frappe.log_error('Generated random times for check-in and check-out')
 
-        def str_to_timedelta(time_str):
-            # Parse the time string (format: HH:MM:SS)
-            time_parts = list(map(int, time_str.split(':')))
-            return timedelta(hours=time_parts[0], minutes=time_parts[1], seconds=time_parts[2])
+    
+        
 
         # get total time
         for data in self.table1:
             
-
             if data.check_in_1 and data.check_out_1:
-                check_in_1 = datetime.strptime(data.check_in_1,"%H:%M:%S")
-                check_out_1 = datetime.strptime(data.check_out_1,"%H:%M:%S")
-                time_difference = check_out_1 - check_in_1
-                # total_time += time_difference
+                def str_to_timedelta(time_str):
+                    if time_str:
+                        # Parse the time string (format: HH:MM:SS)
+                        time_parts = list(map(int, time_str.split(':')))
+                        return timedelta(hours=time_parts[0], minutes=time_parts[1], seconds=time_parts[2])
+                    else:
+                        return timedelta(0)  # Return a zero timedelta if the time string is None or empty
 
+                # Calculate the time difference between check-in and check-out
+                check_in_1 = datetime.strptime(data.check_in_1, "%H:%M:%S")
+                check_out_1 = datetime.strptime(data.check_out_1, "%H:%M:%S")
+                time_difference = check_out_1 - check_in_1
                 data.total_time = str(time_difference)
 
+                # Convert total_time and thresholds to timedelta
                 total_time_timedelta = str_to_timedelta(data.total_time)
-                absent_threshould_timedelta = str_to_timedelta(hr_settings.absent_threshould)
-                half_day_timedelta = str_to_timedelta(hr_settings.half_day_threshould)
-                present_timedelta = str_to_timedelta(hr_settings.present_threshould)
+                
+                absent_threshould_timedelta = str_to_timedelta(hr_settings.absent_threshould or "00:00:00")
+                half_day_timedelta = str_to_timedelta(hr_settings.half_day_threshould or "00:00:00")
+                present_timedelta = str_to_timedelta(hr_settings.present_threshould or "00:00:00")
 
 
                 
@@ -192,36 +198,30 @@ class EmployeeAttendance(Document):
 
 
         for data in self.table1:
-            
-            # set half day where check in not available
-            if data.check_in_1 is None:
-                if hr_settings.mark_half_day == 1:
-                    half_day_for_check_in += 1 
-                    self.half_day_for_check_in = half_day_for_check_in - hr_settings.threshould
-                else:
-                    self.half_day_for_check_in = 0
                 
-            # set absent where check in not available
+            if data.check_in_1 is None and data.check_out_1 is not None:
+                data.check_in_missing = 1
+                if hr_settings.check_not_marked == 1:
+                    if hr_settings.mark_absent == 1:
+                        data.absent_mark_due_to_missing_check_in = 1
+                    else:
+                        data.absent_mark_due_to_missing_check_in = 0
+                    if hr_settings.mark_half_day == 1:
+                        data.half_day_mark_due_to_missing__check_in = 1
+                    else:
+                        data.half_day_mark_due_to_missing__check_in = 0
 
-            if data.check_in_1 is None:
-                if hr_settings.mark_absent == 1:
-                    mark_absent += 1 
-                    self.absent_for_check_in = mark_absent - hr_settings.threshould
-                else:
-                    self.absent_for_check_in = 0
-            
-
-
-
-                # if hr_settings.mark_half_day == 1:
-                #     self.half_day_for_check_in += 1
-                # else:
-                #     self.half_day_for_check_in = 0
-
-            #     if hr_settings.mark_half_day == 1:
-            #         self.half_day_for_check_in += 1
-            #     else:
-            #         self.half_day_for_check_in = 1
+            if data.check_in_1 is not None and data.check_out_1 is  None:
+                data.check_out_missing = 1
+                if hr_settings.check_out_not_marked == 1:
+                    if hr_settings.mark_absent_check_out == 1:
+                        data.absent_mark_due_to_missing_check_out = 1
+                    else:
+                        data.absent_mark_due_to_missing_check_out = 0
+                    if hr_settings.mark_half_day_check_out == 1:
+                        data.half_day_mark_due_to_missing_check_out = 1
+                    else:
+                        data.half_day_mark_due_to_missing_check_out = 0
 
 
 
