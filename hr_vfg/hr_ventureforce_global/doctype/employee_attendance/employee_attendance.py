@@ -110,6 +110,25 @@ class EmployeeAttendance(Document):
         absent_threshould = 0
         half_day_threshould = 0 
         present_threshould = 0 
+        missing_absent_check_in = 0
+        missing_half_day_check_in = 0
+        missing_absent_check_out = 0
+        half_day_mark_due_to_missing_check_out = 0
+
+        for data in self.table1:
+            missing_absent_check_in += data.absent_mark_due_to_missing_check_in
+            missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in
+            missing_absent_check_out += data.absent_mark_due_to_missing_check_out
+            half_day_mark_due_to_missing_check_out += data.half_day_mark_due_to_missing_check_out
+
+        self.total_absent_check_in_missing_1 = missing_absent_check_in
+        self.total_absent_check_in_missing = missing_half_day_check_in
+        self.total_absent_missing_check_out = missing_absent_check_out
+        self.total_halfday_missing_check_out = half_day_mark_due_to_missing_check_out
+
+
+
+
 
 
         if compliance_settings.create_manual_check_in_and_check_out:
@@ -138,7 +157,7 @@ class EmployeeAttendance(Document):
                         data.check_out_1 = generate_random_time(data.shift_out)
 
                     # Log to ensure the logic is executing
-                    frappe.log_error('Generated random times for check-in and check-out')
+                    # frappe.log_error('Generated random times for check-in and check-out')
 
     
         
@@ -194,37 +213,72 @@ class EmployeeAttendance(Document):
         self.absent_threshould = half_day_threshould
         self.present_threshould = present_threshould
 
+        
+
+
+
                 
 
 
         for data in self.table1:
+            # pass
+
                 
-            if data.check_in_1 is None and data.check_out_1 is not None:
+            if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 is "" or data.check_out_1 is "" :
+                # Both are missing, set everything to 0
+                data.check_in_missing = 0
+                data.check_out_missing = 0
+                data.absent_mark_due_to_missing_check_in = 0
+                data.half_day_mark_due_to_missing__check_in = 0
+                data.absent_mark_due_to_missing_check_out = 0
+                data.half_day_mark_due_to_missing_check_out = 0
+
+            # Case 2: If only check_in_1 is None but check_out_1 is available
+            elif data.check_in_1 is None and data.check_out_1 is not None:
                 data.check_in_missing = 1
+                data.check_out_missing = 0  # check_out is available
                 if hr_settings.check_not_marked == 1:
                     if hr_settings.mark_absent == 1:
                         data.absent_mark_due_to_missing_check_in = 1
                     else:
                         data.absent_mark_due_to_missing_check_in = 0
+                        
                     if hr_settings.mark_half_day == 1:
                         data.half_day_mark_due_to_missing__check_in = 1
                     else:
                         data.half_day_mark_due_to_missing__check_in = 0
 
-            if data.check_in_1 is not None and data.check_out_1 is  None:
-                data.check_out_missing = 1
+                # Ensure check-out related fields are set to 0 since check_out_1 is present
+                data.absent_mark_due_to_missing_check_out = 0
+                data.half_day_mark_due_to_missing_check_out = 0
+
+            # Case 3: If only check_out_1 is None but check_in_1 is available
+            elif data.check_in_1 is not None and data.check_out_1 is None:
+                data.check_in_missing = 0
+                data.check_out_missing = 1  # check_out is missing
                 if hr_settings.check_out_not_marked == 1:
                     if hr_settings.mark_absent_check_out == 1:
                         data.absent_mark_due_to_missing_check_out = 1
                     else:
                         data.absent_mark_due_to_missing_check_out = 0
+                        
                     if hr_settings.mark_half_day_check_out == 1:
                         data.half_day_mark_due_to_missing_check_out = 1
                     else:
                         data.half_day_mark_due_to_missing_check_out = 0
+                else:
+                    data.absent_mark_due_to_missing_check_out = 0
+                    data.half_day_mark_due_to_missing_check_out = 0
 
-
-
+            # Case 4: If both check_in_1 and check_out_1 are present
+            else:
+                # Both check_in_1 and check_out_1 are available, set all missing marks to 0
+                data.check_in_missing = 0
+                data.check_out_missing = 0
+                data.absent_mark_due_to_missing_check_in = 0
+                data.half_day_mark_due_to_missing__check_in = 0
+                data.absent_mark_due_to_missing_check_out = 0
+                data.half_day_mark_due_to_missing_check_out = 0
 
 
             # Check if the 'early' checkbox is marked (1 means it's checked)
@@ -1594,26 +1648,35 @@ class EmployeeAttendance(Document):
                                     elif isinstance(data.shift_out, timedelta):
                                         shift_time = (datetime.min + data.shift_out).time()
 
-                                if data.check_out_1 is not None:
-                                    data.estimated_late = "99"
-                                    # Convert check_out_1 to a time object if it's not None
-                                    if isinstance(data.check_out_1, str):
-                                        check_out_1_time = datetime.strptime(data.check_out_1, '%H:%M:%S').time()
+                                if data.check_out_1 is not None and data.check_out_1.strip():
+                                    # data.estimated_late = "99"
+                                    
+                                    # Check if data.check_out_1 is a non-empty string before converting it
+                                    if isinstance(data.check_out_1, str) and data.check_out_1.strip():
+                                        # Attempt to convert string to time object
+                                        try:
+                                            check_out_1_time = datetime.strptime(data.check_out_1, '%H:%M:%S').time()
+                                        except ValueError:
+                                            # Handle case where the string is not in the expected format
+                                            frappe.throw(f"Invalid time format for check_out_1: {data.check_out_1}")
                                     elif isinstance(data.check_out_1, datetime):
                                         check_out_1_time = data.check_out_1.time()
                                     elif isinstance(data.check_out_1, timedelta):
                                         check_out_1_time = (datetime.min + data.check_out_1).time()
+                                    else:
+                                        # If check_out_1 is neither string, datetime, nor timedelta, log or handle the case
+                                        frappe.throw(f"Unsupported type for check_out_1: {type(data.check_out_1)} with value {data.check_out_1}")
                                 
-                                    frappe.log_error(
-                                    message=(
-                                        f"shift_time: {shift_time}, type: {type(shift_time)}\n"
-                                        f"check_out_1_time: {check_out_1_time}, type: {type(check_out_1_time)}\n"
-                                        f"check_out_1_time: {data.check_out_1}, type: {type(data.check_out_1)}\n"
-                                        f"record.from_time: {record.from_time}, type: {type(record.from_time)}\n"
-                                        f"record.to_time: {record.to_time}, type: {type(record.to_time)}"
-                                    ),
-                                    title=f"Date: {data.date}"
-)
+#                                     frappe.log_error(
+#                                     message=(
+#                                         f"shift_time: {shift_time}, type: {type(shift_time)}\n"
+#                                         f"check_out_1_time: {check_out_1_time}, type: {type(check_out_1_time)}\n"
+#                                         f"check_out_1_time: {data.check_out_1}, type: {type(data.check_out_1)}\n"
+#                                         f"record.from_time: {record.from_time}, type: {type(record.from_time)}\n"
+#                                         f"record.to_time: {record.to_time}, type: {type(record.to_time)}"
+#                                     ),
+#                                     title=f"Date: {data.date}"
+# )
 
                                     # Early leaving logic
                                     if record.type == "Weekday":
@@ -1684,7 +1747,8 @@ class EmployeeAttendance(Document):
                                                 # Calculate time_difference_multiplied
                                                 
                                                 if not isinstance(time_difference_delta11, timedelta):
-                                                    frappe.log_error("time_difference_delta is not a timedelta.")
+                                                    # frappe.log_error("time_difference_delta is not a timedelta.")
+                                                    pass
                                                     
                                                 else:
                                                     # Proceed with the calculations
@@ -2298,13 +2362,15 @@ class EmployeeAttendance(Document):
                             check_in_1_time_string = check_in_1
 
                         # Ensure both time strings are not None
-                        if shift_in_time_string is None or check_in_1_time_string is None:
+                        if shift_in_time_string is None or check_in_1_time_string is None or shift_in_time_string == "" or check_in_1_time_string == "":
                             data.early_ot = None
                         else:
-                            # Convert time strings to datetime objects for comparison
-                            shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
-                            check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
-
+                            try:
+                                # Convert time strings to datetime objects for comparison
+                                shift_in_datetime = datetime.strptime(shift_in_time_string, "%H:%M:%S")
+                                check_in_1_datetime = datetime.strptime(check_in_1_time_string, "%H:%M:%S")
+                            except ValueError as e:
+                                frappe.throw(f"Invalid time format: {str(e)}")
 
                             # Calculate time difference if check_in_1 is earlier than shift_in
                             if check_in_1_datetime < shift_in_datetime:

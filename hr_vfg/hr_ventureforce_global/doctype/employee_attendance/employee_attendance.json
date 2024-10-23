@@ -52,6 +52,12 @@
   "total_working_hours",
   "total_weekly_off",
   "present_threshould",
+  "check_in_and_check_out_log_unavailable_section",
+  "total_absent_check_in_missing_1",
+  "total_absent_check_in_missing",
+  "column_break_syeq",
+  "total_absent_missing_check_out",
+  "total_halfday_missing_check_out",
   "over_time_data_section",
   "early_ot",
   "early_sitting",
@@ -607,11 +613,40 @@
    "fieldname": "present_threshould",
    "fieldtype": "Float",
    "label": "Present Threshould"
+  },
+  {
+   "fieldname": "check_in_and_check_out_log_unavailable_section",
+   "fieldtype": "Section Break",
+   "label": "Check In and Check Out Log Unavailable"
+  },
+  {
+   "fieldname": "total_absent_check_in_missing_1",
+   "fieldtype": "Float",
+   "label": "Total Absent Check In Missing"
+  },
+  {
+   "fieldname": "total_absent_check_in_missing",
+   "fieldtype": "Float",
+   "label": "Total Absent Check In Missing"
+  },
+  {
+   "fieldname": "column_break_syeq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_absent_missing_check_out",
+   "fieldtype": "Float",
+   "label": "Total Absent Missing Check Out "
+  },
+  {
+   "fieldname": "total_halfday_missing_check_out",
+   "fieldtype": "Float",
+   "label": "Total Halfday Missing Check Out "
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-10-21 13:22:20.385336",
+ "modified": "2024-10-22 23:54:19.020300",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
