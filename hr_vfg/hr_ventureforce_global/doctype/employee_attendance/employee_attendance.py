@@ -715,6 +715,7 @@ class EmployeeAttendance(Document):
                                             try:
                                                 # shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S").time()
                                                 check_out_1_time = datetime.strptime(check_out_1_str, "%H:%M:%S").time()
+                                                # check_in_1_time = datetime.strptime(check_in_1_str, "%H:%M:%S").time()
                                                 time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
                                                 time_difference_delta = timedelta(hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second)
                                                 
@@ -798,6 +799,7 @@ class EmployeeAttendance(Document):
 
                                                                 # Convert time to datetime objects
                                                                     check_out_1_datetime = datetime.combine(placeholder_date, check_out_1_time)
+                                                                    check_in_1_datetime = datetime.combine(placeholder_date, check_in_1_time)
                                                                     from_time_datetime = datetime.combine(placeholder_date, record.from_time)
                                                                     to_time_datetime = datetime.combine(placeholder_date, record.to_time)
                                                                     # frappe.log_error("Reached conversion section")
@@ -808,7 +810,8 @@ class EmployeeAttendance(Document):
                                                                     if check_out_1_datetime >= from_time_datetime or check_out_1_datetime <= to_time_datetime:
                                                                         data.estimated_late = "check_out_1_time"
                                                                         # Subtract datetime objects to get a timedelta
-                                                                        test = check_out_1_datetime - from_time_datetime
+                                                                        # test = check_out_1_datetime - from_time_datetime
+                                                                        test = check_out_1_datetime - check_in_1_datetime
                                                                         if isinstance(threshould, timedelta):
                                                                         
                                                                             threshold_timedelta = threshould
@@ -832,17 +835,36 @@ class EmployeeAttendance(Document):
                                                                             fixed_hour_timedelta = timedelta(0)
                                                                         data.fixed_hours = fixed_hour_timedelta
                                                                         time_difference_multiplied = test.total_seconds() * record.per_hour_calculation
-                                                                        data.estimated_late = "test.total_seconds()"
+                                                                        data.estimated_late = test.total_seconds()
                                                                  
-                                                                        data.estimated_late = "fixed_hour_timedelta"
+                                                                        data.estimated_late = time_difference_multiplied
                                                     
-                                                                        time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+                                                                        # time_difference_result = timedelta(seconds=time_difference_multiplied) + fixed_hour_timedelta
+                                                                        time_difference_result = timedelta(seconds=time_difference_multiplied)
                                                                         time_delta_difference = int(time_difference_result.total_seconds())
                                                                         hours = time_delta_difference // 3600
                                                                         minutes = (time_delta_difference % 3600) // 60
                                                                         seconds = time_delta_difference % 60
                                                                         difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
                                                                         data.estimated_late = difference_str1
+                                                                        log_title = "Data Processing Log"  # Keep the title brief to avoid length issues
+                                                                        log_message = f"""
+                                                                            date: {data.date},
+                                                                            check_in_1: {data.check_in_1},
+                                                                            check_out_1: {data.check_out_1},
+                                                                            check_out_1_datetime: {check_out_1_datetime},
+                                                                            from_time_datetime: {from_time_datetime},
+                                                                            test (timedelta): {test},
+                                                                            total_seconds: {test.total_seconds()},
+                                                                            threshold_timedelta: {threshold_timedelta},
+                                                                            fixed_hour_timedelta: {fixed_hour_timedelta},
+                                                                            time_difference_multiplied: {time_difference_multiplied},
+                                                                            final formatted time: {difference_str1}
+                                                                        """
+
+                                                                        # Log the error using the message body for detailed info
+                                                                        frappe.log_error(message=log_message, title=log_title)
+                                                                        # data.estimated_late = from_time_datetime
                                                                     else:
                                                                         data.estimated_late = "difference_str1"
 
