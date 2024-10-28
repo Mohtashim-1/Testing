@@ -139,7 +139,7 @@
    "fieldname": "absent_sandwich",
    "fieldtype": "Select",
    "label": "Absent Sandwich",
-   "options": "\nAbsent Before Holiday\nAbsent After Holiday\nAbsent Before and After Holiday"
+   "options": "\nAbsent Before Holiday\nAbsent After Holiday\nAbsent Before and After Holiday\nAbsent Before Or After Holiday"
   },
   {
    "fieldname": "column_break_2",
@@ -397,7 +397,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-22 19:50:11.150958",
+ "modified": "2024-10-28 14:29:27.075408",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "V HR Settings",

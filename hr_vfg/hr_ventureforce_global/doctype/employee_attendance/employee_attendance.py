@@ -514,6 +514,17 @@ class EmployeeAttendance(Document):
                                     self.total_absents+=1
                                     index+=1
                                     continue
+                        elif hr_settings.absent_sandwich in ['Absent Before Or After Holiday']:
+                            if previous and previous.absent == 1:
+                                p_date = previous.date
+                                lv = frappe.get_all("Leave Application", filters={"from_date":["<=",p_date],"to_date":[">=",p_date],"employee":self.employee,"status":"Approved"},fields=["*"])
+                                if len(lv) > 0:
+                                    pass
+                                else:
+                                    data.absent=1
+                                    self.total_absents+=1
+                                    index+=1
+                                    continue
           
             
             if not holiday_flag:
@@ -847,23 +858,23 @@ class EmployeeAttendance(Document):
                                                                         seconds = time_delta_difference % 60
                                                                         difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
                                                                         data.estimated_late = difference_str1
-                                                                        log_title = "Data Processing Log"  # Keep the title brief to avoid length issues
-                                                                        log_message = f"""
-                                                                            date: {data.date},
-                                                                            check_in_1: {data.check_in_1},
-                                                                            check_out_1: {data.check_out_1},
-                                                                            check_out_1_datetime: {check_out_1_datetime},
-                                                                            from_time_datetime: {from_time_datetime},
-                                                                            test (timedelta): {test},
-                                                                            total_seconds: {test.total_seconds()},
-                                                                            threshold_timedelta: {threshold_timedelta},
-                                                                            fixed_hour_timedelta: {fixed_hour_timedelta},
-                                                                            time_difference_multiplied: {time_difference_multiplied},
-                                                                            final formatted time: {difference_str1}
-                                                                        """
+                                                                        # log_title = "Data Processing Log"  # Keep the title brief to avoid length issues
+                                                                        # log_message = f"""
+                                                                        #     date: {data.date},
+                                                                        #     check_in_1: {data.check_in_1},
+                                                                        #     check_out_1: {data.check_out_1},
+                                                                        #     check_out_1_datetime: {check_out_1_datetime},
+                                                                        #     from_time_datetime: {from_time_datetime},
+                                                                        #     test (timedelta): {test},
+                                                                        #     total_seconds: {test.total_seconds()},
+                                                                        #     threshold_timedelta: {threshold_timedelta},
+                                                                        #     fixed_hour_timedelta: {fixed_hour_timedelta},
+                                                                        #     time_difference_multiplied: {time_difference_multiplied},
+                                                                        #     final formatted time: {difference_str1}
+                                                                        # """
 
                                                                         # Log the error using the message body for detailed info
-                                                                        frappe.log_error(message=log_message, title=log_title)
+                                                                        # frappe.log_error(message=log_message, title=log_title)
                                                                         # data.estimated_late = from_time_datetime
                                                                     else:
                                                                         data.estimated_late = "difference_str1"
@@ -2875,6 +2886,10 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
                 elif hr_settings.absent_sandwich == 'Absent Before and After Holiday' and self.table1[num].absent == 1:
                         ab_index_process = True
                         break
+                
+                elif hr_settings.absent_sandwich == 'Absent Before Or After Holiday':
+                        ab_index_process = True
+                        break
                 break
             
             
@@ -2892,6 +2907,8 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
                             if self.holiday_full_day_ot and self.holiday_full_day_ot != "":
                                 self.holiday_full_day_ot = float(self.holiday_full_day_ot or 0) - 1
                     self.total_absents += 1
+
+
 
 
 
