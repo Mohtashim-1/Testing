@@ -1,0 +1,190 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:MF-{YY}-{MM}-{DD}-{###}",
+ "creation": "2024-10-10 17:01:29.622576",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date",
+  "column_break_lfcd",
+  "posting_time",
+  "column_break_reuc",
+  "meal_type",
+  "column_break_enod",
+  "meal_provider",
+  "section_break_kxid",
+  "detail",
+  "total_contractor",
+  "section_break_ywrg",
+  "detail_meal",
+  "total_employees",
+  "total_section",
+  "total_qty",
+  "column_break_krvl",
+  "per_meal_rate",
+  "column_break_dqoj",
+  "total_amount",
+  "remarks_section",
+  "remarks",
+  "section_break_lukz",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_lukz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Meal Form",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Now",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_lfcd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Now",
+   "fieldname": "posting_time",
+   "fieldtype": "Time",
+   "label": "Posting Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_reuc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meal_type",
+   "fieldtype": "Link",
+   "label": "Meal Type",
+   "options": "Meal Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_kxid",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "detail",
+   "fieldtype": "Table",
+   "label": "Detail",
+   "options": "Detail"
+  },
+  {
+   "fieldname": "section_break_ywrg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "detail_meal",
+   "fieldtype": "Table",
+   "label": "Detail Meal",
+   "options": "Detail Meal"
+  },
+  {
+   "fieldname": "remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Remarks",
+   "reqd": 1
+  },
+  {
+   "fieldname": "meal_provider",
+   "fieldtype": "Link",
+   "label": "Meal Provider",
+   "link_filters": "[[\"Meal Provider\",\"active\",\"=\",1]]",
+   "options": "Meal Provider"
+  },
+  {
+   "fieldname": "column_break_enod",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_contractor",
+   "fieldtype": "Int",
+   "label": "Total Contractor"
+  },
+  {
+   "fieldname": "total_employees",
+   "fieldtype": "Int",
+   "label": "Total Employees"
+  },
+  {
+   "fieldname": "total_section",
+   "fieldtype": "Section Break",
+   "label": "Total"
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Int",
+   "label": "Total Qty"
+  },
+  {
+   "fieldname": "column_break_dqoj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Int",
+   "label": "Total Amount"
+  },
+  {
+   "fieldname": "column_break_krvl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "per_meal_rate",
+   "fieldtype": "Int",
+   "label": "Per Meal Rate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-19 13:29:01.658914",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Meal Form",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

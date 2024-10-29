@@ -1,0 +1,122 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:AAH-{YY}-{MM}-{###}",
+ "creation": "2024-10-18 14:29:35.980680",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date",
+  "get_data2",
+  "column_break_cmrq",
+  "absent_date",
+  "column_break_tdjj",
+  "adjustment_date",
+  "absent_date_section",
+  "absent_data",
+  "working_on_holiday_section",
+  "adjustment_data",
+  "section_break_dyen",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_dyen",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Absent Adjustment With Holiday",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "absent_date_section",
+   "fieldtype": "Section Break",
+   "label": "Absent Date"
+  },
+  {
+   "default": "Today",
+   "fieldname": "absent_date",
+   "fieldtype": "Date",
+   "label": "Absent Date"
+  },
+  {
+   "fieldname": "absent_data",
+   "fieldtype": "Table",
+   "label": "Absent Data",
+   "options": "Absent Adjustment CT"
+  },
+  {
+   "fieldname": "working_on_holiday_section",
+   "fieldtype": "Section Break",
+   "label": "Working On Holiday"
+  },
+  {
+   "default": "Today",
+   "fieldname": "adjustment_date",
+   "fieldtype": "Date",
+   "label": "Adjustment Date"
+  },
+  {
+   "fieldname": "adjustment_data",
+   "fieldtype": "Table",
+   "label": "Adjustment Data",
+   "options": "Absent Adjustment CT"
+  },
+  {
+   "fieldname": "column_break_cmrq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_tdjj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "get_data2",
+   "fieldtype": "Button",
+   "label": "Get Data"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-18 15:17:03.382755",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Absent Adjustment With Holiday",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

@@ -1,0 +1,420 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-03-31 18:19:38.145359",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "maximum_lates_for_absent",
+  "maximum_early_for_absent",
+  "holiday_halfday_ot",
+  "threshould_for_absent",
+  "2_column",
+  "maximum_lates_for_halfday",
+  "maximum_early_for_halfday",
+  "holiday_full_day_ot",
+  "working_day_halfday_overtime",
+  "column_break_2",
+  "double_overtime_after",
+  "threshold_for_additional_hours",
+  "working_day_fullday_overtime",
+  "attendance_threshould_section",
+  "absent_threshould",
+  "column_break_jwsc",
+  "half_day_threshould",
+  "column_break_foey",
+  "present_threshould",
+  "overtime_setting_section",
+  "overtime_round_off",
+  "section_break_6",
+  "auto_fetch_check_in",
+  "8_column",
+  "auto_fetch_check_out",
+  "payroll_period_section",
+  "period_from",
+  "column_break_4",
+  "period_to",
+  "absent_sandwich_section",
+  "absent_sandwich",
+  "halfday_sandwich_section",
+  "late_and_early_mark",
+  "column_break_11",
+  "late_mark",
+  "column_break_13",
+  "early_mark",
+  "check_in_and_check_not_available_section",
+  "check_not_marked",
+  "check_out_not_marked",
+  "column_break_lplw",
+  "threshould",
+  "check_out_threshould",
+  "column_break_nyie",
+  "mark_absent",
+  "mark_absent_check_out",
+  "column_break_wewe",
+  "mark_half_day",
+  "mark_half_day_check_out",
+  "attendance_adjustment",
+  "check_out_time_change",
+  "short_leave_apply_on_halfday",
+  "column_break_28",
+  "short_leave_no_allowed",
+  "short_leave_apply_on_late",
+  "column_break_30",
+  "short_leave_hours_allowed",
+  "section_break_23",
+  "night_shift_start_time",
+  "column_break_25",
+  "count_working_on_holiday_in_present_days",
+  "attendance_machines",
+  "attendance_machine"
+ ],
+ "fields": [
+  {
+   "fieldname": "maximum_lates_for_absent",
+   "fieldtype": "Int",
+   "label": "Maximum Lates For Absent"
+  },
+  {
+   "fieldname": "absent_sandwich_section",
+   "fieldtype": "Section Break",
+   "label": "Absent Sandwich"
+  },
+  {
+   "fieldname": "attendance_machines",
+   "fieldtype": "Section Break",
+   "label": "Attendance Machines"
+  },
+  {
+   "fieldname": "halfday_sandwich_section",
+   "fieldtype": "Section Break",
+   "label": "Halfday Sandwich"
+  },
+  {
+   "default": "0",
+   "fieldname": "late_and_early_mark",
+   "fieldtype": "Check",
+   "label": "Late and Early Mark"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "early_mark",
+   "fieldtype": "Check",
+   "label": "Early Mark"
+  },
+  {
+   "fieldname": "payroll_period_section",
+   "fieldtype": "Section Break",
+   "label": "Payroll Period "
+  },
+  {
+   "fieldname": "period_from",
+   "fieldtype": "Int",
+   "label": "Period From"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "period_to",
+   "fieldtype": "Int",
+   "label": "Period To"
+  },
+  {
+   "fieldname": "night_shift_start_time",
+   "fieldtype": "Time",
+   "label": "Night Shift Start Time"
+  },
+  {
+   "fieldname": "absent_sandwich",
+   "fieldtype": "Select",
+   "label": "Absent Sandwich",
+   "options": "\nAbsent Before Holiday\nAbsent After Holiday\nAbsent Before and After Holiday\nAbsent Before Or After Holiday"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "maximum_lates_for_halfday",
+   "fieldtype": "Int",
+   "label": "Maximum Lates For Halfday"
+  },
+  {
+   "fieldname": "double_overtime_after",
+   "fieldtype": "Float",
+   "label": "Double Overtime After Hours"
+  },
+  {
+   "fieldname": "2_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "auto_fetch_check_in",
+   "fieldtype": "Time",
+   "label": "Missing Auto Fetch Check In"
+  },
+  {
+   "fieldname": "8_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "auto_fetch_check_out",
+   "fieldtype": "Time",
+   "label": "Missing Auto Fetch Check Out"
+  },
+  {
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "late_mark",
+   "fieldtype": "Check",
+   "label": "Late  Mark"
+  },
+  {
+   "fieldname": "column_break_25",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Present",
+   "fieldname": "count_working_on_holiday_in_present_days",
+   "fieldtype": "Check",
+   "label": "Count Working on Holiday in Present Days",
+   "options": "\nPresent\nAbsent"
+  },
+  {
+   "fieldname": "threshold_for_additional_hours",
+   "fieldtype": "Int",
+   "label": "Additional Hours Threshold"
+  },
+  {
+   "fieldname": "holiday_halfday_ot",
+   "fieldtype": "Int",
+   "label": "Holiday Halfday Overtime"
+  },
+  {
+   "fieldname": "holiday_full_day_ot",
+   "fieldtype": "Int",
+   "label": "Holiday Full Day Overtime"
+  },
+  {
+   "fieldname": "attendance_adjustment",
+   "fieldtype": "Section Break",
+   "label": "Attendance Adjustment"
+  },
+  {
+   "fieldname": "check_out_time_change",
+   "fieldtype": "Select",
+   "label": "Check Out Time Change ",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "attendance_machine",
+   "fieldtype": "Table",
+   "options": "Attendance Machine"
+  },
+  {
+   "fieldname": "column_break_28",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "short_leave_apply_on_halfday",
+   "fieldtype": "Check",
+   "label": "Short Leave Apply on Halfday"
+  },
+  {
+   "fieldname": "column_break_30",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "short_leave_apply_on_late",
+   "fieldtype": "Check",
+   "label": "Short Leave Apply on Late"
+  },
+  {
+   "fieldname": "short_leave_hours_allowed",
+   "fieldtype": "Data",
+   "label": "Short Leave Hours Allowed"
+  },
+  {
+   "fieldname": "short_leave_no_allowed",
+   "fieldtype": "Data",
+   "label": "Short Leave No Allowed"
+  },
+  {
+   "fieldname": "maximum_early_for_absent",
+   "fieldtype": "Int",
+   "label": "Maximum Early For Absent"
+  },
+  {
+   "fieldname": "maximum_early_for_halfday",
+   "fieldtype": "Int",
+   "label": "Maximum Early For Halfday"
+  },
+  {
+   "description": "No. of hours",
+   "fieldname": "working_day_halfday_overtime",
+   "fieldtype": "Float",
+   "label": "Working Day Halfday Overtime"
+  },
+  {
+   "description": "No. of hours",
+   "fieldname": "working_day_fullday_overtime",
+   "fieldtype": "Float",
+   "label": "Working Day Fullday Overtime"
+  },
+  {
+   "fieldname": "check_in_and_check_not_available_section",
+   "fieldtype": "Section Break",
+   "label": "Check In and Check Not Available"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_not_marked",
+   "fieldtype": "Check",
+   "label": "Check In Not Marked"
+  },
+  {
+   "fieldname": "column_break_lplw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "threshould",
+   "fieldtype": "Float",
+   "label": "Check In Threshould"
+  },
+  {
+   "fieldname": "column_break_nyie",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_absent",
+   "fieldtype": "Check",
+   "label": "Mark Absent Check In",
+   "precision": "0"
+  },
+  {
+   "fieldname": "column_break_wewe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_half_day",
+   "fieldtype": "Check",
+   "label": "Mark Half Day Check In",
+   "precision": "0"
+  },
+  {
+   "fieldname": "threshould_for_absent",
+   "fieldtype": "Time",
+   "label": "Threshould for Absent"
+  },
+  {
+   "fieldname": "attendance_threshould_section",
+   "fieldtype": "Section Break",
+   "label": "Attendance Threshould"
+  },
+  {
+   "fieldname": "absent_threshould",
+   "fieldtype": "Time",
+   "label": "Absent Threshould"
+  },
+  {
+   "fieldname": "half_day_threshould",
+   "fieldtype": "Time",
+   "label": "Half Day Threshould"
+  },
+  {
+   "fieldname": "present_threshould",
+   "fieldtype": "Time",
+   "label": "Present Threshould"
+  },
+  {
+   "fieldname": "column_break_jwsc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_foey",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overtime_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Overtime Setting"
+  },
+  {
+   "default": "0",
+   "fieldname": "overtime_round_off",
+   "fieldtype": "Check",
+   "label": "Overtime Round Off"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_out_not_marked",
+   "fieldtype": "Check",
+   "label": "Check Out Not Marked"
+  },
+  {
+   "fieldname": "check_out_threshould",
+   "fieldtype": "Float",
+   "label": "Check Out Threshould "
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_absent_check_out",
+   "fieldtype": "Check",
+   "label": "Mark Absent Check Out ",
+   "precision": "0"
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_half_day_check_out",
+   "fieldtype": "Check",
+   "label": "Mark Half Day Check Out ",
+   "precision": "0"
+  }
+ ],
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-10-28 14:29:27.075408",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "V HR Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

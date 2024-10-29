@@ -1,0 +1,283 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2023-12-28 23:52:14.867623",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_2",
+  "approved_by",
+  "employee_details_section",
+  "employee_id",
+  "increment_type",
+  "column_break_3",
+  "employee_name",
+  "salary",
+  "column_break_6",
+  "department",
+  "designation",
+  "section_break_13",
+  "increment_date",
+  "column_break_15",
+  "increment_percentage",
+  "column_break_17",
+  "increment_amount",
+  "filters_section",
+  "employee_filter",
+  "department_filter",
+  "column_break_24",
+  "designation_filter",
+  "branch_filter",
+  "column_break_27",
+  "get_employee",
+  "section_break_21",
+  "salary_increment_table",
+  "section_break_29",
+  "total_increment",
+  "column_break_31",
+  "total_salary_after_increment",
+  "naming_series",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Data",
+   "label": "Approved By",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "employee_details_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Employee Details"
+  },
+  {
+   "fieldname": "employee_id",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Employee ID",
+   "options": "Salary Structure Assignment"
+  },
+  {
+   "fieldname": "increment_type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Increment Type",
+   "options": "Yearly Increment"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee_id.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee_id.base",
+   "fieldname": "salary",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Previous Salary",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee_id.department",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Department",
+   "options": "Department",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee_id.designation",
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Designation",
+   "options": "Designation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "increment_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Increment Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "increment_percentage",
+   "fieldtype": "Percent",
+   "label": "Increment Per %"
+  },
+  {
+   "fieldname": "column_break_17",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "increment_amount",
+   "fieldtype": "Float",
+   "label": "Increment Amount"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break",
+   "label": "Salary Increment Table"
+  },
+  {
+   "fieldname": "salary_increment_table",
+   "fieldtype": "Table",
+   "options": "Salary Increments CT"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "HR-SI-.YYYY.-"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Salary Increments",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Salary Increments",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "filters_section",
+   "fieldtype": "Section Break",
+   "label": "Filters"
+  },
+  {
+   "fieldname": "employee_filter",
+   "fieldtype": "Link",
+   "label": "Employee Filter",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "department_filter",
+   "fieldtype": "Link",
+   "label": "Department Filter",
+   "options": "Department"
+  },
+  {
+   "fieldname": "column_break_24",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "designation_filter",
+   "fieldtype": "Link",
+   "label": "Designation Filter",
+   "options": "Designation"
+  },
+  {
+   "fieldname": "branch_filter",
+   "fieldtype": "Link",
+   "label": "Branch Filter",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "column_break_27",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "get_employee",
+   "fieldtype": "Button",
+   "label": "Get Employee"
+  },
+  {
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_increment",
+   "fieldtype": "Currency",
+   "label": "Total Increment"
+  },
+  {
+   "fieldname": "column_break_31",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_salary_after_increment",
+   "fieldtype": "Currency",
+   "label": "Total Salary After Increment"
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-12-30 19:06:23.596465",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Salary Increments",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

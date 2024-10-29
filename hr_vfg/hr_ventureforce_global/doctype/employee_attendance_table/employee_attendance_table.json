@@ -1,0 +1,627 @@
+{
+ "actions": [],
+ "creation": "2018-12-17 18:01:18.515481",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_2",
+  "date",
+  "day",
+  "shift_start",
+  "shift_end",
+  "column_break_3",
+  "check_in_1",
+  "shift_in",
+  "total_time",
+  "column_break_7",
+  "check_out_1",
+  "shift_out",
+  "over_time_section",
+  "over_time_type",
+  "late_sitting",
+  "estimated_late",
+  "per_hours_calculation",
+  "over_time_amount",
+  "approved_ot1",
+  "difference1",
+  "data",
+  "fixed_hours",
+  "late_threshould",
+  "column_break_zbnu",
+  "over_time_type1",
+  "early_ot",
+  "estimate_early",
+  "early_per_hours_calculation",
+  "early_over_time_amount",
+  "approved_eot",
+  "early_difference1",
+  "column_break_ghsm",
+  "total_ot_hours",
+  "total_approved_ot",
+  "section_break_12",
+  "early_over_time",
+  "difference",
+  "late_coming_hours",
+  "early_coming",
+  "column_break_26",
+  "per_day_hour",
+  "early_going_hours",
+  "column_break_13",
+  "additional_hours",
+  "section_break_26",
+  "absent",
+  "early",
+  "holiday_night",
+  "column_break_19",
+  "half_day",
+  "public_holiday",
+  "weekday",
+  "column_break_25",
+  "late",
+  "weekly_off",
+  "late1",
+  "day_type",
+  "section_break_kicn",
+  "absent_due_to_below_threshould",
+  "column_break_ache",
+  "half_day_due_to_below_threshould",
+  "column_break_matc",
+  "present_due_to_above_threshould",
+  "check_in_and_check_out_missing_section",
+  "check_in_missing",
+  "half_day_mark_due_to_missing__check_in",
+  "absent_mark_due_to_missing_check_in",
+  "column_break_vcqt",
+  "check_out_missing",
+  "half_day_mark_due_to_missing_check_out",
+  "absent_mark_due_to_missing_check_out",
+  "section_break_25",
+  "night",
+  "mark_absent",
+  "extra_absent",
+  "holiday_adjustment",
+  "column_break_29",
+  "night_switch",
+  "mark_half_day",
+  "early_overtime",
+  "column_break_32",
+  "extra_working_hours_after_shift",
+  "mark_leave",
+  "section_break_31",
+  "ip",
+  "total_ot_amount",
+  "column_break_35",
+  "extra_absent_count",
+  "early_going",
+  "column_break_38",
+  "type",
+  "extra_duty_for_halfday",
+  "extra_duty_for_fullday",
+  "approved_early_over_time"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "check_in_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Check In"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 2,
+   "fieldname": "check_out_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Check Out"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
+  },
+  {
+   "columns": 2,
+   "fieldname": "difference",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Total Hours"
+  },
+  {
+   "fieldname": "column_break_26",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "late_sitting",
+   "fieldtype": "Time",
+   "label": "Late Sitting Hours"
+  },
+  {
+   "fieldname": "section_break_26",
+   "fieldtype": "Section Break"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "late",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Late"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "early",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Early Going"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "half_day",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Half Day"
+  },
+  {
+   "default": "0",
+   "fieldname": "absent",
+   "fieldtype": "Check",
+   "label": "Absent"
+  },
+  {
+   "default": "0",
+   "fieldname": "extra_working_hours_after_shift",
+   "fieldtype": "Check",
+   "label": "Extra Working Hours After Shift",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "default": "0",
+   "fieldname": "extra_absent",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Extra Absent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_ot_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total OT Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "extra_absent_count",
+   "fieldtype": "Int",
+   "label": "Extra Absent Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Data",
+   "label": "Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "early_going",
+   "fieldtype": "Int",
+   "label": "Early Going",
+   "read_only": 1
+  },
+  {
+   "fieldname": "per_day_hour",
+   "fieldtype": "Time",
+   "label": "Per Day Hour"
+  },
+  {
+   "fieldname": "early_going_hours",
+   "fieldtype": "Time",
+   "label": "Early Going Hours"
+  },
+  {
+   "fieldname": "late_coming_hours",
+   "fieldtype": "Time",
+   "label": "Late Coming Hours"
+  },
+  {
+   "description": "Extra Overtime",
+   "fieldname": "additional_hours",
+   "fieldtype": "Read Only",
+   "label": "Additional Hours"
+  },
+  {
+   "default": "0",
+   "fieldname": "night",
+   "fieldtype": "Check",
+   "label": "Night",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "night_switch",
+   "fieldtype": "Check",
+   "label": "Night Switch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ip",
+   "fieldtype": "Read Only",
+   "label": "IP"
+  },
+  {
+   "fieldname": "approved_ot1",
+   "fieldtype": "Data",
+   "label": "Approved OT"
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_absent",
+   "fieldtype": "Check",
+   "label": "Mark Absent",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_half_day",
+   "fieldtype": "Check",
+   "label": "Mark Half Day",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "mark_leave",
+   "fieldtype": "Check",
+   "label": "Mark Leave",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_19",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_25",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_31",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_35",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_38",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_29",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_32",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "public_holiday",
+   "fieldtype": "Check",
+   "label": "Public Holiday"
+  },
+  {
+   "default": "0",
+   "fieldname": "weekly_off",
+   "fieldtype": "Check",
+   "label": "Weekly Off"
+  },
+  {
+   "fieldname": "early_overtime",
+   "fieldtype": "Time",
+   "label": "Early Overtime"
+  },
+  {
+   "default": "0",
+   "fieldname": "holiday_night",
+   "fieldtype": "Check",
+   "label": "Holiday Night"
+  },
+  {
+   "fieldname": "extra_duty_for_halfday",
+   "fieldtype": "Float",
+   "label": "Extra Duty for Halfday"
+  },
+  {
+   "fieldname": "extra_duty_for_fullday",
+   "fieldtype": "Float",
+   "label": "Extra Duty for Fullday"
+  },
+  {
+   "default": "0",
+   "fieldname": "late1",
+   "fieldtype": "Check",
+   "label": "Late Compensation"
+  },
+  {
+   "fieldname": "early_coming",
+   "fieldtype": "Time",
+   "label": "Early Coming"
+  },
+  {
+   "fieldname": "shift_start",
+   "fieldtype": "Time",
+   "hidden": 1,
+   "label": "Shift Start"
+  },
+  {
+   "fieldname": "shift_end",
+   "fieldtype": "Time",
+   "hidden": 1,
+   "label": "Shift End"
+  },
+  {
+   "fieldname": "early_over_time",
+   "fieldtype": "Time",
+   "label": "Early Over Time"
+  },
+  {
+   "fieldname": "approved_early_over_time",
+   "fieldtype": "Time",
+   "label": "Approved Early Over Time"
+  },
+  {
+   "fieldname": "approved_eot",
+   "fieldtype": "Data",
+   "label": "Approved EOT"
+  },
+  {
+   "fieldname": "over_time_section",
+   "fieldtype": "Section Break",
+   "label": "Over Time"
+  },
+  {
+   "fieldname": "column_break_zbnu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ghsm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_ot_hours",
+   "fieldtype": "Data",
+   "label": "Total OT Hours"
+  },
+  {
+   "fieldname": "shift_in",
+   "fieldtype": "Data",
+   "label": "Shift In"
+  },
+  {
+   "fieldname": "shift_out",
+   "fieldtype": "Data",
+   "label": "Shift Out"
+  },
+  {
+   "fieldname": "early_ot",
+   "fieldtype": "Data",
+   "label": "Early OT"
+  },
+  {
+   "fieldname": "total_approved_ot",
+   "fieldtype": "Data",
+   "label": "Total Approved Over Time"
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Data",
+   "label": "Day"
+  },
+  {
+   "default": "0",
+   "fieldname": "weekday",
+   "fieldtype": "Check",
+   "label": "Weekday"
+  },
+  {
+   "fieldname": "estimated_late",
+   "fieldtype": "Data",
+   "label": "Estimated Late"
+  },
+  {
+   "fieldname": "over_time_type",
+   "fieldtype": "Data",
+   "label": "Over Time Type"
+  },
+  {
+   "fieldname": "over_time_amount",
+   "fieldtype": "Data",
+   "label": "Over Time Amount"
+  },
+  {
+   "fieldname": "per_hours_calculation",
+   "fieldtype": "Float",
+   "label": "Per Hours Calculation"
+  },
+  {
+   "fieldname": "day_type",
+   "fieldtype": "Select",
+   "label": "Day Type",
+   "options": "Weekly Off\nPublic Holiday\nWeekday"
+  },
+  {
+   "fieldname": "difference1",
+   "fieldtype": "Data",
+   "label": "Difference1"
+  },
+  {
+   "fieldname": "over_time_type1",
+   "fieldtype": "Data",
+   "label": "Over Time Type1"
+  },
+  {
+   "fieldname": "estimate_early",
+   "fieldtype": "Data",
+   "label": "Estimate Early"
+  },
+  {
+   "fieldname": "early_per_hours_calculation",
+   "fieldtype": "Float",
+   "label": "Early Per Hours Calculation"
+  },
+  {
+   "fieldname": "early_over_time_amount",
+   "fieldtype": "Data",
+   "label": "Early Over Time Amount"
+  },
+  {
+   "fieldname": "early_difference1",
+   "fieldtype": "Data",
+   "label": "Early Difference1"
+  },
+  {
+   "fieldname": "data",
+   "fieldtype": "Data",
+   "label": "data"
+  },
+  {
+   "fieldname": "fixed_hours",
+   "fieldtype": "Data",
+   "label": "Fixed Hours"
+  },
+  {
+   "fieldname": "late_threshould",
+   "fieldtype": "Data",
+   "label": "Late Threshould"
+  },
+  {
+   "default": "0",
+   "fieldname": "holiday_adjustment",
+   "fieldtype": "Check",
+   "label": "Holiday Adjustment"
+  },
+  {
+   "fieldname": "total_time",
+   "fieldtype": "Data",
+   "label": "Total Time"
+  },
+  {
+   "fieldname": "section_break_kicn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "absent_due_to_below_threshould",
+   "fieldtype": "Check",
+   "label": "Absent Due to Below Threshould"
+  },
+  {
+   "default": "0",
+   "fieldname": "half_day_due_to_below_threshould",
+   "fieldtype": "Check",
+   "label": "Half Day Due to Below Threshould"
+  },
+  {
+   "default": "0",
+   "fieldname": "present_due_to_above_threshould",
+   "fieldtype": "Check",
+   "label": "Present Due to Above Threshould"
+  },
+  {
+   "fieldname": "column_break_ache",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_matc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "check_in_and_check_out_missing_section",
+   "fieldtype": "Section Break",
+   "label": "Check In and Check Out Missing"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_in_missing",
+   "fieldtype": "Check",
+   "label": "Check In Missing"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_out_missing",
+   "fieldtype": "Check",
+   "label": "Check Out Missing "
+  },
+  {
+   "fieldname": "column_break_vcqt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "half_day_mark_due_to_missing__check_in",
+   "fieldtype": "Check",
+   "label": "Half Day Mark Due to Missing  Check In"
+  },
+  {
+   "default": "0",
+   "fieldname": "absent_mark_due_to_missing_check_in",
+   "fieldtype": "Check",
+   "label": "Absent Mark Due to Missing Check In "
+  },
+  {
+   "default": "0",
+   "fieldname": "half_day_mark_due_to_missing_check_out",
+   "fieldtype": "Check",
+   "label": "Half Day Mark Due to Missing Check Out"
+  },
+  {
+   "default": "0",
+   "fieldname": "absent_mark_due_to_missing_check_out",
+   "fieldtype": "Check",
+   "label": "Absent Mark Due to Missing Check Out"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-28 15:04:08.087271",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Employee Attendance Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

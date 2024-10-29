@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:over_time_slab_name",
+ "creation": "2024-09-11 16:09:57.419596",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "over_time_slab_name",
+  "column_break_bppj",
+  "standard_workinghours",
+  "early_over_time_slab_ct_section",
+  "early_overtime_slab",
+  "section_break_clkb",
+  "over_time_slab_ct",
+  "section_break_o3sx",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_o3sx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Over Time Slab",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "over_time_slab_ct",
+   "fieldtype": "Table",
+   "label": "Over Time Slab CT",
+   "options": "Over Time Slab CT"
+  },
+  {
+   "fieldname": "over_time_slab_name",
+   "fieldtype": "Data",
+   "label": "Over Time Slab Name",
+   "unique": 1
+  },
+  {
+   "default": "8",
+   "fieldname": "standard_workinghours",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Standard WorkingHours",
+   "options": "5\n5.5\n6\n6.5\n7\n7.5\n8\n8.5\n9\n9.5\n10\n10.5\n11\n11.5\n12\n12.5\n13\n13.5\n14\n14.5\n15",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_bppj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_clkb",
+   "fieldtype": "Section Break",
+   "label": "Late Over Time Slab"
+  },
+  {
+   "fieldname": "early_over_time_slab_ct_section",
+   "fieldtype": "Section Break",
+   "label": "Early Over Time Slab"
+  },
+  {
+   "fieldname": "early_overtime_slab",
+   "fieldtype": "Table",
+   "label": "Early Overtime Slab",
+   "options": "Early Overtime Slab"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-25 12:16:30.765543",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Over Time Slab",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}
