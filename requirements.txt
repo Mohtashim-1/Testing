@@ -1,0 +1,3 @@
+# frappe -- https://github.com/frappe/frappe is installed via 'bench init'
+zk==0.8.5
+pyzk==0.9

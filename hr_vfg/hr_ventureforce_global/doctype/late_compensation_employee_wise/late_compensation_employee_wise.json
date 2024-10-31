@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:LCA-{YY}-{MM}-{###}",
+ "creation": "2024-08-28 15:11:16.648205",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "month",
+  "get_data",
+  "column_break_vncd",
+  "employee",
+  "column_break_elwk",
+  "year",
+  "section_break_ikqn",
+  "late_coming_adjustment_ct",
+  "section_break_8v4e",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_8v4e",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Late Compensation Employee Wise",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "column_break_elwk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Link",
+   "label": "Year",
+   "options": "Year"
+  },
+  {
+   "fieldname": "column_break_vncd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "get_data",
+   "fieldtype": "Button",
+   "label": "Get Data"
+  },
+  {
+   "fieldname": "section_break_ikqn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "late_coming_adjustment_ct",
+   "fieldtype": "Table",
+   "label": "Late Coming Adjustment CT",
+   "options": "Late Compensation Employee Wise CT"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-28 15:29:47.665655",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Late Compensation Employee Wise",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

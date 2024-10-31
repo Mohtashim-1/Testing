@@ -1,0 +1,160 @@
+{
+ "actions": [],
+ "creation": "2023-12-28 23:57:01.797026",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "increment_date",
+  "column_break_7",
+  "employee",
+  "cb4",
+  "employee_name",
+  "column_break_6",
+  "joining_date",
+  "section_break_8",
+  "designation",
+  "column_break_10",
+  "department",
+  "column_break_12",
+  "increment_type",
+  "section_break_14",
+  "previous_salary",
+  "column_break_4",
+  "increment_per",
+  "column_break_18",
+  "increment_amount",
+  "column_break_20",
+  "after_increment_salary"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "increment_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Designation"
+  },
+  {
+   "fetch_from": "employee.date_of_joining",
+   "fieldname": "joining_date",
+   "fieldtype": "Date",
+   "label": "Joining Date"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.first_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department"
+  },
+  {
+   "fieldname": "increment_amount",
+   "fieldtype": "Currency",
+   "label": "Increment Amount"
+  },
+  {
+   "columns": 2,
+   "fieldname": "increment_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Increment Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_salary",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Previous Salary",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "increment_per",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Increment %",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "after_increment_salary",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "After Salary",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2023-12-29 02:38:43.509711",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Salary Increments CT",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

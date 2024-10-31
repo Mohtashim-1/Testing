@@ -1,0 +1,143 @@
+
+        <style type = "text/css">  
+                @media print {
+                    /* styles here */
+                    #tablerecord{
+                        width: 98%;
+                    }
+                    #mthead{
+                            color:white !important;
+                            border: 2px solid white !important;
+                            text-align: center !important;
+                            background-color: black !important;
+                    }
+                    #mfthead{
+                            color:white !important;
+                            font-weight: 900;
+
+                    }
+
+                }
+
+
+            #mthead{
+                    color:white !important;
+                    border: 2px solid white !important;
+                    text-align: center !important;
+                    background-color: black !important;
+            }
+            #mfthead{
+                    font-weight: 900;
+                    color:white !important;
+
+            }
+
+
+
+    </style>
+
+<h1 class="text-center">Textile Corporation</h1>
+
+<h2 class="text-center">{%= __("Salary Sheet end of ")%} {%=filters.month%} {%=" "%} {%=filters.year %}</h2>
+<table>
+
+
+  <tr>
+    <td width="0%"> <font size="0.1"><b>Department: &nbsp; {%=filters.department%}</b></td>
+    <td width="0%">&nbsp;</td>
+    <td width="0%">&nbsp;</td>
+    <td width="0%" align="center"><font size="0.1">Printed On {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</td>
+    <td width="0%">&nbsp;</td>
+    <td width="3%"><font size="0.1"><b>Date</b></td>
+    <td width="10%"><font size="0.1"><b>{%= frappe.datetime.get_today()%}</b></td>
+    
+    <td width="0%">&nbsp;</td>
+  </tr>
+</table>
+<hr>
+
+<table class=" table table-bordered table-sm " border = "" id = "tablerecord" style = "width: 98%">
+
+    <tr style="" id="">
+        <td style="width: 4%;" id="mthead" rowspan="2"><font size="0.1" id = "mfthead" >{%= __("Sr") %}</td>
+          <td style="width: 8%;" id="mthead" rowspan="2">
+            <font size="0.1" id="mfthead" >{%= __("Emp Code") %}</td>
+        <td style="width: 13%;"  id="mthead"  rowspan="2"><font size="0.1"id="mfthead" >{%= __("Name") %}</td>
+          <td style="width: 8%;"  id="mthead" rowspan="2"><font size="0.1"id="mfthead" >{%= __("Designation") %}</td>
+          <td style="width: 4%;"  id="mthead" rowspan="2"><font size="0.1"id="mfthead" >{%= __("P/H") %}</td>
+            <td style="width: 4%;"  id="mthead" rowspan="2"><font size="0.1"id="mfthead" >{%= __("H") %}</td>
+			<td style="width: 4%;"  id="mthead" rowspan="2"><font size="0.1"id="mfthead" >{%= __("A") %}</td>
+			<td style="width: 4%;"  id="mthead" rowspan="2"><font size="0.1"id="mfthead" >{%= __("M Days") %}</td>
+        <td style="width: 8%;"  id="mthead" rowspan="2"><font size="0.1"id="mfthead" >{%= __("M Salary") %}</td>
+
+          
+            <td style="width: 3%; "  id="mthead" rowspan="2" ><font size="0.1" id="mfthead" >{%= __("G Salary") %}</td>
+            <td style="width: 3%; "  id="mthead" rowspan="2" ><font size="0.1" id="mfthead" >{%= __("OT Hrs") %}</td>
+
+              <td style="width: 13% " id="mthead" colspan="3"><font size="0.1" id="mfthead" >{%= __("Addition") %}</td>
+
+   
+        <td style="width: 13% " id="mthead" colspan="4"><font size="0.1" id="mfthead" >{%= __("Deductions") %}</td>
+        <td style="width: 10%;" id="mthead" rowspan="2"><font size="0.1" id="mfthead" >{%= __("Nt Salary") %}</td>
+    </tr>
+		<tr>
+            
+      <td style="width: 6%;" id="mthead"  ><font size="0.1" id="mfthead" >{%= __("OT Amount") %}</td>
+        <td style="width: 6%; "  id="mthead"  ><font size="0.1" id="mfthead" >{%= __("Attn Allow") %}</td>
+        <td style="width: 4%" id="mthead" ><font size="0.1" id="mfthead" >{%= __("Food/Conv") %}</td>
+
+           
+            
+
+           
+        <th style="width: 5%;" id="mthead" ><font size="0.1" id="mfthead" >{%= __("Advance") %}</td>  
+          <th style="width: 5%;" id="mthead" ><font size="0.1" id="mfthead" >{%= __("Loan") %}</td>
+            <th style="width: 5%;" id="mthead" ><font size="0.1" id="mfthead" >{%= __("4 Days Ded") %}</td>
+              <th style="width: 5%;" id="mthead" ><font size="0.1" id="mfthead" >{%= __("L/S Leave Ded") %}</td>
+
+		</tr>
+	</thead>
+	<tbody>
+		{% for(var i=0, l=data.length; i<l; i++) { %}
+           
+        <tr>
+           
+                <td style="border-color: #000">{%= i+1 %}</td>
+                <td style="border-color: #000"><font size="0.4">
+                  {%= data[i].code %}
+                  {% if (i==(l-1)) { %}
+                     <b>Total</b>
+                  {% } %}
+                </td>
+                <td style="border-color: #000"><font size="0.1">{%= data[i].name %}</td>
+                  <td style="border-color: #000"><font size="0.1">{%= data[i].designation %}</td>
+                    <td style="border-color: #000"><font size="0.1">{%= data[i].present_days_holiday %}</td>
+                       <td style="border-color: #000"><font size="0.1">{%= data[i].holidays %}</td>
+					   <td style="border-color: #000"><font size="0.1">{%= data[i].absents %}</td>
+					   <td style="border-color: #000"><font size="0.1">{%= data[i].month_days %}</td>
+                  <td style="border-color: #000"><font size="0.1">{%= data[i].monthly_salary %}</td>
+
+                
+                  <td style="border-color: #000"><font size="0.1">{%= data[i].gross_salary %}</td>
+                <td style="border-color: #000"><font size="0.1">{%= data[i].ot_hours %}</td>
+
+                <td style="border-color: #000"><font size="0.1">{%= data[i].ot_amount %}</td>
+                <td style="border-color: #000"><font size="0.1">{%= data[i].fixed_fule %}</td>
+                <td style="border-color: #000"><font size="0.1">{%= data[i].project_special_allow %}</td>
+
+
+                <td style="border-color: #000"><font size="0.1">{%= data[i].advance %}</td>
+                <td style="border-color: #000"><font size="0.1">{%= data[i].loan %}</td>
+                <td style="border-color: #000"><font size="0.1">{%= data[i].days_ded %}</td>
+                <td style="border-color: #000"><font size="0.1">{%= data[i].late_short_ded %}</td>
+
+
+                <td style="border-color: #000"><font size="0.1">{%= data[i].net_salary %}</td>
+                 
+					
+			</tr>
+    {% } %}
+    
+	</tbody>
+</table>
+<p class="text-right text-muted"></p>

@@ -1,0 +1,164 @@
+{
+ "actions": [],
+ "creation": "2020-09-23 12:54:28.025600",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "day",
+  "late_mark",
+  "data_4",
+  "start_time",
+  "half_day",
+  "column_break_6",
+  "end_time",
+  "over_time_start",
+  "section_break_hsrh",
+  "over_time_slab",
+  "data_8",
+  "max_early",
+  "minimum_hours_for_present",
+  "column_break_12",
+  "max_half_day",
+  "minimum_hours_for_half_day",
+  "section_break_15",
+  "overtime_slabs",
+  "column_break_17",
+  "late_slab",
+  "column_break_19",
+  "early_slab"
+ ],
+ "fields": [
+  {
+   "fieldname": "day",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Day",
+   "options": "Monday\nTuesday\nWednesday\nThursday\nFriday\nSaturday\nSunday",
+   "search_index": 1
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "End Time"
+  },
+  {
+   "fieldname": "late_mark",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Late Mark",
+   "search_index": 1
+  },
+  {
+   "fieldname": "half_day",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Half Day",
+   "search_index": 1
+  },
+  {
+   "fieldname": "over_time_start",
+   "fieldtype": "Time",
+   "label": "Over Time"
+  },
+  {
+   "fieldname": "max_early",
+   "fieldtype": "Int",
+   "label": "Max Limit For Early Going"
+  },
+  {
+   "fieldname": "max_half_day",
+   "fieldtype": "Int",
+   "label": "Max Limit for Half Day"
+  },
+  {
+   "fieldname": "minimum_hours_for_half_day",
+   "fieldtype": "Float",
+   "label": "Minimum Hours For Half Day"
+  },
+  {
+   "fieldname": "minimum_hours_for_present",
+   "fieldtype": "Float",
+   "label": "Minimum Hours For Present"
+  },
+  {
+   "fieldname": "data_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "data_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "overtime_slabs",
+   "fieldtype": "Link",
+   "label": "Overtime Slabs",
+   "options": "Overtime Slab"
+  },
+  {
+   "fieldname": "column_break_17",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "late_slab",
+   "fieldtype": "Link",
+   "label": "Late Slab",
+   "options": "Late Slab"
+  },
+  {
+   "fieldname": "column_break_19",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "early_slab",
+   "fieldtype": "Link",
+   "label": "Early Slab",
+   "options": "Early Slab"
+  },
+  {
+   "fieldname": "section_break_hsrh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "over_time_slab",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Over Time Slab",
+   "options": "Over Time Slab"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2024-09-11 16:57:35.143565",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Shift Day",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
