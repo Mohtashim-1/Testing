@@ -115,6 +115,10 @@ class EmployeeAttendance(Document):
         half_day_mark_due_to_missing_check_out = 0
 
         for data in self.table1:
+            if data.check_in_1 is None and data.check_out_1 is None:
+                data.absent = 1
+
+        for data in self.table1:
             missing_absent_check_in += data.absent_mark_due_to_missing_check_in
             missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in
             missing_absent_check_out += data.absent_mark_due_to_missing_check_out
@@ -1059,9 +1063,18 @@ class EmployeeAttendance(Document):
                     # data.approved_ot1 = None
                 if data.check_in_1 is None and data.check_out_1 is not None:
                     data.absent = 0
+                if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 is "" and data.check_out_1 is "":
+                    data.absent = 1
+                    data.estimated_late = None
+                    data.total_time = None
+                    data.difference1 = None
+                if data.check_in_1 is None or data.check_out_1 is None or data.check_in_1 is "" or data.check_out_1 is "":
+                    data.estimated_late = None
+                    data.total_time = None
+                    data.difference1 = None
                     
-                if data.check_in_1 is not None and data.check_out_1 is None:
-                    data.absent = 0
+                # if data.check_in_1 is not None and data.check_out_1 is None:
+                #     data.absent = 0
                         
                 if data.weekly_off or data.public_holiday:
                     # If either is True, set weekly_off to 0 and weekday to 0
@@ -1574,6 +1587,14 @@ class EmployeeAttendance(Document):
                                                         if required_hours > total_time1:
                                                             difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
                                                             data.estimated_late = difference_str1
+                                                        else:
+                                                            data.estimated_late = None
+                                                    else:
+                                                        data.estimated_late = None
+                                                else:
+                                                    data.estimated_late = None
+                                            
+
 
                                                         # frappe.log_error(f"Calculated Estimated Late: {difference_str1}")
                                                         # log_message = (
@@ -1691,7 +1712,15 @@ class EmployeeAttendance(Document):
                                                         
                                                         if total_time1 > required_hours:
                                                             difference_str1 = f"{hours:02}:{minutes:02}:{seconds:02}"
-                                                            data.estimated_late = difference_str1
+                                                            data.estimated_late = difference_str
+                                                        else:
+                                                            data.estimated_late = ""
+                                                    else:
+                                                        data.estimated_late = ""
+                                                else:
+                                                    data.estimated_late = ""
+                                            
+
                                                         
                                                         # Combined log message
                                                         # log_message = (
