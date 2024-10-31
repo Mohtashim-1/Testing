@@ -7,19 +7,21 @@
  "engine": "InnoDB",
  "field_order": [
   "column_break_wals",
+  "over_time_threshold",
   "type",
   "column_break_bror",
   "from_time",
+  "per_hour_calculation",
   "column_break_xfek",
   "to_time",
+  "fixed_hour",
   "column_break_ynbh",
   "total_hours",
+  "required_hours",
+  "deduct_hours",
   "column_break_scvu",
   "formula",
-  "over_time_threshold",
-  "per_hour_calculation",
-  "fixed_hour",
-  "deduct_hours"
+  "maximum_over_time_limit_in_hours"
  ],
  "fields": [
   {
@@ -32,6 +34,7 @@
   },
   {
    "columns": 1,
+   "default": "1",
    "fieldname": "per_hour_calculation",
    "fieldtype": "Float",
    "label": "Per Hour Calculation",
@@ -99,7 +102,7 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Over Time Amount",
-   "options": "\nEmployee's Overtime Rate\nEmployee's Overtime Rate x 1.5\nEmployee's Overtime Rate x 2\nEmployee Full Day\nEmployee Full Day x 2"
+   "options": "\nEmployee's Overtime Rate\nEmployee's Overtime Rate x 1.5\nEmployee's Overtime Rate x 2\nEmployee Half Full Day\nEmployee Full Day\nEmployee Full Day x 2"
   },
   {
    "columns": 1,
@@ -125,12 +128,23 @@
    "fieldname": "deduct_hours",
    "fieldtype": "Time",
    "label": "Deduct Hours"
+  },
+  {
+   "fieldname": "maximum_over_time_limit_in_hours",
+   "fieldtype": "Int",
+   "label": "Maximum Over Time Limit (In Hours)",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "required_hours",
+   "fieldtype": "Time",
+   "label": "Required Hours"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-07 15:21:38.102399",
+ "modified": "2024-10-31 14:34:30.614055",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Over Time Slab CT",
