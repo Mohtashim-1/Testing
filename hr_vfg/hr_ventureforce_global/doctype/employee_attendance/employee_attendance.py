@@ -1026,6 +1026,8 @@ class EmployeeAttendance(Document):
                     # data.approved_ot1 = None
                 if data.check_in_1 is None and data.check_out_1 is not None:
                     data.absent = 0
+                if data.check_in_1 is "" and data.check_out_1 is "":
+                    data.absent = 1
                 
                 # if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 is "" and data.check_out_1 is "":
                 #     data.absent = 1
