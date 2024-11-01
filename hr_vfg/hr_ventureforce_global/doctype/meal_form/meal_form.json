@@ -9,21 +9,27 @@
   "posting_date",
   "column_break_lfcd",
   "posting_time",
+  "column_break_odwe",
+  "date",
   "column_break_reuc",
   "meal_type",
   "column_break_enod",
   "meal_provider",
   "section_break_kxid",
   "detail",
-  "total_contractor",
   "section_break_ywrg",
   "detail_meal",
-  "total_employees",
   "total_section",
+  "total_contractor",
+  "column_break_mgno",
+  "total_employees",
+  "column_break_rdou",
   "total_qty",
+  "column_break_dlme",
+  "total_contract_amount",
+  "column_break_mumf",
+  "total_employee_amount",
   "column_break_krvl",
-  "per_meal_rate",
-  "column_break_dqoj",
   "total_amount",
   "remarks_section",
   "remarks",
@@ -111,7 +117,8 @@
    "fieldtype": "Link",
    "label": "Meal Provider",
    "link_filters": "[[\"Meal Provider\",\"active\",\"=\",1]]",
-   "options": "Meal Provider"
+   "options": "Meal Provider",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_enod",
@@ -120,47 +127,80 @@
   {
    "fieldname": "total_contractor",
    "fieldtype": "Int",
-   "label": "Total Contractor"
+   "label": "Total Contractor Qty",
+   "read_only": 1
   },
   {
    "fieldname": "total_employees",
    "fieldtype": "Int",
-   "label": "Total Employees"
+   "label": "Total Employees Qty",
+   "read_only": 1
   },
   {
    "fieldname": "total_section",
    "fieldtype": "Section Break",
-   "label": "Total"
+   "label": "More Info"
   },
   {
    "fieldname": "total_qty",
    "fieldtype": "Int",
-   "label": "Total Qty"
-  },
-  {
-   "fieldname": "column_break_dqoj",
-   "fieldtype": "Column Break"
+   "label": "Total Qty",
+   "read_only": 1
   },
   {
    "fieldname": "total_amount",
    "fieldtype": "Int",
-   "label": "Total Amount"
+   "label": "Total Amount",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_krvl",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "per_meal_rate",
-   "fieldtype": "Int",
-   "label": "Per Meal Rate"
+   "fieldname": "column_break_mgno",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rdou",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_odwe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_dlme",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_contract_amount",
+   "fieldtype": "Float",
+   "label": "Total Contract Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_employee_amount",
+   "fieldtype": "Float",
+   "label": "Total Employee Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_mumf",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-19 13:29:01.658914",
+ "modified": "2024-11-01 14:57:14.574970",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Meal Form",
