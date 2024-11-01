@@ -1521,7 +1521,8 @@ class EmployeeAttendance(Document):
                                                                     seconds = 00
 
                                                         # Format the result as a string in hh:mm:ss format
-                                                        if required_hours > total_time1:
+                                                        # if required_hours > total_time1:
+                                                        if total_time1 > required_hours:
                                                             difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
                                                             data.estimated_late = difference_str1
 
@@ -1636,7 +1637,8 @@ class EmployeeAttendance(Document):
                                                                 else:
                                                                     seconds = 00
 
-                                                        if required_hours > total_time1:
+                                                        # if required_hours > total_time1:
+                                                        if total_time1 > required_hours:
                                                             difference_str1 = f"{hours}:{minutes:02}:{seconds:02}"
                                                             data.estimated_late = difference_str1
                                                         

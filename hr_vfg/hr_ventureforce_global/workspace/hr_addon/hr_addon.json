@@ -389,7 +389,7 @@
    "is_query_report": 0,
    "label": "Early Over Time Employee Wise",
    "link_count": 0,
-   "link_to": "Early Compensation",
+   "link_to": "Early Overtime Employee Wise",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -434,7 +434,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-10-01 11:35:03.857014",
+ "modified": "2024-11-02 02:53:07.713105",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
