@@ -45,6 +45,7 @@ class EmployeeAttendance(Document):
         holiday_halfday_ot =0
         holiday_full_day_ot =0
         self.no_of_holiday_night = 0
+        total_absents = 0
         self.total_absents = 0
         # self.late_comparision = 0
         self.late_comparision = 0
@@ -115,6 +116,10 @@ class EmployeeAttendance(Document):
 
 
         for data in self.table1:
+            if data.absent == 1:
+                total_absents += data.absent
+                self.total_absents = total_absents
+                
             if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 is "" or data.check_out_1 is "" :
                 # Both are missing, set everything to 0
                 data.check_in_missing = 0
@@ -256,7 +261,7 @@ class EmployeeAttendance(Document):
 
         # Store the count of marked checkboxes in the parent doctype
         self.early_going = total_early_goings
-        self.manual_absent = str(total_early_going_hours)
+        # self.manual_absent = str(total_early_going_hours)
 
 
 
@@ -416,13 +421,13 @@ class EmployeeAttendance(Document):
             
             if getdate(data.date) < getdate(frappe.db.get_value("Employee",self.employee,"date_of_joining")):
                 data.absent=1
-                self.total_absents+=1
+                # self.total_absents+=1
                 index+=1
                 continue
             if frappe.db.get_value("Employee",self.employee,"relieving_date"):
                 if getdate(data.date) > getdate(frappe.db.get_value("Employee",self.employee,"relieving_date")):
                     data.absent=1
-                    self.total_absents+=1
+                    # self.total_absents+=1
                     index+=1
                     continue
             
@@ -449,7 +454,7 @@ class EmployeeAttendance(Document):
                                     pass
                                 else:
                                     data.absent=1
-                                    self.total_absents+=1
+                                    # self.total_absents+=1
                                     index+=1
                                     continue
                         elif hr_settings.absent_sandwich in ['Absent Before Or After Holiday']:
@@ -460,7 +465,7 @@ class EmployeeAttendance(Document):
                                     pass
                                 else:
                                     data.absent=1
-                                    self.total_absents+=1
+                                    # self.total_absents+=1
                                     index+=1
                                     continue
           
@@ -805,7 +810,8 @@ class EmployeeAttendance(Document):
                                 data.early = 0 
                         elif (out_diff.total_seconds()/60) > float(day_data.max_half_day) and data.weekly_off==0 and data.public_holiday == 0:
                             if first_out_time < day_data.end_time:
-                                data.absent = 1
+                                pass
+                                # data.absent = 1
                         else:
                             data.early = 0
                        
@@ -908,12 +914,12 @@ class EmployeeAttendance(Document):
                 if data.half_day:
                     total_half_days += 1
               
-                if data.absent == 1:
-                    self.total_absents +=1
+                # if data.absent == 1:
+                #     self.total_absents +=1
                 if data.half_day == 1:
                     if data.absent == 1:
                         data.absent = 0
-                        self.total_absents -=1
+                        # self.total_absents -=1
                 if data.absent == 0 and data.check_in_1:
                     if holiday_flag:
                         if hr_settings.count_working_on_holiday_in_present_days == 1:
@@ -989,7 +995,8 @@ class EmployeeAttendance(Document):
                 if holiday_flag == True and getdate(tempdate) <= getdate(today()):
                     accun_holiday+=1
                 if data.extra_absent:
-                    self.total_absents+=1
+                    pass
+                    # self.total_absents+=1
                
                 if holiday_flag:
                      self.no_of_sundays+=1
@@ -1041,6 +1048,9 @@ class EmployeeAttendance(Document):
                     data.difference1 = None
                     
                 if data.check_in_1 is not None and data.check_out_1 is None:
+                    data.absent = 0
+                
+                if data.weekly_off == 1:
                     data.absent = 0
                         
                 if data.weekly_off or data.public_holiday:
@@ -2571,7 +2581,7 @@ class EmployeeAttendance(Document):
 
         employee = frappe.get_doc("Employee", self.employee)
         if employee.custom_late_unmark == 1:
-            self.manual_absent = 0
+            # self.manual_absent = 0
                                 
             self.total_lates = 0
             data.late = 0 
@@ -2632,7 +2642,7 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
                         elif self.table1[ind].difference >= timedelta(hours=hr_settings.holiday_full_day_ot,minutes=00,seconds=0):
                             if self.holiday_full_day_ot and self.holiday_full_day_ot != "":
                                 self.holiday_full_day_ot = float(self.holiday_full_day_ot or 0) - 1
-                    self.total_absents += 1
+                    # self.total_absents += 1
 
 
 
