@@ -119,6 +119,8 @@ class EmployeeAttendance(Document):
             if data.absent == 1:
                 total_absents += data.absent
                 self.total_absents = total_absents
+            if data.absent == 0:
+                self.no_of_sundays += data.weekly_off
                 
             if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 is "" or data.check_out_1 is "" :
                 # Both are missing, set everything to 0
@@ -454,6 +456,18 @@ class EmployeeAttendance(Document):
                                     pass
                                 else:
                                     data.absent=1
+                                    # self.total_absents+=1
+                                    index+=1
+                                    continue
+                        elif hr_settings.absent_sandwich in ['Absent Before and After Holiday']:
+                            if previous and previous.absent == 1:
+                                p_date = previous.date
+                                lv = frappe.get_all("Leave Application", filters={"from_date":["<=",p_date],"to_date":[">=",p_date],"employee":self.employee,"status":"Approved"},fields=["*"])
+                                if len(lv) > 0:
+                                    pass
+                                else:
+                                    pass
+                                    # data.absent=1
                                     # self.total_absents+=1
                                     index+=1
                                     continue
@@ -999,7 +1013,7 @@ class EmployeeAttendance(Document):
                     # self.total_absents+=1
                
                 if holiday_flag:
-                     self.no_of_sundays+=1
+                    #  self.no_of_sundays+=1
                 
                    
                      if total_time:
@@ -2621,6 +2635,7 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
                     ab_index_process = True
                     break
                 elif hr_settings.absent_sandwich == 'Absent Before and After Holiday':
+                    if previous and previous.absent == 1:
                         ab_index_process = True
                         break
                 elif hr_settings.absent_sandwich == 'Absent Before Or After Holiday':
@@ -2634,7 +2649,7 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
         for ind in ab_index:
                 if self.table1[ind].absent != 1:
                     self.table1[ind].absent = 1
-                    self.no_of_sundays-=1
+                    # self.no_of_sundays-=1
                     if self.table1[ind].difference:
                         if self.table1[ind].difference >= timedelta(hours=hr_settings.holiday_halfday_ot,minutes=00,seconds=0) and \
                             self.table1[ind].difference < timedelta(hours=hr_settings.holiday_full_day_ot,minutes=00,seconds=0):
