@@ -1,0 +1,124 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-04 17:34:36.971592",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "att_ref",
+  "column_break_vrnv",
+  "actual_check_in",
+  "att_child_ref",
+  "column_break_awwh",
+  "check_in",
+  "update_check_in",
+  "column_break_hdfv",
+  "actual_check_out",
+  "column_break_oiao",
+  "check_out",
+  "update_check_out"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_vrnv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "check_in",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Check In",
+   "read_only_depends_on": "eval:doc.update_check_in==0"
+  },
+  {
+   "fieldname": "column_break_awwh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "actual_check_in",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Actual Check In",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hdfv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "check_out",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Check Out",
+   "read_only_depends_on": "eval:doc.update_check_out==0"
+  },
+  {
+   "fieldname": "column_break_oiao",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "actual_check_out",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Actual Check Out",
+   "read_only": 1
+  },
+  {
+   "fieldname": "att_ref",
+   "fieldtype": "Data",
+   "label": "att_ref"
+  },
+  {
+   "fieldname": "att_child_ref",
+   "fieldtype": "Data",
+   "label": "att_child_ref"
+  },
+  {
+   "default": "1",
+   "fieldname": "update_check_in",
+   "fieldtype": "Check",
+   "label": "Update Check In"
+  },
+  {
+   "default": "1",
+   "fieldname": "update_check_out",
+   "fieldtype": "Check",
+   "label": "Update Check Out"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-11-04 18:22:50.025209",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Employee Attendance Adjustment Employee Wise CT",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

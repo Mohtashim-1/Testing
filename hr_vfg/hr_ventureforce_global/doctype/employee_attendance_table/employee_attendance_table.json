@@ -49,6 +49,10 @@
   "early_going_hours",
   "column_break_13",
   "additional_hours",
+  "adjustment_section",
+  "check_in_updated",
+  "column_break_tjbo",
+  "check_out_updated",
   "section_break_26",
   "absent",
   "early",
@@ -609,11 +613,32 @@
    "fieldname": "absent_mark_due_to_missing_check_out",
    "fieldtype": "Check",
    "label": "Absent Mark Due to Missing Check Out"
+  },
+  {
+   "fieldname": "adjustment_section",
+   "fieldtype": "Section Break",
+   "label": "Adjustment"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_in_updated",
+   "fieldtype": "Check",
+   "label": "Check In Updated"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_out_updated",
+   "fieldtype": "Check",
+   "label": "Check Out Updated"
+  },
+  {
+   "fieldname": "column_break_tjbo",
+   "fieldtype": "Column Break"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-10-28 15:04:08.087271",
+ "modified": "2024-11-04 18:26:30.132429",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
