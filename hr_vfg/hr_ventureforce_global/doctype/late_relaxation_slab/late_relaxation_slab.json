@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-04 22:58:31.940021",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "late_sitting_in_hours",
+  "column_break_owrh",
+  "late_sitting_to_in_hours",
+  "column_break_hzwr",
+  "late_relaxation_in_hours"
+ ],
+ "fields": [
+  {
+   "fieldname": "late_sitting_in_hours",
+   "fieldtype": "Time",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "From Time (In Hours)"
+  },
+  {
+   "fieldname": "column_break_hzwr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "late_relaxation_in_hours",
+   "fieldtype": "Time",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Late Relaxation (In Hours)",
+   "precision": "0"
+  },
+  {
+   "fieldname": "late_sitting_to_in_hours",
+   "fieldtype": "Time",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "To Time (In Hours)"
+  },
+  {
+   "fieldname": "column_break_owrh",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-11-05 14:35:19.378430",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Late Relaxation Slab",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -62,6 +62,7 @@ class EmployeeAttendance(Document):
         self.total_extra_duty_for_fullday = 0
         holidays = []
         hr_settings = frappe.get_single('V HR Settings')
+        
         #try:
         month = self.get_month_no(self.month)
         year = int(self.year)
@@ -113,6 +114,8 @@ class EmployeeAttendance(Document):
         missing_half_day_check_in = 0
         missing_absent_check_out = 0
         half_day_mark_due_to_missing_check_out = 0
+
+        
 
 
         for data in self.table1:
@@ -678,6 +681,7 @@ class EmployeeAttendance(Document):
                         data.difference = total_time
                         data.difference1 = total_time
                         check_sanwich_after_holiday(self,previous,data,hr_settings,index)
+                        late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index)
                         previous = data
                         index+=1
                         if data.absent == 0 and data.check_in_1:
@@ -2527,6 +2531,7 @@ class EmployeeAttendance(Document):
                 
                 
                 check_sanwich_after_holiday(self,previous,data,hr_settings,index)
+                late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index)
                
                 previous = data
                 index+=1
@@ -2621,7 +2626,8 @@ class EmployeeAttendance(Document):
         return dict_[month]
     
 
-                
+                            
+
 
 def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
     ab_index = []
@@ -2650,13 +2656,13 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
                 if self.table1[ind].absent != 1:
                     self.table1[ind].absent = 1
                     # self.no_of_sundays-=1
-                    if self.table1[ind].difference:
-                        if self.table1[ind].difference >= timedelta(hours=hr_settings.holiday_halfday_ot,minutes=00,seconds=0) and \
-                            self.table1[ind].difference < timedelta(hours=hr_settings.holiday_full_day_ot,minutes=00,seconds=0):
-                           self.holiday_halfday_ot = self.holiday_halfday_ot - 1
-                        elif self.table1[ind].difference >= timedelta(hours=hr_settings.holiday_full_day_ot,minutes=00,seconds=0):
-                            if self.holiday_full_day_ot and self.holiday_full_day_ot != "":
-                                self.holiday_full_day_ot = float(self.holiday_full_day_ot or 0) - 1
+                    # if self.table1[ind].difference:
+                        # if self.table1[ind].difference >= timedelta(hours=hr_settings.holiday_halfday_ot,minutes=00,seconds=0) and \
+                        #     self.table1[ind].difference < timedelta(hours=hr_settings.holiday_full_day_ot,minutes=00,seconds=0):
+                        #    self.holiday_halfday_ot = self.holiday_halfday_ot - 1
+                        # elif self.table1[ind].difference >= timedelta(hours=hr_settings.holiday_full_day_ot,minutes=00,seconds=0):
+                        #     if self.holiday_full_day_ot and self.holiday_full_day_ot != "":
+                        #         self.holiday_full_day_ot = float(self.holiday_full_day_ot or 0) - 1
                     # self.total_absents += 1
 
 
@@ -2687,3 +2693,67 @@ def get_holidays_for_employee(
 	holidays = frappe.get_all("Holiday", fields=["description","public_holiday", "weekly_off","holiday_date"], filters=filters)
 
 	return holidays
+
+
+
+
+# from datetime import datetime, timedelta
+
+def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index):
+    pass
+
+    # late_relaxation = frappe.get_single('Late Relaxation Settings')
+    
+    # for lr in late_relaxation.late_relaxation_employee_list:
+    #     if self.employee == lr.employee:
+    #         for ind in range(len(self.table1) - 1):
+    #             if self.table1[ind].check_out_1:
+    #                 # Convert check_out_1 string to a datetime.time object
+    #                 check_out_time = datetime.strptime(self.table1[ind].check_out_1, "%H:%M:%S").time()
+    #                 check_out_seconds = check_out_time.hour * 3600 + check_out_time.minute * 60 + check_out_time.second
+                    
+    #                 # Initialize relaxation hours to 0
+    #                 relaxation_hours = timedelta(0)
+                    
+    #                 # Loop through each slab in late_relaxation_slab
+    #                 for slab in late_relaxation.late_relaxation_slab:
+    #                     # Convert start and end times to total seconds
+    #                     start_seconds = slab.late_sitting_in_hours.total_seconds()
+    #                     end_seconds = slab.late_sitting_to_in_hours.total_seconds()
+                        
+    #                     # Check if the check-out time falls within the slab range
+    #                     if start_seconds <= check_out_seconds <= end_seconds:
+    #                         relaxation_hours = slab.late_relaxation_in_hours
+    #                         break  # Stop checking further if a matching slab is found
+                    
+    #                 # If relaxation applies, update late coming hours
+    #                 if relaxation_hours > timedelta(0):
+    #                     # Check if late_coming_hours exists and is already a timedelta
+    #                     late_coming_hours = self.table1[ind + 1].late_coming_hours
+                        
+    #                     if isinstance(late_coming_hours, str):
+    #                         # Parse current late coming hours if it's a string
+    #                         hours1, minutes1, seconds1 = map(int, late_coming_hours.split(":"))
+    #                         current_late_coming = timedelta(hours=hours1, minutes=minutes1, seconds=seconds1)
+    #                     elif isinstance(late_coming_hours, timedelta):
+    #                         # Use current timedelta value directly
+    #                         current_late_coming = late_coming_hours
+    #                     else:
+    #                         # Default to zero if late_coming_hours is neither str nor timedelta
+    #                         current_late_coming = timedelta(0)
+                        
+    #                     # Add the relaxation hours to the late coming time
+    #                     total_time = current_late_coming - relaxation_hours
+                        
+    #                     # Format total_time to `HH:MM:SS` without days
+    #                     total_seconds = int(total_time.total_seconds())
+    #                     # hours = (total_seconds // 3600) % 24
+    #                     hours = (total_seconds // 3600) % 24
+    #                     minutes = (total_seconds % 3600) // 60
+    #                     seconds = total_seconds % 60
+                        
+    #                     # Set formatted time back to `late_coming_hours`
+    #                     self.table1[ind + 1].late_coming_hours = f"{hours:02}:{minutes:02}:{seconds:02}"
+                        
+    #                     # Optionally, store relaxation hours in another field if needed
+    #                     self.table1[ind + 1].data2 = int(relaxation_hours.total_seconds() // 3600)

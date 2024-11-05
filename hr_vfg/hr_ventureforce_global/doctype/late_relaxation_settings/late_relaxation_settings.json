@@ -1,0 +1,48 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-04 22:53:42.116363",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "late_relaxation_slab",
+  "late_relaxation_employee_list"
+ ],
+ "fields": [
+  {
+   "fieldname": "late_relaxation_employee_list",
+   "fieldtype": "Table",
+   "label": "Allowed Employee's",
+   "options": "Late Relaxation Employee List"
+  },
+  {
+   "fieldname": "late_relaxation_slab",
+   "fieldtype": "Table",
+   "label": "Late Relaxation Slab",
+   "options": "Late Relaxation Slab"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-11-04 23:01:24.896549",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Late Relaxation Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
