@@ -32,13 +32,8 @@ class AttendanceAdjustment(Document):
     FROM `tabEmployee Attendance` p
     JOIN `tabEmployee Attendance Table` c ON c.parent = p.name
     WHERE c.date = %s 
-    AND p.employee = %s 
-    AND (
-        (c.check_in_1 IS NULL AND c.check_out_1 IS NOT NULL) 
-        OR 
-        (c.check_in_1 IS NOT NULL AND c.check_out_1 IS NULL)
-    )
-""", (self.date, data.employee_id), as_dict=1)
+    
+""", (self.date,), as_dict=1)
 			adjust_hrs = 0
 			flg = False
 			if len(att) > 0:
