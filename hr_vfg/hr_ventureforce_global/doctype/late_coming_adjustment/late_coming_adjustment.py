@@ -11,8 +11,8 @@ class LateComingAdjustment(Document):
 			rec = frappe.db.sql("""select c.date, p.employee,p.employee_name, c.late_sitting, c.date,c.check_in_1, c.late_sitting,
 					c.late_coming_hours,c.late, c.late1, c.name as child_name, p.name as parent_name from `tabEmployee Attendance` p
 					LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
-					 where p.month=%s and p.year=%s and c.date=%s and c.late = "1"
-					   """, (self.month, self.year, self.date), as_dict=1)
+					 where c.date=%s and c.late = "1"
+					   """, (self.date), as_dict=1)
 			if len(rec)>0:
 				self.detail=[]
 			for r in rec:
