@@ -8,6 +8,7 @@
   "employee_id",
   "employee_name",
   "check_in_1",
+  "designation",
   "column_break_5",
   "check_in",
   "check_out_1",
@@ -70,11 +71,21 @@
    "fieldname": "no_of_hours",
    "fieldtype": "Float",
    "label": "No of hours"
+  },
+  {
+   "fetch_from": "employee_id.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Designation"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2022-11-17 07:43:39.941220",
+ "modified": "2024-11-06 11:57:12.045273",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Attendance Adjustment CT",
@@ -82,5 +93,6 @@
  "permissions": [],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

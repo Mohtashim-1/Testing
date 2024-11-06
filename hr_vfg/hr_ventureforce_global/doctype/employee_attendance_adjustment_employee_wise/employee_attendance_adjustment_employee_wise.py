@@ -10,12 +10,19 @@ class EmployeeAttendanceAdjustmentEmployeeWise(Document):
 	def get_data(self):
 		# Correct the SQL query to only include the required argument (self.date)
 		rec = frappe.db.sql("""
-			select p.employee, p.employee_name, p.month, p.year, p.designation, c.date, c.check_in_1, c.check_out_1, p.name as parent_name, c.name as child_name
-			from `tabEmployee Attendance` p
-			LEFT JOIN `tabEmployee Attendance Table` c ON c.parent=p.name
-			where p.month=%s and p.year=%s and p.employee=%s  and 
-			(c.check_in_1 is null and c.check_out_1 is not null) or (c.check_in_1 is not null and c.check_out_1 is null) 
-		""", ( self.month, self.year,self.employee ), as_dict=1)  # Only pass self.date, not self.ot_frequency
+    SELECT p.employee, p.employee_name, p.month, p.year, p.designation, c.date, c.check_in_1, c.check_out_1, 
+           p.name AS parent_name, c.name AS child_name
+    FROM `tabEmployee Attendance` p
+    LEFT JOIN `tabEmployee Attendance Table` c ON c.parent = p.name
+    WHERE p.month = %s 
+      AND p.year = %s 
+      AND p.employee = %s
+      AND (
+          (c.check_in_1 IS NULL AND c.check_out_1 IS NOT NULL) 
+          OR 
+          (c.check_in_1 IS NOT NULL AND c.check_out_1 IS NULL)
+      )
+""", (self.month, self.year, self.employee), as_dict=1)
 		
 		if rec:
 			self.employee_attendance_adjustment_employee_wise_ct = []

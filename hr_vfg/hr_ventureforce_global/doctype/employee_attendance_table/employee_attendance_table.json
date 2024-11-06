@@ -47,6 +47,7 @@
   "column_break_26",
   "per_day_hour",
   "early_going_hours",
+  "early_going_hours1",
   "column_break_13",
   "additional_hours",
   "adjustment_section",
@@ -634,11 +635,16 @@
    "fieldname": "data2",
    "fieldtype": "Int",
    "label": "data2"
+  },
+  {
+   "fieldname": "early_going_hours1",
+   "fieldtype": "Data",
+   "label": "Early Going Hours1"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-11-05 14:32:28.777317",
+ "modified": "2024-11-06 10:18:21.244748",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",

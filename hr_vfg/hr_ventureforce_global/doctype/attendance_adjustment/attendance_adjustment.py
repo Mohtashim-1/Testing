@@ -27,11 +27,18 @@ class AttendanceAdjustment(Document):
 			# JOIN `tabEmployee Attendance Table` c
 			# 		ON c.parent = p.name where c.date=%s and p.month=%s and p.employee=%s""",
 			# 		(self.date,self.month,data.employee_id), as_dict=1)
-			att = frappe.db.sql(""" select p.name, c.check_in_1, c.check_out_1, late, half_day from `tabEmployee Attendance` p 
-			JOIN `tabEmployee Attendance Table` c
-					ON c.parent = p.name where c.date=%s and p.month=%s and p.employee=%s""",
-					(self.date,self.month,data.employee_id), as_dict=1)
-			att_hrs = 0
+			att = frappe.db.sql("""
+    SELECT p.name, c.check_in_1, c.check_out_1, c.late, c.half_day 
+    FROM `tabEmployee Attendance` p
+    JOIN `tabEmployee Attendance Table` c ON c.parent = p.name
+    WHERE c.date = %s 
+    AND p.employee = %s 
+    AND (
+        (c.check_in_1 IS NULL AND c.check_out_1 IS NOT NULL) 
+        OR 
+        (c.check_in_1 IS NOT NULL AND c.check_out_1 IS NULL)
+    )
+""", (self.date, data.employee_id), as_dict=1)
 			adjust_hrs = 0
 			flg = False
 			if len(att) > 0:
