@@ -49,6 +49,7 @@
   {
    "fieldname": "month",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Month",
    "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
   },
@@ -59,6 +60,7 @@
   {
    "fieldname": "year",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Year",
    "options": "Year"
   },
@@ -99,7 +101,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-12 02:02:25.501657",
+ "modified": "2024-11-07 00:23:32.860499",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Coming Adjustment",
