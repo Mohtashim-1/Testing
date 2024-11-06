@@ -7,16 +7,16 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_fc9a",
-  "month",
-  "column_break_xwjq",
-  "year",
-  "column_break_hajr",
   "employee",
+  "column_break_xwjq",
+  "month",
+  "column_break_hajr",
+  "year",
   "section_break_evlm",
   "get_data",
   "section_break_fypm",
   "early_over_time_form_ct",
-  "section_break_yqow"
+  "amended_from"
  ],
  "fields": [
   {
@@ -60,10 +60,6 @@
    "options": "Early Over Time Form CT"
   },
   {
-   "fieldname": "section_break_yqow",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "section_break_evlm",
    "fieldtype": "Section Break"
   },
@@ -71,12 +67,22 @@
    "fieldname": "get_data",
    "fieldtype": "Button",
    "label": "Get Data"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Early Overtime Employee Wise",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-04 03:58:40.379098",
+ "modified": "2024-11-07 00:18:56.237594",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Early Overtime Employee Wise",
