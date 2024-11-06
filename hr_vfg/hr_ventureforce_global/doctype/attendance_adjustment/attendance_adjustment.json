@@ -25,7 +25,6 @@
   {
    "fieldname": "month",
    "fieldtype": "Select",
-   "hidden": 1,
    "label": "Month",
    "options": "Select\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
   },
@@ -66,7 +65,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-06 11:58:26.586287",
+ "modified": "2024-11-06 18:32:19.372729",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Attendance Adjustment",
