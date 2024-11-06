@@ -235,7 +235,7 @@ class EmployeeAttendance(Document):
 
         # Update parent fields with early going count and hours
         self.early_going = total_early_goings
-        self.manual_absent = round(total_early_going_hours.total_seconds() / 3600, 2)  # Convert to hours
+        # self.manual_absent = round(total_early_going_hours.total_seconds() / 3600, 2)  # Convert to hours
 
         for data in self.table1:
             if data.weekly_off == 1:
@@ -2588,7 +2588,7 @@ class EmployeeAttendance(Document):
 
         employee = frappe.get_doc("Employee", self.employee)
         if employee.custom_late_unmark == 1:
-            self.manual_absent = 0
+            # self.manual_absent = 0
                                 
             self.total_lates = 0
             data.late = 0 
