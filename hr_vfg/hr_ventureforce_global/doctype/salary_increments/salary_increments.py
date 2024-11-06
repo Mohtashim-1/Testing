@@ -61,7 +61,7 @@ class SalaryIncrements(Document):
 						"previous_salary":prev,
 						"increment_per":(self.increment_amount/prev)*100,
 						"increment_amount":self.increment_amount,
-						"after_increment_salary":prev + (prev*(self.increment_percentage/100))
+						"after_increment_salary": prev + self.increment_amount
 					})
 			else:
 				frappe.msgprint("Please select only one, either Increment Percentage or Increment Amount")
