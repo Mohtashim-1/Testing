@@ -2684,6 +2684,10 @@ def get_holidays_for_employee(
 
 def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index):
     late_relaxation = frappe.get_single('Late Relaxation Settings')
+    for data in self.table1:
+        # pass
+        if data.data2 > 0:
+            data.late = 0
     
     for lr in late_relaxation.late_relaxation_employee_list:
         if self.employee == lr.employee:
