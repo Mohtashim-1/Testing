@@ -25,6 +25,7 @@
   "section_break_7",
   "present_days",
   "total_lates",
+  "total_lates_int",
   "early_for_absents",
   "early_going",
   "column_break_jkru",
@@ -662,11 +663,16 @@
    "fieldname": "late_after_relaxation",
    "fieldtype": "Float",
    "label": "Late After Relaxation"
+  },
+  {
+   "fieldname": "total_lates_int",
+   "fieldtype": "Int",
+   "label": "Total Lates Int"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-11-05 19:24:13.862222",
+ "modified": "2024-11-07 14:15:23.191706",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

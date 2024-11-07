@@ -121,6 +121,15 @@ class EmployeeAttendance(Document):
         total_seconds1, total_seconds2, total_seconds3 = 0, 0, 0
         total_seconds_approved_eot, total_seconds_approved_ot1 = 0, 0
         time_seconds_approved_eot1 = 0
+        self.total_lates_int = 0
+
+        total_lates11 = 0
+        for data in self.table1:
+            if data.late == 1:
+                total_lates11 += 1  # increment by 1 each time `data.late` is 1
+        self.total_lates_int = total_lates11
+        self.total_lates = total_lates11
+
 
         # Helper function to convert time string to seconds
         def time_to_seconds(time_input):
@@ -1077,7 +1086,7 @@ class EmployeeAttendance(Document):
                 employee = frappe.get_doc("Employee", self.employee)
                 if employee.custom_late_unmark == 1:
                     #late
-                    self.total_lates = 0
+                    # self.total_lates = 0
                     data.late = 0 
                     # late coming 
                 if employee.custom_late_coming_unmark == 1:
@@ -2553,7 +2562,7 @@ class EmployeeAttendance(Document):
         self.extra_hours = round(
             flt(total_additional_hours.total_seconds())/3600, 2)
         self.extra_ot_amount = extra_ot_amount
-        self.total_lates = total_lates
+        # self.total_lates = total_lates
         self.total_early_goings = total_early
         self.total_half_days = total_half_days
         self.total_early_going_hours = total_early_going_hrs
@@ -2590,7 +2599,7 @@ class EmployeeAttendance(Document):
         if employee.custom_late_unmark == 1:
             # self.manual_absent = 0
                                 
-            self.total_lates = 0
+            # self.total_lates = 0
             data.late = 0 
         else:
             pass
@@ -2688,6 +2697,7 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
         # pass
         if data.data2 > 0:
             data.late = 0
+        # self.total_lates -= 1
     
     for lr in late_relaxation.late_relaxation_employee_list:
         if self.employee == lr.employee:
@@ -2734,3 +2744,4 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
                         # Update late_coming_hours and store relaxation hours in data2
                         # self.table1[ind + 1].late_coming_hours = f"{hours:02}:{minutes:02}:{seconds:02}"
                         self.table1[ind + 1].data2 = int(relaxation_hours.total_seconds() // 3600)  # Store hours in data2
+                        # self.total_lates += 1
