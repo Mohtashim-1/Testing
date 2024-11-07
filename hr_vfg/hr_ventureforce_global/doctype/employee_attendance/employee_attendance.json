@@ -56,9 +56,10 @@
   "check_in_and_check_out_log_unavailable_section",
   "total_absent_check_in_missing_1",
   "total_absent_check_in_missing",
+  "total_missing",
   "column_break_syeq",
-  "total_absent_missing_check_out",
   "total_halfday_missing_check_out",
+  "total_absent_missing_check_out",
   "over_time_data_section",
   "early_ot",
   "early_sitting",
@@ -625,7 +626,7 @@
   {
    "fieldname": "total_absent_check_in_missing_1",
    "fieldtype": "Float",
-   "label": "Total Absent Check In Missing"
+   "label": "Total Half Day Check In Missing"
   },
   {
    "fieldname": "total_absent_check_in_missing",
@@ -668,11 +669,16 @@
    "fieldname": "total_lates_int",
    "fieldtype": "Int",
    "label": "Total Lates Int"
+  },
+  {
+   "fieldname": "total_missing",
+   "fieldtype": "Float",
+   "label": "Total Missing"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-11-07 14:15:23.191706",
+ "modified": "2024-11-07 15:46:21.349308",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

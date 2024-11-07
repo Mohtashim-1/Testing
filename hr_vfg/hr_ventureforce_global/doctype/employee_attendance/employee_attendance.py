@@ -129,6 +129,7 @@ class EmployeeAttendance(Document):
                 total_lates11 += 1  # increment by 1 each time `data.late` is 1
         self.total_lates_int = total_lates11
         self.total_lates = total_lates11
+        
 
 
         # Helper function to convert time string to seconds
@@ -327,6 +328,7 @@ class EmployeeAttendance(Document):
         self.total_absent_check_in_missing = missing_half_day_check_in
         self.total_absent_missing_check_out = missing_absent_check_out
         self.total_halfday_missing_check_out = half_day_mark_due_to_missing_check_out
+        self.total_missing = self.total_absent_check_in_missing + self.total_absent_missing_check_out
 
 
         for data in self.table1:
