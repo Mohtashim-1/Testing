@@ -60,6 +60,7 @@
   "column_break_syeq",
   "total_halfday_missing_check_out",
   "total_absent_missing_check_out",
+  "mark_absent_on_missing",
   "over_time_data_section",
   "early_ot",
   "early_sitting",
@@ -674,11 +675,16 @@
    "fieldname": "total_missing",
    "fieldtype": "Float",
    "label": "Total Missing"
+  },
+  {
+   "fieldname": "mark_absent_on_missing",
+   "fieldtype": "Float",
+   "label": "Mark Absent On Missing"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-11-07 15:46:21.349308",
+ "modified": "2024-11-07 15:53:52.277730",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

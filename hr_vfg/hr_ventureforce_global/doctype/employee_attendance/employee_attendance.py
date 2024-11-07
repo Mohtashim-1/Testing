@@ -329,6 +329,12 @@ class EmployeeAttendance(Document):
         self.total_absent_missing_check_out = missing_absent_check_out
         self.total_halfday_missing_check_out = half_day_mark_due_to_missing_check_out
         self.total_missing = self.total_absent_check_in_missing + self.total_absent_missing_check_out
+        # if hr_settings.absent_threshould_missing_punch > self.total_missing:
+        #     self.mark_absent_on_missing = self.total_missing
+        if self.total_missing > hr_settings.absent_threshould_missing_punch:
+            self.mark_absent_on_missing = self.total_missing - hr_settings.absent_threshould_missing_punch
+
+
 
 
         for data in self.table1:

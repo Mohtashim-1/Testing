@@ -10,6 +10,7 @@
   "maximum_early_for_absent",
   "holiday_halfday_ot",
   "threshould_for_absent",
+  "absent_threshould_missing_punch",
   "2_column",
   "maximum_lates_for_halfday",
   "maximum_early_for_halfday",
@@ -391,13 +392,18 @@
    "fieldtype": "Check",
    "label": "Mark Half Day Check Out ",
    "precision": "0"
+  },
+  {
+   "fieldname": "absent_threshould_missing_punch",
+   "fieldtype": "Float",
+   "label": "Absent Threshould Missing Punch"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-28 14:29:27.075408",
+ "modified": "2024-11-07 15:55:00.356287",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "V HR Settings",
