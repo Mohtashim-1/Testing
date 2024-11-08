@@ -2579,7 +2579,8 @@ class EmployeeAttendance(Document):
         t_lat = 0
         t_earl = 0
         if hr_settings.maximum_lates_for_absent > 0:
-            t_lat = int(total_lates/hr_settings.maximum_lates_for_absent) if total_lates >= hr_settings.maximum_lates_for_absent else 0
+
+            t_lat = int(self.total_lates/hr_settings.maximum_lates_for_absent) if self.total_lates >= hr_settings.maximum_lates_for_absent else 0
         self.lates_for_absent = t_lat
 
         if hr_settings.maximum_early_for_absent > 0:
