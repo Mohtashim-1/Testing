@@ -3,6 +3,6 @@
 
 frappe.query_reports["Missing Monthly Attendance Report"] = {
 	"filters": [
-
+		
 	]
 };
