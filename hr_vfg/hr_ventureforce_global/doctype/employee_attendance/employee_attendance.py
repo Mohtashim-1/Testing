@@ -586,7 +586,7 @@ class EmployeeAttendance(Document):
                                                 otc.parent = %s AND otc.type = %s
                                             """, (weekend_slab, data.day_type), as_dict=True)
 
-                                        if over_time_slab_doc:
+                                        if over_time_slab_doc and data.check_out_1 and data.check_in_1 and data.difference1:
                                             # Parse check-in and check-out times
                                             check_in_1 = datetime.strptime(data.check_in_1, "%H:%M:%S").time()
                                             check_out_1 = datetime.strptime(data.check_out_1, "%H:%M:%S").time()
@@ -2043,11 +2043,12 @@ class EmployeeAttendance(Document):
 
                                 if isinstance(record_1.to_time, timedelta):
                                     record_1.to_time = (datetime.min + record_1.to_time).time()
-                            
-                                if data.check_in_1:
+
+                                if isinstance(check_in_1_time, datetime):
+                                    check_in_1_time = check_in_1_time.time() 
+                                if data.check_in_1 and check_in_1_time:
                                     if record_1.from_time < record_1.to_time:
-                                        if isinstance(check_in_1_time, datetime):
-                                            check_in_1_time = check_in_1_time.time()  # Convert to time
+                                         
                                         # Shift crosses midnight
                                         if check_in_1_time < record_1.to_time:
                                             if threshould is not None:
@@ -2694,8 +2695,9 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
     late_relaxation = frappe.get_single('Late Relaxation Settings')
     for data in self.table1:
         # pass
-        if data.data2 > 0:
-            data.late = 0
+        if data.data2:
+            if data.data2 > 0:
+                data.late = 0
         # self.total_lates -= 1
     
     for lr in late_relaxation.late_relaxation_employee_list:
