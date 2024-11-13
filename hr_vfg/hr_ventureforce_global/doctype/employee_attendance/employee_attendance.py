@@ -556,99 +556,89 @@ class EmployeeAttendance(Document):
                             
 
                     if data.day_type == "Weekly Off":
-                        # data.estimated_late = total_time
-                        shift1 = None
-                        if data.day_type == "Weekly Off":
-                            # Fetch the shift assignment
-                            shift_ass = frappe.get_all("Shift Assignment", 
-                                                        filters={
-                                                            'employee': self.employee,
-                                                            'start_date': ["<=", data.date],
-                                                            'status': 'Active'
-                                                        }, 
-                                                        fields=['*'])
+                            # data.estimated_late = total_time
+                            shift1 = None
+                            if data.day_type == "Weekly Off":
+                                # Fetch the shift assignment
+                                shift_ass = frappe.get_all("Shift Assignment", 
+                                                            filters={
+                                                                'employee': self.employee,
+                                                                'start_date': ["<=", data.date],
+                                                                'status': 'Active'
+                                                            }, 
+                                                            fields=['*'])
 
-                            if shift_ass:
-                                # Fetch the assigned shift
-                                shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
-                                if shift1:
-                                    weekend_slab = shift1[0].custom_slab
-                                    overtime_slab = frappe.get_doc("Over Time Slab", weekend_slab)
+                                if shift_ass:
+                                    # Fetch the assigned shift
+                                    shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
+                                    if shift1:
+                                        weekend_slab = shift1[0].custom_slab
+                                        overtime_slab = frappe.get_doc("Over Time Slab", weekend_slab)
 
-                                    # Get specific overtime slab details
-                                    over_time_slab_doc = frappe.db.sql("""
-                                        SELECT 
-                                            otc.from_time, otc.to_time, otc.type, otc.formula, otc.per_hour_calculation,
-                                            otc.over_time_threshold, otc.fixed_hour, otc.maximum_over_time_limit_in_hours
-                                        FROM 
-                                            `tabOver Time Slab CT` as otc
-                                        WHERE 
-                                            otc.parent = %s AND otc.type = %s
-                                        """, (weekend_slab, data.day_type), as_dict=True)
+                                        # Get specific overtime slab details
+                                        over_time_slab_doc = frappe.db.sql("""
+                                            SELECT 
+                                                otc.from_time, otc.to_time, otc.type, otc.formula, otc.per_hour_calculation,
+                                                otc.over_time_threshold, otc.fixed_hour, otc.maximum_over_time_limit_in_hours
+                                            FROM 
+                                                `tabOver Time Slab CT` as otc
+                                            WHERE 
+                                                otc.parent = %s AND otc.type = %s
+                                            """, (weekend_slab, data.day_type), as_dict=True)
 
-                                    if over_time_slab_doc and data.difference1:
-                                        # Parse check-in and check-out times
-                                        check_in_1 = datetime.strptime(data.check_in_1, "%H:%M:%S").time()
-                                        check_out_1 = datetime.strptime(data.check_out_1, "%H:%M:%S").time()
-                                        time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
-                                        time_difference_delta = timedelta(
-                                            hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second
-                                        )
+                                        if over_time_slab_doc:
+                                            # Parse check-in and check-out times
+                                            check_in_1 = datetime.strptime(data.check_in_1, "%H:%M:%S").time()
+                                            check_out_1 = datetime.strptime(data.check_out_1, "%H:%M:%S").time()
+                                            time_difference = datetime.strptime(data.difference1, "%H:%M:%S").time()
+                                            time_difference_delta = timedelta(
+                                                hours=time_difference.hour, minutes=time_difference.minute, seconds=time_difference.second
+                                            )
 
-                                        # Loop through each slab record for overtime calculation
-                                        for record in over_time_slab_doc:
-                                            if isinstance(record['from_time'], timedelta):
-                                                from_time = (datetime.min + record['from_time']).time()
-                                            else:
-                                                from_time = datetime.strptime(record['from_time'], "%H:%M:%S").time()
-
-                                            if isinstance(record['to_time'], timedelta):
-                                                to_time = (datetime.min + record['to_time']).time()
-                                            else:   
-                                                to_time = datetime.strptime(record['to_time'], "%H:%M:%S").time()
-                                            
-                                            
-                                            # Determine if shift crosses midnight
-                                            if from_time <= to_time:  # Standard range
-                                                in_time_range = from_time <= check_out_1 <= to_time
-                                            else:  # Midnight crossover range
-                                                in_time_range = check_out_1 >= from_time or check_out_1 <= to_time
-
-                                            if in_time_range:
-                                                # Calculate time difference for overtime
-                                                check_in_dt = datetime.combine(datetime.today(), check_in_1)
-                                                check_out_dt = datetime.combine(datetime.today(), check_out_1)
-                                                actual_work_time = check_out_dt - check_in_dt
-
-                                                # Apply per-hour calculation to get the estimated late time
-                                                overtime_seconds = actual_work_time.total_seconds() * record['per_hour_calculation']
-                                                overtime_timedelta = timedelta(seconds=overtime_seconds)
-
-                                                # Calculate total overtime including fixed hours
-                                                if isinstance(record['fixed_hour'], timedelta):
-                                                    fixed_hours = record['fixed_hour']  # Already a timedelta
+                                            # Loop through each slab record for overtime calculation
+                                            for record in over_time_slab_doc:
+                                                if isinstance(record['from_time'], timedelta):
+                                                    from_time = (datetime.min + record['from_time']).time()
                                                 else:
-                                                    fixed_hours = timedelta(hours=record['fixed_hour']) if record['fixed_hour'] else timedelta()
+                                                    from_time = datetime.strptime(record['from_time'], "%H:%M:%S").time()
 
-                                                # Calculate total overtime
-                                                total_overtime = overtime_timedelta + fixed_hours
+                                                if isinstance(record['to_time'], timedelta):
+                                                    to_time = (datetime.min + record['to_time']).time()
+                                                else:   
+                                                    to_time = datetime.strptime(record['to_time'], "%H:%M:%S").time()
+                                                
+                                                
+                                                # Determine if shift crosses midnight
+                                                if from_time <= to_time:  # Standard range
+                                                    in_time_range = from_time <= check_out_1 <= to_time
+                                                else:  # Midnight crossover range
+                                                    in_time_range = check_out_1 >= from_time or check_out_1 <= to_time
 
-                                                # Format total overtime to `HH:MM:SS`
-                                                hours, remainder = divmod(int(total_overtime.total_seconds()), 3600)
-                                                minutes, seconds = divmod(remainder, 60)
-                                                overtime_round_off = hr_settings.overtime_round_off
-                                                if data.difference1 != "00:00:00":
-                                                    if overtime_round_off == 1:
-                                                        if minutes >= 30:
-                                                            minutes = 30
-                                                        else: 
-                                                            minutes = 00
-                                                        if seconds >= 30:
-                                                            seconds = 30
-                                                        else:
-                                                            seconds = 00
-                                                data.estimated_late = f"{hours:02}:{minutes:02}:{seconds:02}"
-                                                break
+                                                if in_time_range:
+                                                    # Calculate time difference for overtime
+                                                    check_in_dt = datetime.combine(datetime.today(), check_in_1)
+                                                    check_out_dt = datetime.combine(datetime.today(), check_out_1)
+                                                    actual_work_time = check_out_dt - check_in_dt
+
+                                                    # Apply per-hour calculation to get the estimated late time
+                                                    overtime_seconds = actual_work_time.total_seconds() * record['per_hour_calculation']
+                                                    overtime_timedelta = timedelta(seconds=overtime_seconds)
+
+                                                    # Calculate total overtime including fixed hours
+                                                    if isinstance(record['fixed_hour'], timedelta):
+                                                        fixed_hours = record['fixed_hour']  # Already a timedelta
+                                                    else:
+                                                        fixed_hours = timedelta(hours=record['fixed_hour']) if record['fixed_hour'] else timedelta()
+
+                                                    # Calculate total overtime
+                                                    total_overtime = overtime_timedelta + fixed_hours
+
+                                                    # Format total overtime to `HH:MM:SS`
+                                                    hours, remainder = divmod(int(total_overtime.total_seconds()), 3600)
+                                                    minutes, seconds = divmod(remainder, 60)
+                                                    data.estimated_late = f"{hours:02}:{minutes:02}:{seconds:02}"
+                                                    break
+
 
 
                                         
