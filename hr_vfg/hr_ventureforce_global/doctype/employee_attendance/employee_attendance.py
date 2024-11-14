@@ -636,6 +636,16 @@ class EmployeeAttendance(Document):
                                                     # Format total overtime to `HH:MM:SS`
                                                     hours, remainder = divmod(int(total_overtime.total_seconds()), 3600)
                                                     minutes, seconds = divmod(remainder, 60)
+                                                    if data.difference1 != "00:00:00":
+                                                        if overtime_round_off == 1:
+                                                            if minutes >= 30:
+                                                                minutes = 30
+                                                            else: 
+                                                                minutes = 00
+                                                            if seconds >= 30:
+                                                                seconds = 00
+                                                            else:
+                                                                seconds = 00
                                                     data.estimated_late = f"{hours:02}:{minutes:02}:{seconds:02}"
                                                     break
 
@@ -1532,7 +1542,7 @@ class EmployeeAttendance(Document):
                                                                 else: 
                                                                     minutes = 00
                                                                 if seconds >= 30:
-                                                                    seconds = 30
+                                                                    seconds = 00
                                                                 else:
                                                                     seconds = 00
 
@@ -2071,6 +2081,17 @@ class EmployeeAttendance(Document):
                                                     minutes = (time_delta_difference % 3600) // 60
                                                     seconds = time_delta_difference % 60
                                                     difference_str1 = f"{hours}:{minutes}:{seconds}"
+                                                    overtime_round_off = hr_settings.overtime_round_off
+                                                    if data.difference1 != "00:00:00":
+                                                        if overtime_round_off == 1:
+                                                            if minutes >= 30:
+                                                                minutes = 30
+                                                            else: 
+                                                                minutes = 00
+                                                            if seconds >= 30:
+                                                                seconds = 00
+                                                            else:
+                                                                seconds = 00
 
                                                     # Store the estimated early time in your data object
                                                     data.estimate_early = final_timedelta
@@ -2088,6 +2109,17 @@ class EmployeeAttendance(Document):
                                                     minutes = (time_delta_difference % 3600) // 60
                                                     seconds = time_delta_difference % 60
                                                     difference_str1 = f"{hours}:{minutes}:{seconds}"
+                                                    overtime_round_off = hr_settings.overtime_round_off
+                                                    if data.difference1 != "00:00:00":
+                                                        if overtime_round_off == 1:
+                                                            if minutes >= 30:
+                                                                minutes = 30
+                                                            else: 
+                                                                minutes = 00
+                                                            if seconds >= 30:
+                                                                seconds = 00
+                                                            else:
+                                                                seconds = 00
                                                     data.estimate_early = difference_str1
                                                     
                                     else:
