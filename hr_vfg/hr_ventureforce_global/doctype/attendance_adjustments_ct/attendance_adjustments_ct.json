@@ -1,0 +1,126 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-14 14:45:17.980395",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "check_in",
+  "actual_check_in",
+  "att_ref",
+  "column_break_ijaz",
+  "designation",
+  "check_out",
+  "actual_check_out",
+  "att_child_ref",
+  "column_break_qjnj",
+  "department"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "columns": 1,
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Designation"
+  },
+  {
+   "columns": 1,
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Department"
+  },
+  {
+   "fieldname": "column_break_ijaz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_qjnj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "check_in",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Check In "
+  },
+  {
+   "columns": 1,
+   "fieldname": "actual_check_in",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Actual Check In"
+  },
+  {
+   "columns": 1,
+   "fieldname": "check_out",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Check Out"
+  },
+  {
+   "columns": 1,
+   "fieldname": "actual_check_out",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Actual Check Out"
+  },
+  {
+   "fieldname": "att_ref",
+   "fieldtype": "Data",
+   "label": "Attendance Refrence"
+  },
+  {
+   "fieldname": "att_child_ref",
+   "fieldtype": "Data",
+   "label": "Attendance Child Reference"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-11-14 14:54:48.885506",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Attendance Adjustments CT",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
