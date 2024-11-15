@@ -2797,7 +2797,7 @@ def refresh_table(docname):
     
     # Save the document to apply changes
     doc.save(ignore_permissions=True)
-    frappe.msgprint('t')
+    # frappe.msgprint('t')
     
     # Optional: Return success message
     return {"message": "Child table updated successfully!"}
