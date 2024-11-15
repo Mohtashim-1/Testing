@@ -636,6 +636,7 @@ class EmployeeAttendance(Document):
                                                     # Format total overtime to `HH:MM:SS`
                                                     hours, remainder = divmod(int(total_overtime.total_seconds()), 3600)
                                                     minutes, seconds = divmod(remainder, 60)
+                                                    overtime_round_off = hr_settings.overtime_round_off
                                                     if data.difference1 != "00:00:00":
                                                         if overtime_round_off == 1:
                                                             if minutes >= 30:
