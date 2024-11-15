@@ -69,3 +69,37 @@ frappe.listview_settings['Employee Attendance'] = {
 	
 }
 }
+
+
+
+frappe.listview_settings['Employee Attendance'] = {
+    onload: function(listview) {
+        listview.page.add_action_item(__('Refresh'), function() {
+            // Get selected documents
+            const selected_docs = listview.get_checked_items();
+            if (!selected_docs.length) {
+                frappe.msgprint(__('Please select at least one document.'));
+                return;
+            }
+
+            // Confirm action
+            frappe.confirm(
+                __('Are you sure you want to refresh the table for selected records?'),
+                function() {
+                    frappe.call({
+                        method: "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.employee_attendance.refresh_table",
+                        args: {
+                            docname: selected_docs[0].name // Process the first selected doc (you can loop if required)
+                        },
+                        callback: function(response) {
+                            if (response.message) {
+                                frappe.msgprint(response.message);
+                                listview.refresh(); // Refresh the List View
+                            }
+                        }
+                    });
+                }
+            );
+        });
+    }
+};

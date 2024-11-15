@@ -122,6 +122,7 @@ class EmployeeAttendance(Document):
         total_seconds_approved_eot, total_seconds_approved_ot1 = 0, 0
         time_seconds_approved_eot1 = 0
         self.total_lates_int = 0
+        
 
         total_lates11 = 0
         for data in self.table1:
@@ -2779,3 +2780,24 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
                         # self.table1[ind + 1].late_coming_hours = f"{hours:02}:{minutes:02}:{seconds:02}"
                         self.table1[ind + 1].data2 = int(relaxation_hours.total_seconds() // 3600)  # Store hours in data2
                         # self.total_lates += 1
+
+
+@frappe.whitelist()
+def refresh_table(docname):
+    # Fetch the Employee Attendance document
+    doc = frappe.get_doc("Employee Attendance", docname)
+    
+    # Update the 'refreshed' field in all child table rows
+    for row in doc.table1:
+        if row.refreshed == 1:
+            row.refreshed = 0
+        elif row.refreshed == 0:
+            row.refreshed = 1
+    
+    
+    # Save the document to apply changes
+    doc.save(ignore_permissions=True)
+    frappe.msgprint('t')
+    
+    # Optional: Return success message
+    return {"message": "Child table updated successfully!"}
