@@ -587,7 +587,7 @@ class EmployeeAttendance(Document):
                                                 otc.parent = %s AND otc.type = %s
                                             """, (weekend_slab, data.day_type), as_dict=True)
 
-                                        if over_time_slab_doc and data.check_out_1 and data.check_in_1 and data.difference1:
+                                        if over_time_slab_doc and data.check_out_1 and data.check_in_1 and data.difference1 and data.early == 0:
                                             # Parse check-in and check-out times
                                             check_in_1 = datetime.strptime(data.check_in_1, "%H:%M:%S").time()
                                             check_out_1 = datetime.strptime(data.check_out_1, "%H:%M:%S").time()
@@ -659,7 +659,8 @@ class EmployeeAttendance(Document):
 
                     if not day_data:
                         data.difference = total_time
-                        data.difference1 = total_time
+                        if data.early == 0:
+                            data.difference1 = total_time
                         check_sanwich_after_holiday(self,previous,data,hr_settings,index)
                         late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index)
                         previous = data
@@ -1223,7 +1224,7 @@ class EmployeeAttendance(Document):
                                        
                                         
                                     # Ensure both are strings and `check_out_1_str` is not None
-                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(shift_in_str, str):
+                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(shift_in_str, str) and data.early == 0:
                                         try:
                                             # Convert the string times to datetime objects
                                             shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S")
