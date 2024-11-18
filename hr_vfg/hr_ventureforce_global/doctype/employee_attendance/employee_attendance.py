@@ -141,16 +141,19 @@ class EmployeeAttendance(Document):
                     if len(time_parts) == 3:
                         return time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
                     else:
-                        print(f"Invalid time format: {time_input}")
+                        pass
+                        # print(f"Invalid time format: {time_input}")
                         return 0
                 except ValueError:
-                    print(f"Error processing time format: {time_input}")
+                    pass
+                    # print(f"Error processing time format: {time_input}")
                     return 0
             elif isinstance(time_input, timedelta):  # Check if it's a timedelta object
                 total_seconds = time_input.total_seconds()
                 return int(total_seconds)  # Return total seconds as integer
             else:
-                print(f"Invalid type: {type(time_input)}")
+                pass
+                # print(f"Invalid type: {type(time_input)}")
                 return 0
 
         # Iterate over the rows in table1
@@ -163,32 +166,36 @@ class EmployeeAttendance(Document):
             # Sum early_ot
             if data.early_ot:
                 total_seconds1 += time_to_seconds(data.early_ot)
-                print(f"Added {time_to_seconds(data.early_ot)} seconds from {data.early_ot}")
+                pass
+                # print(f"Added {time_to_seconds(data.early_ot)} seconds from {data.early_ot}")
 
             # Sum estimated_late
             if data.estimated_late:
                 total_seconds2 += time_to_seconds(data.estimated_late)
-                print(f"Added {time_to_seconds(data.estimated_late)} seconds from {data.estimated_late}")
+                pass
+                # print(f"Added {time_to_seconds(data.estimated_late)} seconds from {data.estimated_late}")
 
             # Sum estimate_early
             if data.estimate_early:
                 total_seconds3 += time_to_seconds(data.estimate_early)
-                print(f"Added {time_to_seconds(data.estimate_early)} seconds from {data.estimate_early}")
+                pass
+                # print(f"Added {time_to_seconds(data.estimate_early)} seconds from {data.estimate_early}")
 
             # Sum approved_eot
             if data.approved_eot:
                 total_seconds_approved_eot += time_to_seconds(data.approved_eot)
-                print(f"Added {time_to_seconds(data.approved_eot)} seconds from {data.approved_eot}")
+                pass
+                # print(f"Added {time_to_seconds(data.approved_eot)} seconds from {data.approved_eot}")
 
             # Sum approved_ot1
             if data.approved_ot1:
                 total_seconds_approved_ot1 += time_to_seconds(data.approved_ot1)
-                print(f"Added {time_to_seconds(data.approved_ot1)} seconds from {data.approved_ot1}")
+                # print(f"Added {time_to_seconds(data.approved_ot1)} seconds from {data.approved_ot1}")
 
             # Sum approved early sitting (again checking approved_eot for any duplicate logic)
             if data.approved_eot:
                 total_seconds_approved_eot += time_to_seconds(data.approved_eot)
-                print(f"Added {time_to_seconds(data.approved_eot)} seconds from {data.approved_eot}")
+                # print(f"Added {time_to_seconds(data.approved_eot)} seconds from {data.approved_eot}")
 
         # Calculate total hours after loop
         self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
@@ -197,7 +204,7 @@ class EmployeeAttendance(Document):
         self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
 
         # Print accumulated totals
-        print(f"Total seconds accumulated for approved_eot: {total_seconds_approved_eot}")
+        # print(f"Total seconds accumulated for approved_eot: {total_seconds_approved_eot}")
 
         # Calculate total of late sitting and early sitting
         total_sitting = float(self.late_sitting) + float(self.early_sitting)
@@ -532,11 +539,11 @@ class EmployeeAttendance(Document):
                     #  day of week 
                 
                     date1 = data.date
-                    print(f"\n\n\n\\\n\n\n{date1}")
+                    # print(f"\n\n\n\\\n\n\n{date1}")
                     dateobj = getdate(date1)
                     day_of_week = dateobj.strftime('%A')
                     data.day = day_of_week
-                    print(dateobj)
+                    # print(dateobj)
                    
                     day_name = datetime.strptime(
                         str(data.date), '%Y-%m-%d').strftime('%A')
@@ -1290,8 +1297,9 @@ class EmployeeAttendance(Document):
                                                 data.early_difference1 = difference_str
 
                                         except ValueError as e:
+                                            pass
                                             # Handle any value parsing errors here
-                                            print(f"Error parsing time strings: {e}")
+                                            # print(f"Error parsing time strings: {e}")
 
                                     
                             day_type = data.day_type 
@@ -2103,7 +2111,8 @@ class EmployeeAttendance(Document):
                                                     data.estimate_early = final_timedelta
 
                                                     # You can also log the difference if needed
-                                                    print(f"Estimated Early Time: {difference_str1}")
+                                                    pass
+                                                    # print(f"Estimated Early Time: {difference_str1}")
                                         else:
                                             if data.over_time_type == "Weekly Off":
                                                 if time_difference_delta1 > threshould:

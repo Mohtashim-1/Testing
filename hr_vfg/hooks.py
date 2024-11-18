@@ -107,7 +107,7 @@ doc_events = {
 
 scheduler_events = {
     "cron": {
-	"*/1 * * * *": [
+	"*/02 * * * *": [
 			"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
 		]
 	}
