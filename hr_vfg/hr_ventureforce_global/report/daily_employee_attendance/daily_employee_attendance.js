@@ -13,10 +13,11 @@ frappe.query_reports['Daily Employee Attendance'] = {
 				fieldname:"to",
 				label: __("Date"),
 				fieldtype: "Date",
+				default: frappe.datetime.add_days(frappe.datetime.get_today(), -1)
 				// default: frappe.datetime.get_today()-1
 				// default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
 				// default: frappe.datetime.get_today().now(),
-				default:frappe.datetime.get_today(),
+				// default:frappe.datetime.get_today(),
 			},
 			{
 				fieldname:"depart",

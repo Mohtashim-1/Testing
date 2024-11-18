@@ -144,7 +144,7 @@ def get_checkins(args=None, ip=None, port=None,password=0):
 										doc1.attendance_time= str(check_in)
 										doc1.type = "Check In"
 										doc1.ip = ip+":"+port
-										doc1.save()
+										doc1.save(ignore_permissions=True)
 							
 						except:
 							frappe.log_error(frappe.get_traceback(),"Attendance hook test")
@@ -336,7 +336,7 @@ def get_checkouts(args=None,ip=None, port=None,password=0):
 										doc2.attendance_time= str(check_out)
 										doc2.type = "Check Out"
 										doc2.ip = '182.184.121.132:4371'
-										doc2.save()
+										doc2.save(ignore_permissions=True)
 						except:
 							frappe.log_error(frappe.get_traceback(),"Attendance hook test")
 				
