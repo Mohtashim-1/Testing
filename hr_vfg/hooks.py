@@ -105,20 +105,14 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-#     "cron": {
-#         "00 13 * * *": [
-#             "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-#         ]
-#     }
-# }
-
-
 scheduler_events = {
-    "hourly": [
-        "hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
-    ]
+    "cron": {
+	"*/1 * * * *": [
+			"hr_vfg.hr_ventureforce_global.doctype.employee_attendance.attendance_connector.get_attendance_from_hook"
+		]
+	}
 }
+
 
 # scheduler_events = {
     # "daily": [
