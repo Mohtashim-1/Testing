@@ -574,7 +574,8 @@ class EmployeeAttendance(Document):
                                     shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
                                     if shift1:
                                         weekend_slab = shift1[0].custom_slab
-                                        overtime_slab = frappe.get_doc("Over Time Slab", weekend_slab)
+                                        if weekend_slab:
+                                            overtime_slab = frappe.get_doc("Over Time Slab", weekend_slab)
 
 
                                         # Get specific overtime slab details
