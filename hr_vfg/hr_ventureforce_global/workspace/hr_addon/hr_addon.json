@@ -428,7 +428,7 @@
    "is_query_report": 0,
    "label": "Employee Attendance Adjustment",
    "link_count": 0,
-   "link_to": "Attendance Adjustment",
+   "link_to": "Attendance Adjustments",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -444,7 +444,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-11-04 17:40:00.092840",
+ "modified": "2024-11-18 16:00:28.216518",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
