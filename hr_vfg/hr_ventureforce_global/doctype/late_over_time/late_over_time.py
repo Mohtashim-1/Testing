@@ -2,8 +2,15 @@
 # For license information, please see license.txt
 import frappe
 from frappe.model.document import Document
+from datetime import datetime
 
 class LateOverTime(Document):
+	def validate(self):
+		date_str = self.date  
+		date_obj = datetime.strptime(date_str, "%Y-%m-%d")  
+		self.months = date_obj.strftime("%B") 
+		self.year1 = date_obj.year
+
 	@frappe.whitelist()
 	def get_data(self):
 		# Correct the SQL query to only include the required argument (self.date)
