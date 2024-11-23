@@ -23,6 +23,7 @@
   "get_data",
   "section_break_10",
   "details",
+  "project",
   "section_break_rmvm",
   "remarks",
   "section_break_12",
@@ -153,12 +154,18 @@
   {
    "fieldname": "column_break_hqav",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-23 15:22:55.094259",
+ "modified": "2024-11-23 17:20:39.582509",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Over Time",
