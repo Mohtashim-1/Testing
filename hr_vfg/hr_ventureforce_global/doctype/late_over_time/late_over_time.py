@@ -2,14 +2,36 @@
 # For license information, please see license.txt
 import frappe
 from frappe.model.document import Document
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class LateOverTime(Document):
 	def validate(self):
+		self.month_and_year()
+		self.total_ot()
+
+	def month_and_year(self):
 		date_str = self.date  
 		date_obj = datetime.strptime(date_str, "%Y-%m-%d")  
+		self.day = date_obj.strftime('%A')
 		self.months = date_obj.strftime("%B") 
 		self.year1 = date_obj.year
+	
+	def total_ot(self):
+		total_seconds = 0
+		total_approved_seconds = 0 
+		for row in self.details:
+			if row.actual_overtime:
+				time_parts = list(map(int, row.actual_overtime.split(":")))
+				actual_time = timedelta(hours=time_parts[0], minutes=time_parts[1], seconds=time_parts[2])
+				total_seconds += actual_time.total_seconds()
+			if row.approved_overtime:
+				time_parts1 = list(map(int, row.approved_overtime.split(":")))
+				actual_time1 = timedelta(hours=time_parts1[0], minutes=time_parts1[1], seconds=time_parts1[2])
+				total_approved_seconds += actual_time1.total_seconds()
+		total_overtime = str(timedelta(seconds=total_seconds))
+		total_approved_overtime = str(timedelta(seconds=total_approved_seconds))
+		self.total_over_time = total_overtime
+		self.approved_over_time = total_approved_overtime
 
 	@frappe.whitelist()
 	def get_data(self):

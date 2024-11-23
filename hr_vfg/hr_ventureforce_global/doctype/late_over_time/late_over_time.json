@@ -10,6 +10,8 @@
  "field_order": [
   "date",
   "ot_frequency",
+  "column_break_hqav",
+  "day",
   "column_break_2",
   "months",
   "month",
@@ -21,8 +23,12 @@
   "get_data",
   "section_break_10",
   "details",
-  "section_break_12",
+  "section_break_rmvm",
   "remarks",
+  "section_break_12",
+  "total_over_time",
+  "column_break_zdjg",
+  "approved_over_time",
   "amended_from"
  ],
  "fields": [
@@ -118,12 +124,41 @@
    "fieldname": "year1",
    "fieldtype": "Int",
    "label": "Year"
+  },
+  {
+   "fieldname": "total_over_time",
+   "fieldtype": "Data",
+   "label": "Total Over Time"
+  },
+  {
+   "fieldname": "column_break_zdjg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_over_time",
+   "fieldtype": "Data",
+   "label": "Approved Over Time"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_rmvm",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Data",
+   "label": "Day"
+  },
+  {
+   "fieldname": "column_break_hqav",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-23 15:16:52.263145",
+ "modified": "2024-11-23 15:22:55.094259",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Over Time",
