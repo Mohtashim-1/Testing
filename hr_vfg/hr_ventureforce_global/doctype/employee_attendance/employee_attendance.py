@@ -2743,8 +2743,37 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
     for data in self.table1:
         # pass
         if data.data2:
-            if data.data2 > 0:
-                data.late = 0
+            if data.late_coming_hours:
+                time_parts1 = list(map(int, data.late_coming_hours.split(":")))
+                actual_time = timedelta(hours=time_parts1[0], minutes=time_parts1[1], seconds=time_parts1[2])
+                # frappe.log_error(f"actual_time{actual_time}time_parts1{time_parts1}")
+                if data.data2 >= time_parts1[0]:
+                    data.late = 0
+                    allowed_hours = int(data.data2)
+                    deduct_late_relax = time_parts1[0]
+                    minus_hour = deduct_late_relax - allowed_hours
+                    if minus_hour < 0:
+                        minus_hour = 0
+                    new_time = timedelta(hours=minus_hour, minutes=0, seconds=0)
+                    data.late_coming_hours = str(new_time)
+
+                else:
+                    data.late = 1
+                    # allowed_hours = int(data.data2)
+                    # deduct_late_relax = time_parts1[0]
+                    # minus_hour = deduct_late_relax - allowed_hours
+                    # if minus_hour < 0:
+                    #     minus_hour = 0
+                    # new_time = timedelta(hours=minus_hour, minutes=time_parts1[1], seconds=time_parts1[2])
+                    # data.late_coming_hours = str(new_time)
+                    
+
+
+                    
+
+
+            # if data.data2 > 0:
+            #     data.late = 0
         # self.total_lates -= 1
     
     for lr in late_relaxation.late_relaxation_employee_list:
@@ -2797,10 +2826,8 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
 
 @frappe.whitelist()
 def refresh_table(docname):
-    # Fetch the Employee Attendance document
     doc = frappe.get_doc("Employee Attendance", docname)
     
-    # Update the 'refreshed' field in all child table rows
     for row in doc.table1:
         if row.refreshed == 1:
             row.refreshed = 0
@@ -2808,9 +2835,6 @@ def refresh_table(docname):
             row.refreshed = 1
     
     
-    # Save the document to apply changes
     doc.save(ignore_permissions=True)
-    # frappe.msgprint('t')
-    
-    # Optional: Return success message
+
     return {"message": "Child table updated successfully!"}
