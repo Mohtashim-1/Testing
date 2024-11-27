@@ -10,7 +10,7 @@ class LateOverTime(Document):
 		self.total_ot()
 
 	def month_and_year(self):
-		date_str = self.date  
+		date_str = str(self.date)
 		date_obj = datetime.strptime(date_str, "%Y-%m-%d")  
 		self.day = date_obj.strftime('%A')
 		self.months = date_obj.strftime("%B") 
