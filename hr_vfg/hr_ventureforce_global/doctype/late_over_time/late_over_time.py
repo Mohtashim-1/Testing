@@ -18,16 +18,35 @@ class LateOverTime(Document):
 	
 	def total_ot(self):
 		total_seconds = 0
-		total_approved_seconds = 0 
+		total_approved_seconds = 0
+
 		for row in self.details:
-			if row.actual_overtime:
-				time_parts = list(map(int, row.actual_overtime.split(":")))
-				actual_time = timedelta(hours=time_parts[0], minutes=time_parts[1], seconds=time_parts[2])
+			actual_overtime = row.actual_overtime
+			approved_overtime = row.approved_overtime
+
+			# Process actual overtime
+			if actual_overtime:
+				if isinstance(actual_overtime, str):
+					time_parts = list(map(int, actual_overtime.split(":")))
+					actual_time = timedelta(hours=time_parts[0], minutes=time_parts[1], seconds=time_parts[2])
+				elif isinstance(actual_overtime, timedelta):
+					actual_time = actual_overtime
+				else:
+					raise ValueError("Invalid format for actual_overtime")
 				total_seconds += actual_time.total_seconds()
-			if row.approved_overtime:
-				time_parts1 = list(map(int, row.approved_overtime.split(":")))
-				actual_time1 = timedelta(hours=time_parts1[0], minutes=time_parts1[1], seconds=time_parts1[2])
-				total_approved_seconds += actual_time1.total_seconds()
+
+			# Process approved overtime
+			if approved_overtime:
+				if isinstance(approved_overtime, str):
+					time_parts1 = list(map(int, approved_overtime.split(":")))
+					approved_time = timedelta(hours=time_parts1[0], minutes=time_parts1[1], seconds=time_parts1[2])
+				elif isinstance(approved_overtime, timedelta):
+					approved_time = approved_overtime
+				else:
+					raise ValueError("Invalid format for approved_overtime")
+				total_approved_seconds += approved_time.total_seconds()
+
+		# Convert total seconds back to timedelta and store as string
 		total_overtime = str(timedelta(seconds=total_seconds))
 		total_approved_overtime = str(timedelta(seconds=total_approved_seconds))
 		self.total_over_time = total_overtime
