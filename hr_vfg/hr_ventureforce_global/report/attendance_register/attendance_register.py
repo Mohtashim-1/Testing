@@ -117,14 +117,7 @@ def get_datas(filters=None):
     if filters is None:
         filters = {}
 
-    # Month mapping
-    month_mapping = {
-        "January": 1, "February": 2, "March": 3, "April": 4,
-        "May": 5, "June": 6, "July": 7, "August": 8,
-        "September": 9, "October": 10, "November": 11, "December": 12
-    }
-
-    # Prepare filters for attendance records
+    # Prepare filter conditions for parent doctype
     conditions = {}
     if filters.get("employee"):
         conditions["employee"] = filters["employee"]
@@ -133,53 +126,56 @@ def get_datas(filters=None):
     if filters.get("year"):
         conditions["year"] = filters["year"]
 
-    # Fetch attendance records
+    # Fetch filtered attendance records
     attendance_records = frappe.get_all(
         'Employee Attendance',
         filters=conditions,
-        fields=['employee', 'employee_name', 'month', 'year']
+        fields=['name', 'employee', 'employee_name']
     )
 
     data = []
 
+    # Process each attendance record
     for record in attendance_records:
-        attendance_doc = frappe.get_doc('Employee Attendance','MOHTASHIM MUHAMMAD SHOAIB-September00109')
+        # Fetch the full document (including child table)
+        attendance_doc = frappe.get_doc('Employee Attendance', record['name'])
         
-        check_in_out_data = {'employee': record['employee'], 'employee_name': record['employee_name']}
-        
-        late_count, absent_count, leave_count = 0, 0, 0
+        # Initialize check-in/out data for this employee
+        check_in_out_data = {
+            'employee': record['employee'],
+            'employee_name': record['employee_name']
+        }
 
-        # Initialize for each day
+        # Initialize fields for each day of the month
         for day in range(1, 31):
             check_in_out_data[f'date_{day}'] = None
             check_in_out_data[f'check_in_{day}'] = None
             check_in_out_data[f'check_out_{day}'] = None
             check_in_out_data[f'status_{day}'] = None
 
+        # Process child table (table1) for daily attendance
         for child in attendance_doc.table1:
             day = child.date.day
-            if 1 <= day <= 30:
+            if 1 <= day <= 30:  # Ensure the day falls within the range
                 check_in_out_data[f'date_{day}'] = child.date
                 check_in_out_data[f'check_in_{day}'] = child.check_in_1
                 check_in_out_data[f'check_out_{day}'] = child.check_out_1
-                
-                # Check for late, absent, leave status
+
+                # Determine status based on child table fields
                 if child.late:
                     status = "Late"
                 elif child.absent:
                     status = "Absent"
                 elif child.mark_leave:
                     status = "Leave"
-                elif child.check_in_1 or child.check_out_1:  # Mark as present if check-in is available
+                elif child.check_in_1 or child.check_out_1:
                     status = "Present"
                 else:
-                    status = "Absent"  # Default status if no check-in info is found
-
-                
+                    status = "Absent"  # Default status if no check-in/out info
 
                 check_in_out_data[f'status_{day}'] = status
 
-        # Add the data for the employee to the final list
+        # Append processed data for this employee
         data.append(check_in_out_data)
 
     return data
