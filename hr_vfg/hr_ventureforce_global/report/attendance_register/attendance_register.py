@@ -26,14 +26,14 @@ def get_chart_data(data):
             }
 
         # Iterate through each day's status
-        for day in range(1, 31):
-            status = row.get(f'status_{day}')
-            if status == 'Late':
-                employee_stats[employee]['Late'] += 1
-            elif status == 'Absent':
-                employee_stats[employee]['Absent'] += 1
-            elif status == 'Leave':
-                employee_stats[employee]['Leave'] += 1
+        # for day in range(1, 31):
+        #     status = row.get(f'status_{day}')
+        #     if status == 'Late':
+        #         employee_stats[employee]['Late'] += 1
+        #     elif status == 'Absent':
+        #         employee_stats[employee]['Absent'] += 1
+        #     elif status == 'Leave':
+        #         employee_stats[employee]['Leave'] += 1
 
     # Prepare data for chart
     labels = list(employee_stats.keys())  # Employee names
@@ -66,7 +66,6 @@ def get_chart_data(data):
 
     return chart
 
-
 def get_columns(filters=None):
     columns = [
         {
@@ -84,32 +83,20 @@ def get_columns(filters=None):
         }
     ]
 
-    # Add columns for each day of the month
+    # Add columns for each day of the month (just the day number in the heading)
     for day in range(1, 31):
         columns.append({
-            "label": _(f"Date {day}"),
-            "fieldname": f"date_{day}",
-            "fieldtype": "Date",
-            "width": 100
-        })
-        columns.append({
-            "label": _(f"Check In {day}"),
-            "fieldname": f"check_in_{day}",
+            "label": _(f"{day}"),
+            "fieldname": f"day_{day}",
             "fieldtype": "Data",
-            "width": 100
+            "width": 200
         })
-        columns.append({
-            "label": _(f"Check Out {day}"),
-            "fieldname": f"check_out_{day}",
-            "fieldtype": "Data",
-            "width": 100
-        })
-        columns.append({
-            "label": _(f"Status {day}"),
-            "fieldname": f"status_{day}",
-            "fieldtype": "Data",
-            "width": 100
-        })
+        # columns.append({
+        #     "label": _(f"Status {day}"),
+        #     "fieldname": f"status_{day}",
+        #     "fieldtype": "Data",
+        #     "width": 100
+        # })
 
     return columns
 
@@ -140,42 +127,40 @@ def get_datas(filters=None):
         # Fetch the full document (including child table)
         attendance_doc = frappe.get_doc('Employee Attendance', record['name'])
         
-        # Initialize check-in/out data for this employee
-        check_in_out_data = {
+        # Initialize data for this employee
+        employee_data = {
             'employee': record['employee'],
             'employee_name': record['employee_name']
         }
 
         # Initialize fields for each day of the month
         for day in range(1, 31):
-            check_in_out_data[f'date_{day}'] = None
-            check_in_out_data[f'check_in_{day}'] = None
-            check_in_out_data[f'check_out_{day}'] = None
-            check_in_out_data[f'status_{day}'] = None
+            employee_data[f'day_{day}'] = None
+            # employee_data[f'status_{day}'] = None
 
         # Process child table (table1) for daily attendance
         for child in attendance_doc.table1:
             day = child.date.day
             if 1 <= day <= 30:  # Ensure the day falls within the range
-                check_in_out_data[f'date_{day}'] = child.date
-                check_in_out_data[f'check_in_{day}'] = child.check_in_1
-                check_in_out_data[f'check_out_{day}'] = child.check_out_1
+                # Combine check-in and check-out times
+                check_in_out = f"{child.check_in_1 or 'N/A'} / {child.check_out_1 or 'N/A'}"
+                employee_data[f'day_{day}'] = check_in_out
 
                 # Determine status based on child table fields
-                if child.late:
-                    status = "Late"
-                elif child.absent:
-                    status = "Absent"
-                elif child.mark_leave:
-                    status = "Leave"
-                elif child.check_in_1 or child.check_out_1:
-                    status = "Present"
-                else:
-                    status = "Absent"  # Default status if no check-in/out info
+                # if child.late:
+                #     status = "Late"
+                # elif child.absent:
+                #     status = "Absent"
+                # elif child.mark_leave:
+                #     status = "Leave"
+                # elif child.check_in_1 or child.check_out_1:
+                #     status = "Present"
+                # else:
+                #     status = "Absent"  # Default status if no check-in/out info
 
-                check_in_out_data[f'status_{day}'] = status
+                # employee_data[f'status_{day}'] = status
 
         # Append processed data for this employee
-        data.append(check_in_out_data)
+        data.append(employee_data)
 
     return data

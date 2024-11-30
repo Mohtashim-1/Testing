@@ -1,0 +1,69 @@
+<h2 class="text-center">{%= __("Attendance Register") %}</h2>
+<table>
+  <tr>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="6%" style="width: 2%;"></td>
+    <td width="3%"><b>Employee:</b></td>
+    <td width="10%"><b>{%= filters.employee %}</b></td>
+    <td width="6%" style="width: 2%;"></td>
+    
+    <td width="3%"><b>Month:</b></td>
+    <td colspan="15"><b>{%= filters.month %}</b></td>
+    <td width="0%">&nbsp;</td>
+  </tr>
+</table>
+<hr>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th style="width: 6%; font-weight: bold;">{%= __("Sr") %}</th>
+            <th style="width: 12%; font-weight: bold;">{%= __("Code") %}</th>
+            <th style="width: 20%; font-weight: bold;">{%= __("Name") %}</th>
+            <th style="width: 10%; font-weight: bold;">{%= __("Dept") %}</th>
+            <th style="width: 10%; font-weight: bold;">{%= __("Dsg") %}</th>
+            
+            <!-- Loop through days of the month to display individual columns for each day's attendance -->
+            {% for (var day=1; day<=31; day++) { %}
+                <th style="width: 3%; font-weight: bold;">{%= __("Day " + day) %}</th>
+            {% } %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for (var i=0, l=data.length; i<l; i++) { %}
+        <tr>
+            <td style="border-color: #000">{%= i + 1 %}</td>
+            <td style="border-color: #000">{%= data[i].employee %}</td>
+            <td style="border-color: #000">{%= data[i].employee_name %}</td>
+            <td style="border-color: #000">{%= data[i].department %}</td>
+            <td style="border-color: #000">{%= data[i].designation %}</td>
+            
+            <!-- Loop through each day and display check-in/check-out data -->
+            {% for (var day=1; day<=31; day++) { %}
+                <td style="border-color: #000">
+                    {% if (data[i]['day_' + day]) { %}
+                        {%= data[i]['day_' + day] %}
+                    {% } else { %}
+                        N/A
+                    {% } %}
+                </td>
+            {% } %}
+        </tr>
+        {% } %}
+    </tbody>
+</table>
+
+<p class="text-right text-muted">Printed On {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</p>
