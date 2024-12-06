@@ -266,7 +266,7 @@ class EmployeeAttendance(Document):
             # if data.absent == 0:
             #     self.no_of_sundays += data.weekly_off
                 
-            if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 is "" or data.check_out_1 is "" :
+            if data.check_in_1 == None and data.check_out_1 == None or data.check_in_1 == "" or data.check_out_1 == "" :
                 # Both are missing, set everything to 0
                 data.check_in_missing = 0
                 data.check_out_missing = 0
@@ -2740,88 +2740,112 @@ def get_holidays_for_employee(
 
 def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index):
     late_relaxation = frappe.get_single('Late Relaxation Settings')
-    for data in self.table1:
-        # pass
-        if data.data2:
-            if data.late_coming_hours:
-                time_parts1 = list(map(int, data.late_coming_hours.split(":")))
-                actual_time = timedelta(hours=time_parts1[0], minutes=time_parts1[1], seconds=time_parts1[2])
-                # frappe.log_error(f"actual_time{actual_time}time_parts1{time_parts1}")
-                if data.data2 >= time_parts1[0]:
-                    data.late = 0
-                    allowed_hours = int(data.data2)
-                    deduct_late_relax = time_parts1[0]
-                    minus_hour = deduct_late_relax - allowed_hours
-                    if minus_hour < 0:
-                        minus_hour = 0
-                    new_time = timedelta(hours=minus_hour, minutes=0, seconds=0)
-                    data.late_coming_hours = str(new_time)
-
-                else:
-                    data.late = 1
-                    # allowed_hours = int(data.data2)
-                    # deduct_late_relax = time_parts1[0]
-                    # minus_hour = deduct_late_relax - allowed_hours
-                    # if minus_hour < 0:
-                    #     minus_hour = 0
-                    # new_time = timedelta(hours=minus_hour, minutes=time_parts1[1], seconds=time_parts1[2])
-                    # data.late_coming_hours = str(new_time)
-                    
-
-
-                    
-
-
-            # if data.data2 > 0:
-            #     data.late = 0
-        # self.total_lates -= 1
     
+    # Debug for table1 and list
+    # print(f"Type of 'list': {type(list)}")
+    # print(f"self.table1: {self.table1}")
+    # print(f"Type of self.table1: {type(self.table1)}")
+    
+    # for data in self.table1:
+    #     if data.data2 and data.late_coming_hours:
+    #         time_parts1 = list(map(int, data.late_coming_hours.split(":")))  # Ensure no shadowing
+    #         actual_time = timedelta(hours=time_parts1[0], minutes=time_parts1[1], seconds=time_parts1[2])
+            
+    #         if data.data2 >= time_parts1[0]:
+    #             data.late = 0
+    #             allowed_hours = int(data.data2)
+    #             deduct_late_relax = time_parts1[0]
+    #             minus_hour = max(deduct_late_relax - allowed_hours, 0)
+    #             new_time = timedelta(hours=minus_hour)
+    #             data.late_coming_hours = str(new_time)
+    #         else:
+    #             data.late = 1
+
     for lr in late_relaxation.late_relaxation_employee_list:
         if self.employee == lr.employee:
             for ind in range(len(self.table1) - 1):
                 if self.table1[ind].check_out_1:
-                    # Convert check_out_1 to time and calculate seconds
                     check_out_time = datetime.strptime(self.table1[ind].check_out_1, "%H:%M:%S").time()
-                    check_out_seconds = check_out_time.hour * 3600 + check_out_time.minute * 60 + check_out_time.second
-                    
-                    # Initialize relaxation hours to 0
+                    check_out_seconds = (
+                        check_out_time.hour * 3600 + check_out_time.minute * 60 + check_out_time.second
+                    )
                     relaxation_hours = timedelta(0)
-                    
-                    # Loop through each slab to determine the appropriate relaxation hours
                     for slab in late_relaxation.late_relaxation_slab:
                         start_seconds = slab.late_sitting_in_hours.total_seconds()
                         end_seconds = slab.late_sitting_to_in_hours.total_seconds()
                         
                         if start_seconds <= check_out_seconds <= end_seconds:
                             relaxation_hours = slab.late_relaxation_in_hours
-                            break
-                    
+                            
+                            if relaxation_hours > timedelta(0):
+                                hours_seconds = relaxation_hours.total_seconds()
+                                hh_mm_ss = str(timedelta(seconds=int(hours_seconds)))
+                                self.table1[ind + 1].data3 = hh_mm_ss  # Store relaxation hours in data3
+
+                                # Loop through table1 to compare late_coming_hours with data3
+                                for data in self.table1:
+                                    if data.data3 and data.late_coming_hours:
+                                        # Convert both fields to timedelta for accurate comparison
+                                        if isinstance(data.data3, str):
+                                            data3_parts = list(map(int, data.data3.split(":")))
+                                            data3_td = timedelta(hours=data3_parts[0], minutes=data3_parts[1], seconds=data3_parts[2])
+                                        else:
+                                            data3_td = data.data3
+
+                                        if isinstance(data.late_coming_hours, str):
+                                            late_parts = list(map(int, data.late_coming_hours.split(":")))
+                                            late_coming_td = timedelta(hours=late_parts[0], minutes=late_parts[1], seconds=late_parts[2])
+                                        else:
+                                            late_coming_td = data.late_coming_hours
+
+                                        # Perform the comparison and set data.late accordingly
+                                        if late_coming_td > data3_td:
+                                            data.late = 1  # Late condition
+                                            print(f"LATE: late_coming_hours > data3 ({late_coming_td} > {data3_td})")
+                                        else:
+                                            data.late = 0  # Not late
+                                            print(f"NOT LATE: late_coming_hours <= data3 ({late_coming_td} <= {data3_td})")
+                                    else:
+                                        # Handle missing fields
+                                        if not data.data3:
+                                            print("data3 is missing")
+                                        if not data.late_coming_hours:
+                                            print("late_coming_hours is missing")
+
+
                     # Update late coming hours if relaxation hours are applicable
-                    if relaxation_hours > timedelta(0):
-                        late_coming_hours = self.table1[ind + 1].late_coming_hours
+                    # if relaxation_hours > timedelta(0):
+                    #     late_coming_hours = self.table1[ind + 1].late_coming_hours
                         
-                        # Convert late_coming_hours to timedelta
-                        if isinstance(late_coming_hours, str):
-                            hours1, minutes1, seconds1 = map(int, late_coming_hours.split(":"))
-                            current_late_coming = timedelta(hours=hours1, minutes=minutes1, seconds=seconds1)
-                        elif isinstance(late_coming_hours, timedelta):
-                            current_late_coming = late_coming_hours
-                        else:
-                            current_late_coming = timedelta(0)
+                    #     # Convert late_coming_hours to timedelta
+                    #     if isinstance(late_coming_hours, str):
+                    #         hours1, minutes1, seconds1 = map(int, late_coming_hours.split(":"))
+                    #         current_late_coming = timedelta(hours=hours1, minutes=minutes1, seconds=seconds1)
+                    #     elif isinstance(late_coming_hours, timedelta):
+                    #         current_late_coming = late_coming_hours
+                    #     else:
+                    #         current_late_coming = timedelta(0)
                         
-                        # Subtract relaxation hours from late coming time, ensuring no negative value
-                        total_time = max(current_late_coming - relaxation_hours, timedelta(0))
+                    #     # Subtract relaxation hours from late coming time, ensuring no negative value
+                    #     total_time = max(current_late_coming - relaxation_hours, timedelta(0))
                         
-                        # Format total_time as `HH:MM:SS`
-                        total_seconds = int(total_time.total_seconds())
-                        hours = (total_seconds // 3600) % 24
-                        minutes = (total_seconds % 3600) // 60
-                        seconds = total_seconds % 60
+                    #     # Format total_time as `HH:MM:SS`
+                    #     total_seconds = int(total_time.total_seconds())
+                    #     hours = (total_seconds // 3600) % 24
+                    #     minutes = (total_seconds % 3600) // 60
+                    #     seconds = total_seconds % 60
                         
                         # Update late_coming_hours and store relaxation hours in data2
-                        # self.table1[ind + 1].late_coming_hours = f"{hours:02}:{minutes:02}:{seconds:02}"
-                        self.table1[ind + 1].data2 = int(relaxation_hours.total_seconds() // 3600)  # Store hours in data2
+                       
+                        # self.table1[ind + 1].data2 = int(relaxation_hours.total_seconds())  # Store hours in data2
                         # self.total_lates += 1
+                        # hours_seconds = relaxation_hours.total_seconds()  # Get total seconds
+                        # hh_mm_ss = str(timedelta(seconds=int(hours_seconds)))  # Convert to hh:mm:ss
+                        # print(f"test{hh_mm_ss}")
+
+                        # self.table1[ind + 1].data3 = hh_mm_ss  # Store in data2
+                    # else:
+                    #     print(f'chacha')
 
 
 @frappe.whitelist()
