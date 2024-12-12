@@ -105,23 +105,33 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reporting",
-   "link_count": 1,
+   "link_count": 2,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Meal Summary Report",
    "link_count": 0,
    "link_to": "Meal Summary Report",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Meal Report Day Wise",
+   "link_count": 0,
+   "link_to": "Meal Report Day Wise",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-12-11 19:59:31.059340",
+ "modified": "2024-12-12 12:20:05.190066",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Meal",
