@@ -15,7 +15,7 @@ def get_column(filters):
         {"fieldname": "meal_provider", "label": "Meal Provider", "fieldtype": "Data", "width": 400},
         {"fieldname": "meal_type", "label": "Meal Type", "fieldtype": "Data", "width": 100},
         {"fieldname": "total_contractor", "label": "Total Contractor", "fieldtype": "Float"},
-        {"fieldname": "total_employee", "label": "Total Employee", "fieldtype": "Float"},
+        {"fieldname": "total_employees", "label": "Total Employee", "fieldtype": "Float"},
         {"fieldname": "total_amount", "label": "Total Amount", "fieldtype": "Currency"},
     ]
     return columns

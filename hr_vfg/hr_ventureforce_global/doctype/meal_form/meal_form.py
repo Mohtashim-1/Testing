@@ -69,42 +69,20 @@ class MealForm(Document):
 		for i in self.detail_meal:
 			total_qty1 += i.qty
 			total_amount1 += i.amount
-		self.total_contractor = total_qty
-		self.total_contract_amount = total_amount
-		self.total_employees = total_qty1
-		self.total_employee_amount = total_amount1
-		self.total_qty = self.total_contractor + self.total_employees 
-		self.total_amount = self.total_contract_amount + self.total_employee_amount
+		# self.total_contractor = total_qty
+		# self.total_contract_amount = total_amount
+		# self.total_employees = total_qty1
+		# self.total_employee_amount = total_amount1
+		# self.total_qty = self.total_contractor + self.total_employees 
+		# self.total_amount = self.total_contract_amount + self.total_employee_amount
+		self.db_set('total_contractor', total_qty)
+		self.db_set('total_contract_amount', total_amount)
+		self.db_set('total_employees', total_qty1)
+		self.db_set('total_employee_amount', total_amount1)
+		self.db_set('total_qty', total_qty + total_qty1)
+		self.db_set('total_amount', total_amount + total_amount1)
 				
 
-
-	# def calculate_total_contractor(self):
-	# 	total = 0
-	# 	for i in self.detail:
-	# 		total += i.quantity
-	# 	self.total_contractor = total
-
-	
-	# def calculate_total_employee(self):
-	# 	total1 = 0
-	# 	for j in self.detail_meal:
-	# 		total1 += j.qty
-	# 	self.total_employees = total1
-	
-	# def calculate_total_sum(self):
-	# 	total_qty = self.total_contractor + self.total_employees
-	# 	self.total_qty = total_qty
-
-	# # def rate_of_meal(self):
-	# # 	meal_provider = frappe.get_doc("Meal Provider",self.meal_provider)
-	# # 	meal_data = meal_provider.meal_provider_ct
-	# # 	for m in meal_data:
-	# # 		if self.meal_type == m.meal_type:
-	# # 			self.per_meal_rate = m.rate
-
-	# def sum_total_amount(self):
-	# 	total_amount = self.per_meal_rate * self.total_qty
-	# 	self.total_amount = total_amount
 
 
 		
