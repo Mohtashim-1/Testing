@@ -21,7 +21,7 @@ class EmployeeAdvanceBulk(Document):
 		def calculate_total_advance(self):
 			amount = 0
 			for i in self.employee_advance_bulk_ct:
-				amount += i.amount
+				amount += i.amount or 0
 			self.total_advance = amount
 
 		@frappe.whitelist()
