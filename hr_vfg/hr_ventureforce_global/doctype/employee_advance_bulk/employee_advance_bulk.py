@@ -3,9 +3,27 @@
 
 import frappe
 from frappe.model.document import Document
+from datetime import datetime, timedelta
 
 
 class EmployeeAdvanceBulk(Document):
+		def validate(self):
+			self.month_and_year()
+			self.calculate_total_advance()
+
+		def month_and_year(self):
+			date_str = str(self.posting_date)
+			date_obj = datetime.strptime(date_str, "%Y-%m-%d")  
+			self.day = date_obj.strftime('%A')
+			self.month = date_obj.strftime("%B") 
+			self.year = date_obj.year
+
+		def calculate_total_advance(self):
+			amount = 0
+			for i in self.employee_advance_bulk_ct:
+				amount += i.amount
+			self.total_advance = amount
+
 		@frappe.whitelist()
 		def get_data(self):
 			rec = frappe.db.sql("""
