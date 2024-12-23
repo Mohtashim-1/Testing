@@ -7,7 +7,13 @@
  "engine": "InnoDB",
  "field_order": [
   "employee_name",
+  "column_break_ztik",
+  "designation",
+  "column_break_pptq",
+  "department",
+  "column_break_qoca",
   "amount",
+  "column_break_hane",
   "date_of_joining"
  ],
  "fields": [
@@ -23,12 +29,13 @@
   },
   {
    "fieldname": "employee_name",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_filter": 1,
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
-   "label": "Employee Name"
+   "label": "Employee Name",
+   "options": "Employee"
   },
   {
    "fieldname": "date_of_joining",
@@ -38,12 +45,49 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Date of Joining"
+  },
+  {
+   "fetch_from": "employee_name.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Designation"
+  },
+  {
+   "fetch_from": "employee_name.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Department"
+  },
+  {
+   "fieldname": "column_break_ztik",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_pptq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_qoca",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hane",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-28 14:18:18.181802",
+ "modified": "2024-12-23 18:51:43.217132",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Advance Bulk CT",
