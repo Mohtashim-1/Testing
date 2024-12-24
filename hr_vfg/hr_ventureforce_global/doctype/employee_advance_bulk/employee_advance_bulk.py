@@ -34,7 +34,7 @@ class EmployeeAdvanceBulk(Document):
         # Loop through each employee record and append to the child table
         for r in rec:
             self.append('employee_advance_bulk_ct', {
-                "employee_name": r['employee_name'], 
+                "employee_name": r['name'], 
                 "designation": r.designation,
                 "department": r['department'],  # Employee's department
                 "date_of_joining": r['date_of_joining']  # Employee's date of joining
