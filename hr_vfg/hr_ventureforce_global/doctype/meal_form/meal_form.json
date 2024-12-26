@@ -38,6 +38,10 @@
   "service_qty",
   "column_break_uioa",
   "service_amount",
+  "billing_section",
+  "invoiced",
+  "column_break_myhc",
+  "invoiced_amount",
   "remarks_section",
   "remarks",
   "section_break_lukz",
@@ -239,13 +243,33 @@
   {
    "fieldname": "column_break_relc",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "billing_section",
+   "fieldtype": "Section Break",
+   "label": "Billing"
+  },
+  {
+   "default": "0",
+   "fieldname": "invoiced",
+   "fieldtype": "Check",
+   "label": "Invoiced"
+  },
+  {
+   "fieldname": "column_break_myhc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoiced_amount",
+   "fieldtype": "Float",
+   "label": "Invoiced Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-26 16:23:36.211775",
+ "modified": "2024-12-26 16:26:11.837226",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Meal Form",
