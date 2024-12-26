@@ -19,7 +19,10 @@
   "detail",
   "section_break_ywrg",
   "detail_meal",
+  "section_break_cjcj",
+  "service_charges_ct",
   "total_section",
+  "column_break_relc",
   "total_contractor",
   "column_break_mgno",
   "total_employees",
@@ -31,6 +34,10 @@
   "total_employee_amount",
   "column_break_krvl",
   "total_amount",
+  "service_total_section",
+  "service_qty",
+  "column_break_uioa",
+  "service_amount",
   "remarks_section",
   "remarks",
   "section_break_lukz",
@@ -76,28 +83,30 @@
   {
    "fieldname": "meal_type",
    "fieldtype": "Link",
-   "label": "Meal Type",
+   "label": "Service Type",
    "options": "Meal Type",
    "reqd": 1
   },
   {
    "fieldname": "section_break_kxid",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Contractor"
   },
   {
    "fieldname": "detail",
    "fieldtype": "Table",
-   "label": "Detail",
+   "label": "Contractor Detail",
    "options": "Detail"
   },
   {
    "fieldname": "section_break_ywrg",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Employee"
   },
   {
    "fieldname": "detail_meal",
    "fieldtype": "Table",
-   "label": "Detail Meal",
+   "label": "Employee Detail",
    "options": "Detail Meal"
   },
   {
@@ -115,7 +124,7 @@
   {
    "fieldname": "meal_provider",
    "fieldtype": "Link",
-   "label": "Meal Provider",
+   "label": "Service Provider",
    "link_filters": "[[\"Meal Provider\",\"active\",\"=\",1]]",
    "options": "Meal Provider",
    "reqd": 1
@@ -139,7 +148,7 @@
   {
    "fieldname": "total_section",
    "fieldtype": "Section Break",
-   "label": "More Info"
+   "label": "Meal Total"
   },
   {
    "fieldname": "total_qty",
@@ -194,13 +203,49 @@
   {
    "fieldname": "column_break_mumf",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_cjcj",
+   "fieldtype": "Section Break",
+   "label": "Service"
+  },
+  {
+   "fieldname": "service_charges_ct",
+   "fieldtype": "Table",
+   "label": "Service Detail",
+   "options": "Service Charges CT"
+  },
+  {
+   "fieldname": "service_total_section",
+   "fieldtype": "Section Break",
+   "label": "Service Total"
+  },
+  {
+   "fieldname": "service_qty",
+   "fieldtype": "Float",
+   "label": "Total Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_uioa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "service_amount",
+   "fieldtype": "Float",
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_relc",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-01 14:57:14.574970",
+ "modified": "2024-12-26 16:23:36.211775",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Meal Form",

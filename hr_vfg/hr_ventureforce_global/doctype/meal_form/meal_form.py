@@ -16,6 +16,16 @@ class MealForm(Document):
 		self.contract_rate_base_on_category()
 		self.employee_rate_base_on_category()
 		self.total_qty_and_total_amount()
+		self.total_service_and_total_amount()
+	
+	def total_service_and_total_amount(self):
+		s_qty = 0
+		s_amount = 0
+		for i in self.service_charges_ct:
+			s_qty += i.qty
+			s_amount += i.amount
+		self.service_qty = s_qty
+		self.service_amount = s_amount
 
 	
 	def contract_rate_base_on_category(self):
@@ -81,6 +91,7 @@ class MealForm(Document):
 		self.db_set('total_employee_amount', total_amount1)
 		self.db_set('total_qty', total_qty + total_qty1)
 		self.db_set('total_amount', total_amount + total_amount1)
+		# self.save(ignore_permissions=True)
 				
 
 
