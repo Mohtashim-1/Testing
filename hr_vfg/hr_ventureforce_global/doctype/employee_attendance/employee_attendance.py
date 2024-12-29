@@ -158,10 +158,17 @@ class EmployeeAttendance(Document):
 
         # Iterate over the rows in table1
         for data in self.table1:
+            if data.check_in_1 is None and data.check_out_1 is None:
+                data.total_time = None
+                data.difference = None
+                data.total_time = None
+                data.difference1 = None
 
             # Check for Weekly Off
             if data.day_type == "Weekly Off":
                 data.weekly_off = 1
+                data.shift_in = None
+                data.shift_out = None
 
             # Sum early_ot
             if data.early_ot:
@@ -629,6 +636,10 @@ class EmployeeAttendance(Document):
                                                         # Calculate time difference for overtime
                                                         check_in_dt = datetime.combine(datetime.today(), check_in_1)
                                                         check_out_dt = datetime.combine(datetime.today(), check_out_1)
+
+                                                        if check_out_1 < check_in_1:
+                                                            check_out_dt += timedelta(days=1)
+                                                        
                                                         actual_work_time = check_out_dt - check_in_dt
 
                                                         # Apply per-hour calculation to get the estimated late time
@@ -1227,14 +1238,14 @@ class EmployeeAttendance(Document):
                                                 seconds = total_seconds % 60
                                                                     
                                                 difference_str = f"{hours:02}:{minutes:02}:{seconds:02}"
-                                                data.difference1 = "cecking1"  # Assign the formatted difference to the data object
+                                                data.difference1 = difference_str  
                                                 # data.difference1 = difference1
                                             except ValueError as e:
                                                 pass
                                        
                                         
                                     # Ensure both are strings and `check_out_1_str` is not None
-                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(shift_in_str, str) and data.early == 0:
+                                    if isinstance(shift_out_str, str) and isinstance(check_out_1_str, str) and isinstance(shift_in_str, str) and isinstance(check_in_1_str, str) and data.early == 0:
                                         try:
                                             # Convert the string times to datetime objects
                                             shift_out_time = datetime.strptime(shift_out_str, "%H:%M:%S")
@@ -1247,11 +1258,16 @@ class EmployeeAttendance(Document):
                                                 check_out_1_time += timedelta(days=1)
                                                 difference1 = check_out_1_time - shift_out_time
                                             
-                                            if check_out_1_time > shift_out_time:
+                                            if check_out_1_time > shift_out_time and data.over_time_type != "Weekly Off":
                                                 difference1 = check_out_1_time - shift_out_time
-                                            if data.over_time_type == "Weekly Off":
+                                            
+                                            if check_out_1_time < shift_out_time and data.over_time_type == "Weekly Off":
+                                                # difference1 = check_out_1_time - check_in_1_str
+                                                difference1 = check_out_1_time - check_in_1_str
+                                            # if data.over_time_type == "Weekly Off":
+                                            #     pass
                                                 # difference1 = timedelta(hours=10, minutes=10, seconds=10)
-                                                difference1 = check_out_1_time - shift_in_time
+                                                # difference1 = check_out_1_time - shift_in_time
                                             
                                             # # Get the total difference in seconds and break it down into hours, minutes, and seconds
                                             total_seconds = int(difference1.total_seconds())
