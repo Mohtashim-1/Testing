@@ -8,18 +8,19 @@
  "field_order": [
   "employee",
   "month",
-  "email_id",
   "unit",
-  "joining_date",
-  "image",
   "column_break_3",
   "employee_name",
   "year",
-  "department",
+  "joining_date",
   "column_break_7",
   "biometric_id",
+  "department",
+  "image",
+  "column_break_fqji",
   "company",
   "designation",
+  "email_id",
   "section_break_5",
   "table1",
   "section_break_7",
@@ -55,11 +56,15 @@
   "present_threshould",
   "check_in_and_check_out_log_unavailable_section",
   "total_absent_check_in_missing_1",
+  "column_break_jbbl",
   "total_absent_check_in_missing",
+  "column_break_yvgi",
   "total_missing",
   "column_break_syeq",
   "total_halfday_missing_check_out",
+  "column_break_lawd",
   "total_absent_missing_check_out",
+  "column_break_alhp",
   "mark_absent_on_missing",
   "over_time_data_section",
   "early_ot",
@@ -81,29 +86,33 @@
   "approved_total_sitting",
   "time_calculation_section",
   "holiday_hour",
+  "total_difference_hours",
+  "column_break_wgrj",
   "extra_hours",
+  "holiday_full_day_ot",
   "column_break_22",
   "over_time",
+  "total_public_holidays",
+  "column_break_owro",
   "holiday_halfday_ot",
-  "total_difference_hours",
   "column_break_44",
   "early_over_time",
-  "holiday_full_day_ot",
-  "total_public_holidays",
   "column_break_43",
   "extra_ot_amount",
   "section_break_15",
   "short_hours",
   "late_coming_hours_f",
+  "column_break_rqou",
   "late_relaxation",
-  "late_after_relaxation",
   "deduction_hours",
   "column_break_18",
   "total_early_going_hours",
+  "total_extra_duty_for_fullday",
+  "column_break_uwvk",
   "total_extra_duty_for_halfday",
+  "late_after_relaxation",
   "column_break_52",
   "late_plus_early_hours_",
-  "total_extra_duty_for_fullday",
   "column_break_54",
   "late_early_adjustment",
   "allowance_section",
@@ -680,11 +689,47 @@
    "fieldname": "mark_absent_on_missing",
    "fieldtype": "Float",
    "label": "Mark Absent On Missing"
+  },
+  {
+   "fieldname": "column_break_fqji",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jbbl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_yvgi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_lawd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_alhp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_wgrj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_owro",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rqou",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_uwvk",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-11-15 21:41:47.815598",
+ "modified": "2024-12-30 18:17:14.967273",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
