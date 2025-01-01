@@ -9,6 +9,7 @@
   "employee",
   "month",
   "unit",
+  "cnic",
   "column_break_3",
   "employee_name",
   "year",
@@ -34,16 +35,17 @@
   "lates_for_halfday",
   "total_early_goings",
   "half_day_for_check_in",
+  "half_day_threshould",
   "cb18",
   "manual_absent",
   "lates_for_absent",
   "no_of_sundays",
   "absent_for_check_in",
   "column_break_rpvn",
+  "total_leaves",
   "total_half_days",
   "late_comparision",
   "early_for_halfday",
-  "half_day_threshould",
   "column_break_25",
   "no_of_nights",
   "total_working_days",
@@ -725,11 +727,22 @@
   {
    "fieldname": "column_break_uwvk",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.cnic",
+   "fieldname": "cnic",
+   "fieldtype": "Data",
+   "label": "CNIC"
+  },
+  {
+   "fieldname": "total_leaves",
+   "fieldtype": "Float",
+   "label": "Total Leaves"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-12-30 18:17:14.967273",
+ "modified": "2025-01-01 19:10:46.284717",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",

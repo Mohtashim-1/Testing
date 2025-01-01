@@ -122,6 +122,8 @@ class EmployeeAttendance(Document):
         total_seconds_approved_eot, total_seconds_approved_ot1 = 0, 0
         time_seconds_approved_eot1 = 0
         self.total_lates_int = 0
+        leave = 0
+        self.total_leaves = 0
         
 
         total_lates11 = 0
@@ -338,19 +340,21 @@ class EmployeeAttendance(Document):
             missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in
             missing_absent_check_out += data.absent_mark_due_to_missing_check_out
             half_day_mark_due_to_missing_check_out += data.half_day_mark_due_to_missing_check_out
+            leave += data.mark_leave
 
         self.total_absent_check_in_missing_1 = missing_absent_check_in
         self.total_absent_check_in_missing = missing_half_day_check_in
         self.total_absent_missing_check_out = missing_absent_check_out
         self.total_halfday_missing_check_out = half_day_mark_due_to_missing_check_out
         self.total_missing = self.total_absent_check_in_missing + self.total_absent_missing_check_out
+        self.total_leaves = leave
         # if hr_settings.absent_threshould_missing_punch > self.total_missing:
         #     self.mark_absent_on_missing = self.total_missing
         if self.total_missing > hr_settings.absent_threshould_missing_punch:
             self.mark_absent_on_missing = self.total_missing - hr_settings.absent_threshould_missing_punch
 
 
-
+        
 
         for data in self.table1:
             
@@ -439,6 +443,12 @@ class EmployeeAttendance(Document):
                     # self.total_absents+=1
                     index+=1
                     continue
+
+            if data.absent == 1:
+                la = frappe.get_all("Leave Application", filters={"from_date":["<=",data.date],"to_date":[">=",data.date],"employee":self.employee,"status":"Approved"},fields=["*"])
+                if la>0:
+                    data.mark_leave = 1
+
             
             
 
@@ -460,7 +470,8 @@ class EmployeeAttendance(Document):
                                 p_date = previous.date
                                 lv = frappe.get_all("Leave Application", filters={"from_date":["<=",p_date],"to_date":[">=",p_date],"employee":self.employee,"status":"Approved"},fields=["*"])
                                 if len(lv) > 0:
-                                    pass
+                                    # pass
+                                    data.mark_leave = 1
                                 else:
                                     data.absent=1
                                     # self.total_absents+=1
@@ -471,7 +482,8 @@ class EmployeeAttendance(Document):
                                 p_date = previous.date
                                 lv = frappe.get_all("Leave Application", filters={"from_date":["<=",p_date],"to_date":[">=",p_date],"employee":self.employee,"status":"Approved"},fields=["*"])
                                 if len(lv) > 0:
-                                    pass
+                                    # pass
+                                    data.mark_leave = 1
                                 else:
                                     data.absent=1
                                     # self.total_absents+=1
@@ -483,6 +495,7 @@ class EmployeeAttendance(Document):
                 total_working_days+=1
             LA = frappe.get_all("Leave Application", filters={"from_date":["<=",tempdate],"to_date":[">=",tempdate],"employee":self.employee,"status":"Approved"},fields=["*"])
             if len(LA) > 0:
+                data.mark_leave = 1
                 leave_flag = True
                 if LA[0].half_day:
                     half_day_leave = 1
