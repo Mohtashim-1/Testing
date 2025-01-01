@@ -358,45 +358,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Report",
-   "link_count": 3,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Monthly Attendance Register",
-   "link_count": 0,
-   "link_to": "Attendance Register",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Daily Employee Attendance",
-   "link_count": 0,
-   "link_to": "Daily Employee Attendance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Employee Individual Attendance",
-   "link_count": 0,
-   "link_to": "Employee Individual Attendance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Attendance",
    "link_count": 4,
    "link_type": "DocType",
@@ -442,9 +403,58 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Report",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Monthly Attendance Register",
+   "link_count": 0,
+   "link_to": "Attendance Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Daily Employee Attendance",
+   "link_count": 0,
+   "link_to": "Daily Employee Attendance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Employee Individual Attendance",
+   "link_count": 0,
+   "link_to": "Employee Individual Attendance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Late Report",
+   "link_count": 0,
+   "link_to": "Employee Attendance Late For Absent",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-11-18 16:00:28.216518",
+ "modified": "2025-01-01 19:23:48.709425",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
