@@ -33,7 +33,10 @@ def get_data(filters):
     
     # Ensure filters are present and in the correct format
     if from_date and to_date:
-        filter_conditions = {'date': ['between', [from_date, to_date]]}
+        filter_conditions = {
+            'date': ['between', [from_date, to_date]],
+            'docstatus':1
+        }
         
         # If meal_supplier is provided, add it to the filter conditions
         if meal_supplier:
