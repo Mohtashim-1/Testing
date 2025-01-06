@@ -163,6 +163,16 @@ class EmployeeAttendance(Document):
                 pass
                 # print(f"Invalid type: {type(time_input)}")
                 return 0
+        
+        # Logic for updating short_hours
+        late_coming_hours = 0  # Initialize to 0
+
+        for data in self.table1:
+            if data.late_coming_hours:  # Check if late_coming_hours is not None or empty
+                late_coming_hours += time_to_seconds(data.late_coming_hours)
+
+        # Convert total seconds to hours and format with two decimal places
+        self.short_hours = "{:.2f}".format(late_coming_hours / 3600.0)
 
         # Iterate over the rows in table1
         for data in self.table1:
@@ -185,9 +195,9 @@ class EmployeeAttendance(Document):
                 # print(f"Added {time_to_seconds(data.early_ot)} seconds from {data.early_ot}")
 
             # Sum early_ot
-            if data.late_coming_hours:
-                late_coming_hours += time_to_seconds(data.late_coming_hours)
-                pass
+            # if data.late_coming_hours:
+            #     late_coming_hours += time_to_seconds(data.late_coming_hours)
+                # pass
             # Sum estimated_late
             if data.estimated_late:
                 total_seconds2 += time_to_seconds(data.estimated_late)
@@ -218,7 +228,7 @@ class EmployeeAttendance(Document):
 
         # Calculate total hours after loop
         self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
-        self.short_hours = "{:.2f}".format(late_coming_hours / 3600.0)
+        # self.short_hours = "{:.2f}".format(late_coming_hours / 3600.0)
         self.late_sitting = "{:.2f}".format(total_seconds2 / 3600.0)
         self.early_sitting = "{:.2f}".format(total_seconds3 / 3600.0)
         self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
