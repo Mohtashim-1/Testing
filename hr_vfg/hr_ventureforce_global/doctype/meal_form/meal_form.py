@@ -89,7 +89,7 @@ class MealForm(Document):
 		self.db_set('total_contract_amount', total_amount)
 		self.db_set('total_employees', total_qty1)
 		self.db_set('total_employee_amount', total_amount1)
-		self.db_set('total_qty', total_qty + total_qty1)
+		self.db_set('total_qty', total_qty + total_qty1 + self.total_qty)
 		self.db_set('total_amount', total_amount + total_amount1)
 		# self.save(ignore_permissions=True)
 				
