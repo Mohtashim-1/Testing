@@ -124,6 +124,12 @@ class EmployeeAttendance(Document):
         self.total_lates_int = 0
         leave = 0
         self.total_leaves = 0
+        self.short_hours = 0
+        late_coming_hours = 0  # Initialize late_coming_hours
+
+        # for data in self.table1:
+        #     late_coming_hours += 1  
+        # self.short_hours += late_coming_hours  
         
 
         total_lates11 = 0
@@ -178,6 +184,10 @@ class EmployeeAttendance(Document):
                 pass
                 # print(f"Added {time_to_seconds(data.early_ot)} seconds from {data.early_ot}")
 
+            # Sum early_ot
+            if data.late_coming_hours:
+                late_coming_hours += time_to_seconds(data.late_coming_hours)
+                pass
             # Sum estimated_late
             if data.estimated_late:
                 total_seconds2 += time_to_seconds(data.estimated_late)
@@ -208,6 +218,7 @@ class EmployeeAttendance(Document):
 
         # Calculate total hours after loop
         self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
+        self.short_hours = "{:.2f}".format(late_coming_hours / 3600.0)
         self.late_sitting = "{:.2f}".format(total_seconds2 / 3600.0)
         self.early_sitting = "{:.2f}".format(total_seconds3 / 3600.0)
         self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot / 3600.0)
@@ -2654,7 +2665,7 @@ class EmployeeAttendance(Document):
             t_earl = int(total_early/hr_settings.maximum_early_for_absent) if total_early >= hr_settings.maximum_early_for_absent else 0
         self.early_for_absents = t_earl
        
-        self.short_hours = self.difference
+        # self.short_hours = self.difference
        
         self.total_working_hours = round(required_working_hrs,2)
         self.total_difference_hours = round(self.total_working_hours - self.hours_worked,2)
