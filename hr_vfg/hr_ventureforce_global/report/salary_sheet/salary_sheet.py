@@ -31,6 +31,7 @@ def get_column():
 	_("OT Amount")+ "::100", 
 	_("Attn Allow")+ "::100",
 	_("Food Conv")+ "::100",
+	_("Punch Missing")+ "::100",
 	_("Advance")+ "::100",
 	_("Loan")+ "::100",
 	_("Days Ded")+ "::100",
@@ -43,6 +44,8 @@ def get_data(filters):
 	cond ={}
 	if filters.month:
 		cond["month"] = filters.month
+	if filters.year:
+		cond["year"] = filters.year
 	if filters.employee:
 		cond["employee"] = filters.employee
 	if filters.department:
@@ -97,8 +100,10 @@ def get_data(filters):
 		for ern in doc.deductions:
 			if "Absent".lower() in ern.salary_component.lower():
 				abse += ern.amount
-			elif "Advance".lower() in ern.salary_component.lower():
-				adv = ern.amount
+			elif "employee advance".lower() in ern.salary_component.lower():
+				ladv = ern.amount
+			elif "Punch Missing".lower() in ern.salary_component.lower():
+				l_miss = ern.amount
 			elif "Late".lower() in ern.salary_component.lower():
 				late = ern.amount
 			elif "Early".lower() in ern.salary_component.lower():
@@ -126,6 +131,7 @@ def get_data(filters):
 				int(overtime),
 				int(att_allow),
 				int(0),
+				int(l_miss),
 				int(ladv),
 				int(loan),
 				int(ladd),
