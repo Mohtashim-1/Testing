@@ -8,15 +8,21 @@ from datetime import datetime
 
 class MealForm(Document):
 	def validate(self):
-		# self.calculate_total_contractor()
-		# self.calculate_total_employee()
-		# self.calculate_total_sum()
-		# self.rate_of_meal()
-		# self.sum_total_amount()
 		self.contract_rate_base_on_category()
 		self.employee_rate_base_on_category()
 		self.total_qty_and_total_amount()
 		self.total_service_and_total_amount()
+		self.total_sum_qty()
+
+	def before_save(self):
+		self.total_sum_qty()
+
+	def total_sum_qty(self):
+		contractor_qty = self.total_contractor or 0
+		employee_qty = self.total_employees or 0
+		service_qty = self.service_qty or 0
+		self.total_qty = contractor_qty + employee_qty + service_qty
+
 	
 	def total_service_and_total_amount(self):
 		s_qty = 0
@@ -89,7 +95,7 @@ class MealForm(Document):
 		self.db_set('total_contract_amount', total_amount)
 		self.db_set('total_employees', total_qty1)
 		self.db_set('total_employee_amount', total_amount1)
-		self.db_set('total_qty', total_qty + total_qty1 + self.total_qty)
+		# self.db_set('total_qty', total_qty + total_qty1 + self.total_qty)
 		self.db_set('total_amount', total_amount + total_amount1)
 		# self.save(ignore_permissions=True)
 				
