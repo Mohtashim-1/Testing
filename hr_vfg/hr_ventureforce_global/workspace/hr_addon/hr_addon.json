@@ -408,7 +408,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
-   "link_count": 4,
+   "link_count": 9,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -426,9 +426,9 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Daily Employee Attendance",
+   "label": "Daily Attendance Report",
    "link_count": 0,
-   "link_to": "Daily Employee Attendance",
+   "link_to": "Daily Attendance Report",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -452,9 +452,59 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Missing Attendance Report",
+   "link_count": 0,
+   "link_to": "Missing Attendance Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Attendence Summary Report",
+   "link_count": 0,
+   "link_to": "Attendence Summary Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Monthly Attendance Summary",
+   "link_count": 0,
+   "link_to": "Monthly Attendance Summary",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "HR Attendance Report",
+   "link_count": 0,
+   "link_to": "HR Attendance Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Attendance Late For Absent",
+   "link_count": 0,
+   "link_to": "Employee Attendance Late For Absent",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-01-01 19:23:48.709425",
+ "modified": "2025-01-07 17:36:28.755222",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",

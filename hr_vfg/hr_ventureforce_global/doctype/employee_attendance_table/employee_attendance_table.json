@@ -69,6 +69,8 @@
   "weekly_off",
   "late1",
   "day_type",
+  "sunday",
+  "holiday",
   "section_break_kicn",
   "absent_due_to_below_threshould",
   "column_break_ache",
@@ -653,11 +655,23 @@
    "fieldname": "data3",
    "fieldtype": "Data",
    "label": "data3"
+  },
+  {
+   "default": "0",
+   "fieldname": "sunday",
+   "fieldtype": "Check",
+   "label": "Sunday"
+  },
+  {
+   "default": "0",
+   "fieldname": "holiday",
+   "fieldtype": "Check",
+   "label": "Holiday"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-12-06 10:16:05.863789",
+ "modified": "2025-01-07 17:27:07.240454",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
