@@ -88,6 +88,7 @@ def get_data(filters):
 		abse = 0.0
 		early = 0.0
 		ladv = 0.0
+		l_miss = 0.0
 
 
 
