@@ -26,6 +26,7 @@ def get_column():
 	_("Absents") + "::80",
 	# _("Month Days") + "::80",	
 	_("Monthly Salary")+ "::100",
+	_("Fuel")+ "::100",
 	_("Gross Salary")+ "::100", 
 	_("OT Hours")+ "::100", 
 	_("OT Amount")+ "::100", 
@@ -70,6 +71,7 @@ def get_data(filters):
 		other_allow = 0.0
 		arrears = 0.0
 		trip=0.0
+		fuel = 0.0
 		for ern in doc.earnings:
 			if "Basic".lower() in ern.salary_component.lower():
 				basic += ern.amount
@@ -77,6 +79,8 @@ def get_data(filters):
 				conv_allow = ern.amount
 			elif "Overtime".lower() in ern.salary_component.lower():
 				overtime += ern.amount
+			elif "Fuel".lower() in ern.salary_component.lower():
+				fuel += ern.amount
 			elif "Attendance".lower() in ern.salary_component.lower():
 				att_allow = ern.amount
 
@@ -127,6 +131,7 @@ def get_data(filters):
 				doc.total_absents,
 				# doc.total_month_days,
 				int(basic),
+				int(fuel),
 				int(doc.gross_pay),
 				int(doc.over_time),
 				int(overtime),
