@@ -1113,7 +1113,7 @@ class EmployeeAttendance(Document):
                 if data.late1 == 1:  # This is the correct way to check for late1 in the child table data
                         self.late_comparision += 1
                         data.late = 0
-                        data.late_coming_hours = None
+                        # data.late_coming_hours = None
                         total_lates -= 1
                 if data.weekly_off:
                     data.shift_start = None

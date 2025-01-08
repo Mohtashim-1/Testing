@@ -1,0 +1,32 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2025-01-07 18:12:55.222657",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letterhead": null,
+ "modified": "2025-01-07 19:30:38.192221",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Daily Attendance Reports",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Employee Attendance",
+ "report_name": "Daily Attendance Reports",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "HR Manager"
+  }
+ ]
+}

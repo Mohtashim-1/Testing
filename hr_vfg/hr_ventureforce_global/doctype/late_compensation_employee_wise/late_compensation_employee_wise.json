@@ -42,6 +42,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "label": "Employee",
+   "link_filters": "[[\"Employee\",\"status\",\"=\",\"Active\"]]",
    "options": "Employee"
   },
   {
@@ -77,7 +78,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-07 00:25:56.616392",
+ "modified": "2025-01-08 16:40:06.545374",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Late Compensation Employee Wise",
