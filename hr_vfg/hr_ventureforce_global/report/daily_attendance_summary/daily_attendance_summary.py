@@ -37,12 +37,12 @@ def get_columns(filters):
             "label":"Department",
             "width":200,
         },
-        {
-            "fieldtype":"Data",
-            "fieldname":"sub_department",
-            "label":"Sub Department",
-            "width":200,
-        },
+        # {
+        #     "fieldtype":"Data",
+        #     "fieldname":"sub_department",
+        #     "label":"Sub Department",
+        #     "width":200,
+        # },
         {
             "fieldtype":"Int",
             "fieldname":"total_employee",
@@ -80,7 +80,7 @@ def get_columns(filters):
 def get_data(filters):
     data = []
     rec = frappe.db.sql("""
-               SELECT p.department, emp.sub_department, c.late, c.early, c.weekly_off AS sunday, c.public_holiday AS holiday, c.absent, c.half_day
+               SELECT p.department, c.late, c.early, c.weekly_off AS sunday, c.public_holiday AS holiday, c.absent, c.half_day
                FROM `tabEmployee Attendance` p
                LEFT JOIN 
                `tabEmployee` AS emp
@@ -94,7 +94,7 @@ def get_data(filters):
     for r in rec:
         exists = False
         for d in data:
-            if r.get("department") == d.get("department") and r.get("sub_department") == d.get("sub_department"):
+            if r.get("department") == d.get("department"):
                 d["total_employee"] += 1
                 if r.get("absent"):
                     d["total_absent"] += 1
@@ -111,7 +111,6 @@ def get_data(filters):
         if not exists:
             data.append({
                 "department": r.get("department"),
-                "sub_department": r.get("sub_department"),
                 "total_employee": 1,
                 "total_absent": 1 if r.get("absent") else 0,
                 "late_present": 1 if r.get("late") else 0,
