@@ -1,0 +1,53 @@
+<h2 class="text-center">{%= __("Daily Attendance Reports") %}</h2>
+
+<table>
+  <tr>
+    <td width="3%"><b>Employee:</b></td>
+    <td width="10%"><b>{%= filters.employee || "All" %}</b></td>
+    <td width="3%"><b>Month:</b></td>
+    <td width="10%"><b>{%= filters.month || "N/A" %}</b></td>
+  </tr>
+</table>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th style="width: 5%; font-weight: bold;">{%= __("Sr") %}</th>
+      <th style="width: 10%; font-weight: bold;">{%= __("Date") %}</th>
+      <th style="width: 10%; font-weight: bold;">{%= __("Emp ID") %}</th>
+      <th style="width: 15%; font-weight: bold;">{%= __("Emp Name") %}</th>
+      <th style="width: 10%; font-weight: bold;">{%= __("Department") %}</th>
+      <th style="width: 15%; font-weight: bold;">{%= __("Designation") %}</th>
+      <th style="width: 10%; font-weight: bold;">{%= __("Shift Start") %}</th>
+      <th style="width: 10%; font-weight: bold;">{%= __("Shift End") %}</th>
+      <th style="width: 10%; font-weight: bold;">{%= __("Time In") %}</th>
+      <th style="width: 10%; font-weight: bold;">{%= __("Time Out") %}</th>
+      <th style="width: 8%; font-weight: bold;">{%= __("Late Minutes") %}</th>
+      <th style="width: 8%; font-weight: bold;">{%= __("Early Out") %}</th>
+      <th style="width: 8%; font-weight: bold;">{%= __("OT Hours") %}</th>
+      <th style="width: 8%; font-weight: bold;">{%= __("Total Hours") %}</th>
+      <th style="width: 15%; font-weight: bold;">{%= __("Remarks") %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for (var i = 0, l = data.length; i < l; i++) { %}
+    <tr>
+      <td style="border-color: #000">{%= i + 1 %}</td>
+      <td style="border-color: #000">{%= data[i].date || "N/A" %}</td>
+      <td style="border-color: #000">{%= data[i].emp_id  %}</td>
+      <td style="border-color: #000">{%= data[i].emp_name %}</td>
+      <td style="border-color: #000">{%= data[i].department || "N/A" %}</td>
+      <td style="border-color: #000">{%= data[i].designation || "N/A" %}</td>
+      <td style="border-color: #000">{%= data[i].shift_start || "N/A" %}</td>
+      <td style="border-color: #000">{%= data[i].shift_end || "N/A" %}</td>
+      <td style="border-color: #000">{%= data[i].time_in || "N/A" %}</td>
+      <td style="border-color: #000">{%= data[i].time_out || "N/A" %}</td>
+      <td style="border-color: #000">{%= data[i].late || "0:00" %}</td>
+      <td style="border-color: #000">{%= data[i].early_going_hours || "0:00" %}</td>
+      <td style="border-color: #000">{%= data[i].ot_hours || "0:00" %}</td>
+      <td style="border-color: #000">{%= data[i].total_hours || "0:00" %}</td>
+      <td style="border-color: #000">{%= data[i].remarks || "No Remarks" %}</td>
+    </tr>
+    {% } %}
+  </tbody>
+</table>
