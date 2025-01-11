@@ -140,6 +140,13 @@ class EmployeeAttendance(Document):
         self.total_lates = total_lates11
         
 
+        for data in self.table1:
+            date1 = data.date
+            # print(f"\n\n\n\\\n\n\n{date1}")
+            dateobj = getdate(date1)
+            day_of_week = dateobj.strftime('%A')
+            data.day = day_of_week
+
 
         # Helper function to convert time string to seconds
         def time_to_seconds(time_input):
