@@ -565,6 +565,76 @@ class EmployeeAttendance(Document):
                     else:
                         diff = first_out_time - first_in_time
                     total_time = total_time + diff if total_time else diff
+                
+                
+
+
+
+                if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 or data.check_out_1:
+                    shift = None
+                    shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee,
+                                                                            'start_date': ["<=", getdate(data.date)],'end_date': [">=", getdate(data.date)]}, fields=["*"])
+                    if len(shift_ass) > 0:
+                        shift = shift_ass[0].shift_type
+                    else:
+                        shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee,
+                                                                            'start_date': ["<=", getdate(data.date)]}, fields=["*"])
+                    if len(shift_ass) > 0:
+                        shift = shift_ass[0].shift_type
+                    if shift == None:
+                        frappe.throw(_("No shift available for this employee{0}").format(self.employee))
+                    data.shift = shift
+                    shift_doc = frappe.get_doc("Shift Type", shift)
+                    s_type = shift_doc.shift_type
+                    h_type = shift_doc.holiday_list
+                    h_list= frappe.get_doc("Holiday List", h_type)
+                    data.holiday_list = h_list.name
+                    week_list = h_list
+
+                    data_date = datetime.strptime(str(data.date), '%Y-%m-%d').date()
+                    is_match_found = False
+
+                    for h in h_list.holidays:
+                        holiday_date = datetime.strptime(str(h.holiday_date), '%Y-%m-%d').date()
+
+                        if holiday_date == data_date:
+                            is_match_found = True
+                            # print(f"\n\n\nMatch found for date: {data_date}")
+                            if h.weekly_off == 1:
+                                # print(f"\n\n\nWeekly off identified for {data_date}")
+                                data.weekly_off = 1
+                                data.public_holiday = 0
+                            elif h.public_holiday == 1:
+                                # print(f"\n\n\nPublic holiday identified for {data_date}")
+                                data.public_holiday = 1
+                                data.weekly_off = 0
+                            break  # Exit the loop once a match is found
+
+                    if not is_match_found:
+                        # print(f"No holiday match for {data_date}")
+                        data.public_holiday = 0
+                        data.weekly_off = 0
+                    
+                    
+                    # for h in h_list.holidays:
+                        
+                    #     print(f"date{data.date}")
+                    #     print(f"holiday{h.holiday_date}")
+                    #     if h.holiday_date == data.date:
+                    #         print(f"/n/n/nhe    llo world1")
+                    #         if h.weekly_off == 1:
+                    #             print(f"/n/n/nhello world")
+                    #             data.weekly_off = 1
+                    #         elif h.public_holiday == 1:
+                    #             data.public_holiday = 1
+                    #     else:
+                    #         data.public_holiday = 0
+                    #         data.weekly_off = 0
+                
+
+
+
+
                    
                 if data.check_in_1 and data.check_in_1 != data.check_out_1:
                     shift = None
@@ -582,6 +652,18 @@ class EmployeeAttendance(Document):
                     data.shift = shift
                     shift_doc = frappe.get_doc("Shift Type", shift)
                     s_type = shift_doc.shift_type
+                    h_type = shift_doc.holiday_list
+                    h_list= frappe.get_doc("Holiday List", h_type)
+                    data.holiday_list = h_list.name
+                    week_list = h_list
+                    # for h in h_list.holidays:
+                        
+                    #     print(data.date)
+                    #     print(h.holiday_date)
+                    #     if h.holiday_date == data.date:
+                    #         data.weekly_off = 1
+                    #     else:
+                    #         data.public_holiday = 1
                     data.absent = 0
 
                     #  day of week 
@@ -1133,28 +1215,27 @@ class EmployeeAttendance(Document):
                 if data.check_in_1 is not None and data.check_out_1 is None:
                     data.absent = 0
                         
-                if data.weekly_off or data.public_holiday:
-                    # If either is True, set weekly_off to 0 and weekday to 0
-                    data.weekly_off = 0
-                    data.weekday = 0
-                    data.public_holiday = 0
-                else:
-                    data.weekday = 1
+                # if data.weekly_off or data.public_holiday:
+                #     data.weekly_off = 0
+                #     data.weekday = 0
+                #     data.public_holiday = 0
+                # else:
+                #     data.weekday = 1
                     
-                if data.weekly_off == 1:
-                    data.day_type = "Weekly Off"
-                elif data.weekday == 1:
-                    data.day_type = "Weekday"
+                # if data.weekly_off == 1:
+                #     data.day_type = "Weekly Off"
+                # elif data.weekday == 1:
+                #     data.day_type = "Weekday"
                 
-                if data.day_type == "Public Holiday":
-                    data.public_holiday = 1
+                # if data.day_type == "Public Holiday":
+                #     data.public_holiday = 1
                 
 
-                if data.public_holiday == 1:
-                    data.day_type = "Public Holiday"
+                # if data.public_holiday == 1:
+                #     data.day_type = "Public Holiday"
                 
-                if data.day_type == "Weekly Off":
-                    data.weekly_off = 1
+                # if data.day_type == "Weekly Off":
+                #     data.weekly_off = 1
 
                 employee = frappe.get_doc("Employee", self.employee)
                 if employee.custom_late_unmark == 1:
@@ -2766,32 +2847,32 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
 
 
 
-def get_holidays_for_employee(
-	employee, start_date, end_date, raise_exception=True, only_non_weekly=False
-):
-	"""Get Holidays for a given employee
+# def get_holidays_for_employee(
+# 	employee, start_date, end_date, raise_exception=True, only_non_weekly=False
+# ):
+# 	"""Get Holidays for a given employee
 
-	`employee` (str)
-	`start_date` (str or datetime)
-	`end_date` (str or datetime)
-	`raise_exception` (bool)
-	`only_non_weekly` (bool)
+# 	`employee` (str)
+# 	`start_date` (str or datetime)
+# 	`end_date` (str or datetime)
+# 	`raise_exception` (bool)
+# 	`only_non_weekly` (bool)
 
-	return: list of dicts with `holiday_date` and `description`
-	"""
-	holiday_list = get_holiday_list_for_employee(employee, raise_exception=raise_exception)
+# 	return: list of dicts with `holiday_date` and `description`
+# 	"""
+# 	holiday_list = get_holiday_list_for_employee(employee, raise_exception=raise_exception)
 
-	if not holiday_list:
-		return []
+# 	if not holiday_list:
+# 		return []
 
-	filters = {"parent": holiday_list, "holiday_date": ("between", [start_date, end_date])}
+# 	filters = {"parent": holiday_list, "holiday_date": ("between", [start_date, end_date])}
 
-	if only_non_weekly:
-		filters["weekly_off"] = False
+# 	if only_non_weekly:
+# 		filters["weekly_off"] = False
 
-	holidays = frappe.get_all("Holiday", fields=["description","public_holiday", "weekly_off","holiday_date"], filters=filters)
+# 	holidays = frappe.get_all("Holiday", fields=["description","public_holiday", "weekly_off","holiday_date"], filters=filters)
 
-	return holidays
+# 	return holidays
 
 
 

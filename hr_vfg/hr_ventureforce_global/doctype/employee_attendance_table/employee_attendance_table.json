@@ -18,6 +18,8 @@
   "column_break_7",
   "check_out_1",
   "shift_out",
+  "shift",
+  "holiday_list",
   "over_time_section",
   "over_time_type",
   "late_sitting",
@@ -667,11 +669,22 @@
    "fieldname": "holiday",
    "fieldtype": "Check",
    "label": "Holiday"
+  },
+  {
+   "fieldname": "shift",
+   "fieldtype": "Data",
+   "label": "Shift",
+   "options": "Shift Type"
+  },
+  {
+   "fieldname": "holiday_list",
+   "fieldtype": "Data",
+   "label": "Holiday List"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2025-01-07 17:27:07.240454",
+ "modified": "2025-01-14 14:50:57.684731",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance Table",
