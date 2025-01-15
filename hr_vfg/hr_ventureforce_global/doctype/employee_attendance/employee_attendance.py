@@ -190,10 +190,10 @@ class EmployeeAttendance(Document):
                 data.difference1 = None
 
             # Check for Weekly Off
-            if data.day_type == "Weekly Off":
-                data.weekly_off = 1
-                data.shift_in = None
-                data.shift_out = None
+            # if data.day_type == "Weekly Off":
+            #     data.weekly_off = 1
+            #     data.shift_in = None
+            #     data.shift_out = None
 
             # Sum early_ot
             if data.early_ot:
@@ -608,6 +608,9 @@ class EmployeeAttendance(Document):
                                 # print(f"\n\n\nPublic holiday identified for {data_date}")
                                 data.public_holiday = 1
                                 data.weekly_off = 0
+                            else:
+                                data.weekday = 1
+
                             break  # Exit the loop once a match is found
 
                     if not is_match_found:
@@ -1222,10 +1225,12 @@ class EmployeeAttendance(Document):
                 # else:
                 #     data.weekday = 1
                     
-                # if data.weekly_off == 1:
-                #     data.day_type = "Weekly Off"
-                # elif data.weekday == 1:
-                #     data.day_type = "Weekday"
+                if data.weekly_off == 1:
+                    data.day_type = "Weekly Off"
+                elif data.public_holiday == 1:
+                    data.day_type = "Public Holiday"
+                elif data.weekday == 1:
+                    data.day_type = "Weekday"
                 
                 # if data.day_type == "Public Holiday":
                 #     data.public_holiday = 1
