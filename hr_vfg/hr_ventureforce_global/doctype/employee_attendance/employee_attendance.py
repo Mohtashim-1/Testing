@@ -368,7 +368,7 @@ class EmployeeAttendance(Document):
             missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in
             missing_absent_check_out += data.absent_mark_due_to_missing_check_out
             half_day_mark_due_to_missing_check_out += data.half_day_mark_due_to_missing_check_out
-            leave += data.mark_leave
+            leave += data.mark_leave or 0
 
         self.total_absent_check_in_missing_1 = missing_absent_check_in
         self.total_absent_check_in_missing = missing_half_day_check_in
