@@ -364,10 +364,10 @@ class EmployeeAttendance(Document):
         #         data.absent = 1
 
         for data in self.table1:
-            missing_absent_check_in += data.absent_mark_due_to_missing_check_in
-            missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in
-            missing_absent_check_out += data.absent_mark_due_to_missing_check_out
-            half_day_mark_due_to_missing_check_out += data.half_day_mark_due_to_missing_check_out
+            missing_absent_check_in += data.absent_mark_due_to_missing_check_in or 0
+            missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in or 0
+            missing_absent_check_out += data.absent_mark_due_to_missing_check_out or 0
+            half_day_mark_due_to_missing_check_out += data.half_day_mark_due_to_missing_check_out or 0
             leave += data.mark_leave or 0
 
         self.total_absent_check_in_missing_1 = missing_absent_check_in
