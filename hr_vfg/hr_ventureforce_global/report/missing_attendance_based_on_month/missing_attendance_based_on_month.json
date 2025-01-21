@@ -1,0 +1,32 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2025-01-22 00:15:42.159324",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letterhead": null,
+ "modified": "2025-01-22 00:15:42.159324",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Missing Attendance Based on Month",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Employee Attendance",
+ "report_name": "Missing Attendance Based on Month",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "HR Manager"
+  }
+ ]
+}
