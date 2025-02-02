@@ -1,7 +1,3 @@
-# Copyright (c) 2025, VFG and contributors
-# For license information, please see license.txt
-
-
 from __future__ import unicode_literals
 import frappe
 from frappe import msgprint, _
@@ -9,164 +5,176 @@ from datetime import datetime, timedelta
 import datetime as special
 from frappe.utils import fmt_money
 
-# import frappe
-
 def execute(filters=None):
-	columns, data = [], []
-	columns = get_column()
-	data = get_data(filters)
-	return columns, data
+    columns, data = [], []
+    columns = get_column()
+    data = get_data(filters, columns)
+    return columns, data
 
 def get_column():
-	column =[
-    _("Emp. Id") + "::80",
-	_("Name") + "::120",
-	_("Designation") + "::120",	
-	# _("Present Days Holiday") + "::80",
-	_("Department") + "::80",
-	_("Days Worked") + "::80",
-	# _("Month Days") + "::80",	
-	_("Gross Salary")+ "::100",
-	_("O.T Hours")+ "::100",
-	_("O.T Amount")+ "::100", 
-	_("Total Income")+ "::100", 
-	_("I. Tax")+ "::100", 
-	_("Loan")+ "::100",
-	_("E.O.B.I Ded.")+ "::100",
-	_("Total Ded")+ "::100",
-	_("Net Payable")+ "::100",
-	_("Receiver Signature")+ "::100"
-	]
-
-	return column
-def get_data(filters):
-	cond ={}
-	if filters.month:
-		cond["month"] = filters.month
-	if filters.year:
-		cond["year"] = filters.year
-	if filters.employee:
-		cond["employee"] = filters.employee
-	if filters.department:
-		cond["department"] = filters.department
-	#try:
-	salary_slips = frappe.get_all("Salary Slip",filters=cond,fields=["*"])
-	#
-	data=[]
-	
-	for sp in salary_slips:
-		row = []
-		doc  = frappe.get_doc("Salary Slip",sp.name)
-		leaves = 0.0
-		for lev in doc.leave_details:
-			leaves +=lev.taken
-		basic = 0.0
-		overtime = 0.0
-		att_allow = 0.0
-		conv_allow = 0.0
-		leave_allow =0.0
-		perf_allow =0.0
-		other_allow = 0.0
-		arrears = 0.0
-		trip=0.0
-		fuel = 0.0
-		for ern in doc.earnings:
-			if "Basic".lower() in ern.salary_component.lower():
-				basic += ern.amount
-			elif "Conveyance".lower() in ern.salary_component.lower():
-				conv_allow = ern.amount
-			elif "Overtime".lower() in ern.salary_component.lower():
-				overtime += ern.amount
-			elif "Fuel".lower() in ern.salary_component.lower():
-				fuel += ern.amount
-			elif "Attendance".lower() in ern.salary_component.lower():
-				att_allow = ern.amount
-
-		late = 0.0
-		loan = 0.0
-		short = 0.0
-		adv = 0.0
-		ad = 0.0
-		abse = 0.0
-		early = 0.0
-		ladv = 0.0
-		l_miss = 0.0
-		tax = 0.0
+    column = [
+        _("S No") + "::80",  # Add serial number column
+        _("Emp Id") + "::80",
+        _("Name") + "::120",
+        _("Designation") + "::120",    
+        _("Days Worked") + "::80",
+        _("Gross Salary") + "::100",
+        _("OT Hours") + "::100",
+        _("OT Amount") + "::100", 
+        _("Total Income") + "::100", 
+        _("I Tax") + "::100", 
+        _("Loan") + "::100",
+        _("E.O.B.I Ded.") + "::100",
+        _("Total Ded") + "::100",
+        _("Net Payable") + "::100",
+        _("Receiver Signature") + "::100"
+    ]
+    return column
 
 
+def get_data(filters, columns):
+    cond = {}
+    if filters.month:
+        cond["month"] = filters.month
+    if filters.year:
+        cond["year"] = filters.year
+    if filters.employee:
+        cond["employee"] = filters.employee
+    if filters.department:
+        cond["department"] = filters.department
 
-		#for ll in doc.loans:
-		#	if "Loan".lower() in ll.loan_type.lower():
-		#		loan+=ll.principal_amount
-		#	elif "Advance".lower() in ll.loan_type.lower():
-		#		ladv += ll.principal_amount
+    # Fetch salary slips based on filters
+    salary_slips = frappe.get_all("Salary Slip", filters=cond, fields=["*"])
 
-		for ern in doc.deductions:
-			if "Absent".lower() in ern.salary_component.lower():
-				abse += ern.amount
-			elif "employee advance".lower() in ern.salary_component.lower():
-				ladv = ern.amount
-			elif "Punch Missing".lower() in ern.salary_component.lower():
-				l_miss = ern.amount
-			elif "Late".lower() in ern.salary_component.lower():
-				late = ern.amount
-			elif "Early".lower() in ern.salary_component.lower():
-				early = ern.amount
-			elif "Short".lower() in ern.salary_component.lower():
-				short = ern.amount
-			elif "Tax".lower() in ern.salary_component.lower():
-				tax = ern.amount	
-		ladd = int(late+abse)
-		lsld = int(early+short)
-		tax = int(tax)
+    # Create a dictionary to group data by department
+    grouped_data = {}
 
-		#bb = basic/doc.total_working_days*float(doc.present_days)
-		#gross = int(bb+overtime+att_allow+conv_allow+leave_allow+perf_allow+other_allow+arrears)
-		#total_ded = int(abse+adv+late+early+loan_o_adv+short)
-		#net_pay = gross-total_ded
-		row =[
-				doc.biometric_id,
-				doc.employee_name,
-				doc.designation,
-				doc.department,
-				# doc.total_present_days,
-				doc.present_days,
-				# doc.total_absents,
-				# doc.total_month_days,
-				# int(basic),
-				# int(fuel),
-				int(doc.basic_salary),
-				int(doc.custom_total_over_time_le),
-				int(overtime),
-				int(doc.gross_pay),
-				# int(att_allow),
-				int(tax),
-				int(l_miss),
-				int(ladv),
-				int(doc.total_deduction),
-				# int(ladd),
-				# int(lsld),
-				int(doc.rounded_total),
-				""
-			]
-		data.append(row)
-			
+    # Loop through the salary slips and group them by department
+    serial_no = 1  # Start serial number
+    for sp in salary_slips:
+        doc = frappe.get_doc("Salary Slip", sp.name)
 
+        # Grouping data by department
+        if doc.department not in grouped_data:
+            grouped_data[doc.department] = []
 
+        # Initialize salary components to default values
+        overtime = 0.0
+        tax = 0.0
+        loan = 0.0
+        abse = 0.0
+        early = 0.0
+        late = 0.0
 
-	return data
+        # Iterate over earnings and calculate overtime
+        for ern in doc.earnings:
+            if "Overtime".lower() in ern.salary_component.lower():
+                overtime += ern.amount
 
+        # Iterate over deductions and calculate tax, loan, and others
+        for ern in doc.deductions:
+            if "Tax".lower() in ern.salary_component.lower():
+                tax = ern.amount
+            elif "Absent".lower() in ern.salary_component.lower():
+                abse += ern.amount
+            elif "Late".lower() in ern.salary_component.lower():
+                late = ern.amount
+            elif "Early".lower() in ern.salary_component.lower():
+                early = ern.amount
 
-@frappe.whitelist()
-def get_day_name(date):
-		day = special.datetime.strptime(str(date).replace("-", " "), '%Y %m %d').weekday()
-		switcher = {
-			0:"Monday",
-			1:"Tuesday",
-			2:"Wednesday",
-			3:"Thursday",
-			4:"Friday",
-			5:"Saturday",
-			6:"Sunday"
-		}
-		return switcher.get(day,"Not Found")
+        # Prepare row data for each salary slip
+        row = [
+            serial_no,  # Add serial number here
+            doc.biometric_id or "",  # Default empty string if missing
+            doc.employee_name or "",  # Default empty string if missing
+            doc.designation or "",  # Default empty string if missing
+            doc.present_days or 0,  # Default to 0 if missing
+            int(doc.basic_salary) if doc.basic_salary else 0,  # Default to 0 if missing
+            int(doc.custom_total_over_time_le),
+            int(overtime),
+            int(doc.gross_pay) if doc.gross_pay else 0,  # Default to 0 if missing
+            int(tax),
+            int(late),
+            int(0),
+            int(doc.total_deduction) if doc.total_deduction else 0,  # Default to 0 if missing
+            int(doc.rounded_total) if doc.rounded_total else 0,  # Default to 0 if missing
+            ""  # Empty field for the receiver signature
+        ]
+
+        # Debugging: Check if the row has the correct number of columns
+        if len(row) == len(columns):
+            grouped_data[doc.department].append(row)
+        else:
+            frappe.msgprint(_("Row length mismatch in department: {} for employee: {}").format(doc.department, doc.employee_name))
+            # Print the row data for debugging
+            print(f"Row data for employee {doc.employee_name}: {row}")
+            # Padding the row if shorter or truncating if too long
+            if len(row) < len(columns):
+                row += [""] * (len(columns) - len(row))  # Pad with empty values
+            elif len(row) > len(columns):
+                row = row[:len(columns)]  # Truncate extra columns
+
+            grouped_data[doc.department].append(row)
+
+        serial_no += 1  # Increment serial number after processing each row
+
+    # Convert the grouped data into a list of rows for each department
+    data = []
+    for department, rows in grouped_data.items():
+        # Add a department header row, ensure that the department name spans across all columns
+        department_row = [""] * len(columns)  # Create an empty row with the same length as columns
+        department_row[1] = department  # Place the department name in the second column (skip serial number)
+        
+        # Add the department row as the first row
+        data.append(department_row)
+
+        # Initialize totals for the department
+        total_gross_salary = 0
+        total_ot_hours = 0
+        total_ot_amount = 0
+        total_income = 0
+        total_tax = 0
+        total_loan = 0
+        total_eobi = 0
+        total_ded = 0
+        total_net_payable = 0
+
+        # Add all rows under the department
+        for row in rows:
+            data.append(row)
+
+            # Accumulate totals for each department
+            total_gross_salary += row[5]  # Gross Salary
+            total_ot_hours += row[6]  # OT Hours
+            total_ot_amount += row[7]  # OT Amount
+            total_income += row[8]  # Total Income
+            total_tax += row[9]  # Tax
+            total_loan += row[10]  # Loan
+            total_eobi += row[11]  # E.O.B.I Ded.
+            total_ded += row[12]  # Total Ded
+            total_net_payable += row[13]  # Net Payable
+
+        # Add totals row for the department
+        totals_row = [
+
+            _("Total"),  # Label the row as Total
+            "",  # Leave Name blank
+            "",  # Leave Name blank
+            "",  # Leave Name blank
+            "",  # Leave Designation blank
+            total_gross_salary,  # Total Gross Salary
+            total_ot_hours,  # Total OT Hours
+            total_ot_amount,  # Total OT Amount
+            total_income,  # Total Income
+            total_tax,  # Total Tax
+            total_loan,  # Total Loan
+            total_eobi,  # Total E.O.B.I Ded.
+            total_ded,  # Total Ded
+            total_net_payable,  # Total Net Payable
+            ""  # Receiver Signature field remains empty
+        ]
+
+        # Add the totals row to the data
+        data.append(totals_row)
+
+    return data
