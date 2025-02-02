@@ -1,0 +1,59 @@
+<h1 class="text-center">Payroll</h1>
+<h2 class="text-center">
+    {%= __("For the Month of  ") %} {%= filters.month %} {%= " " %} {%= filters.year %}
+</h2>
+
+<table style="width: 100%;">
+    <tr>
+        <td align="left"><strong>Printed On:</strong> {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</td>
+        <td>&nbsp;</td>
+        <td align="right"><b>Date: </b>{%= frappe.datetime.get_today() %}</td>
+    </tr>
+</table>
+<hr>
+
+<table class="table table-bordered table-sm" id="tablerecord" style="width: 98%; border: 1px solid black;">
+    <thead>
+        <tr>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("S. No.") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Emp Code") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Employee Name") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Designation") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Days Worked") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Gross Salary") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("O.T Hours") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("O.T Amount") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Total Income") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("I. Tax Ded.") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Loan Ded.") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("EOBI Ded.") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Total Ded.") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Net Payable") %}</th>
+            <th style="color: white; background-color: black; text-align: center; border: 1px solid black;" rowspan="2">{%= __("Receiver's Signature") %}</th>
+        </tr>
+    </thead>
+
+    <tbody style="border: 1px solid black;">
+        {% for i in data %}
+        <tr>
+            <td style="border: 1px solid black;">{%= i.s_no %}</td>
+            <td style="border: 1px solid black;">{%= i.emp_id %}</td>
+            <td style="border: 1px solid black;">{%= i.name %}</td>
+            <td style="border: 1px solid black;">{%= i.designation %}</td>
+            <td style="border: 1px solid black;">{%= i.days_worked %}</td>
+            <td style="border: 1px solid black;">{%= i.gross_salary %}</td>
+            <td style="border: 1px solid black;">{%= i.ot_hours %}</td>
+            <td style="border: 1px solid black;">{%= i.ot_amount %}</td>
+            <td style="border: 1px solid black;">{%= i.total_income %}</td>
+            <td style="border: 1px solid black;">{%= i.i_tax %}</td>
+            <td style="border: 1px solid black;">{%= i.loan %}</td>
+            <td style="border: 1px solid black;">{%= i.eobi_ded %}</td>
+            <td style="border: 1px solid black;">{%= i.total_ded %}</td>
+            <td style="border: 1px solid black;">{%= i.net_payable %}</td>
+            <td style="border: 1px solid black;"></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p class="text-right text-muted"></p>
