@@ -153,26 +153,24 @@ def get_data(filters, columns):
             total_eobi += row[11]  # E.O.B.I Ded.
             total_ded += row[12]  # Total Ded
             total_net_payable += row[13]  # Net Payable
+            totals_row = [
+				"<b>" + _("Total") + "</b>",  # Bold label for Total
+				"",  # Leave Name blank
+				"",  # Leave Name blank
+				"",  # Leave Name blank
+				"",  # Leave Designation blank
+				"<b>" + str(total_gross_salary) + "</b>",  # Bold Total Gross Salary
+				"<b>" + str(total_ot_hours) + "</b>",  # Bold Total OT Hours
+				"<b>" + str(total_ot_amount) + "</b>",  # Bold Total OT Amount
+				"<b>" + str(total_income) + "</b>",  # Bold Total Income
+				"<b>" + str(total_tax) + "</b>",  # Bold Total Tax
+				"<b>" + str(total_loan) + "</b>",  # Bold Total Loan
+				"<b>" + str(total_eobi) + "</b>",  # Bold Total E.O.B.I Ded.
+				"<b>" + str(total_ded) + "</b>",  # Bold Total Ded
+				"<b>" + str(total_net_payable) + "</b>",  # Bold Total Net Payable
+				""  # Receiver Signature field remains empty
+			]
 
-        # Add totals row for the department
-        totals_row = [
-
-            _("Total"),  # Label the row as Total
-            "",  # Leave Name blank
-            "",  # Leave Name blank
-            "",  # Leave Name blank
-            "",  # Leave Designation blank
-            total_gross_salary,  # Total Gross Salary
-            total_ot_hours,  # Total OT Hours
-            total_ot_amount,  # Total OT Amount
-            total_income,  # Total Income
-            total_tax,  # Total Tax
-            total_loan,  # Total Loan
-            total_eobi,  # Total E.O.B.I Ded.
-            total_ded,  # Total Ded
-            total_net_payable,  # Total Net Payable
-            ""  # Receiver Signature field remains empty
-        ]
 
         # Add the totals row to the data
         data.append(totals_row)
