@@ -146,6 +146,12 @@ class EmployeeAttendance(Document):
             dateobj = getdate(date1)
             day_of_week = dateobj.strftime('%A')
             data.day = day_of_week
+            if data.weekly_off == 1:
+                data.day_type = "Weekly Off"
+            elif data.public_holiday == 1:
+                data.day_type = "Public Holiday"
+            elif data.weekday == 1:
+                data.day_type = "Weekday"
 
 
         # Helper function to convert time string to seconds
@@ -581,7 +587,7 @@ class EmployeeAttendance(Document):
                                                                             'start_date': ["<=", getdate(data.date)]}, fields=["*"])
                     if len(shift_ass) > 0:
                         shift = shift_ass[0].shift_type
-                    if shift == None:
+                    if shift is None:
                         frappe.throw(_("No shift available for this employee{0}").format(self.employee))
                     data.shift = shift
                     shift_doc = frappe.get_doc("Shift Type", shift)
@@ -1225,12 +1231,12 @@ class EmployeeAttendance(Document):
                 # else:
                 #     data.weekday = 1
                     
-                if data.weekly_off == 1:
-                    data.day_type = "Weekly Off"
-                elif data.public_holiday == 1:
-                    data.day_type = "Public Holiday"
-                elif data.weekday == 1:
-                    data.day_type = "Weekday"
+                # if data.weekly_off == 1:
+                #     data.day_type = "Weekly Off"
+                # elif data.public_holiday == 1:
+                #     data.day_type = "Public Holiday"
+                # elif data.weekday == 1:
+                #     data.day_type = "Weekday"
                 
                 # if data.day_type == "Public Holiday":
                 #     data.public_holiday = 1
