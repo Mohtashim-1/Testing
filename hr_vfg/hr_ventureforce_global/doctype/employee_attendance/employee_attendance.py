@@ -3001,17 +3001,34 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
                     #     print(f'chacha')
 
 
+# @frappe.whitelist()
+# def refresh_table(docname):
+#     doc = frappe.get_doc("Employee Attendance", docname)
+    
+#     for row in doc.table1:
+#         if row.refreshed == 1:
+#             row.refreshed = 0
+#         elif row.refreshed == 0:
+#             row.refreshed = 1
+    
+    
+#     doc.save(ignore_permissions=True)
+
+#     return {"message": "Child table updated successfully!"}
+
 @frappe.whitelist()
 def refresh_table(docname):
     doc = frappe.get_doc("Employee Attendance", docname)
     
     for row in doc.table1:
-        if row.refreshed == 1:
-            row.refreshed = 0
-        elif row.refreshed == 0:
-            row.refreshed = 1
-    
-    
-    doc.save(ignore_permissions=True)
+        # Toggle refreshed field
+        row.refreshed = 0 if row.refreshed else 1
 
+        # Ensure dependent fields are refreshed (modify logic as needed)
+        row.estimated_late = row.estimated_late  # Trigger update
+        row.difference1 = row.difference1  # Trigger update
+        row.day_type = row.day_type  # Trigger update
+
+    doc.save(ignore_permissions=True)
+    
     return {"message": "Child table updated successfully!"}
