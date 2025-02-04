@@ -152,6 +152,9 @@ class EmployeeAttendance(Document):
                 data.day_type = "Public Holiday"
             elif data.weekday == 1:
                 data.day_type = "Weekday"
+            
+            if data.weekly_off == 0:
+                data.weekday = 1
 
 
         # Helper function to convert time string to seconds
