@@ -3025,9 +3025,10 @@ def refresh_table(docname):
         row.refreshed = 0 if row.refreshed else 1
 
         # Ensure dependent fields are refreshed (modify logic as needed)
-        row.estimated_late = row.estimated_late  # Trigger update
-        row.difference1 = row.difference1  # Trigger update
-        row.day_type = row.day_type  # Trigger update
+        row.estimated_late = None
+        row.difference1 = None
+        row.day_type = None
+        row.over_time_type = None
 
     doc.save(ignore_permissions=True)
     
