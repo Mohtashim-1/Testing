@@ -33,24 +33,24 @@ frappe.query_reports["Salary Register Report"] = {
             "options": "Department"
         }
 	],
-	"onload": function () {
-        frappe.call({
-            method: "hrms.hr.report.monthly_attendance_sheet.monthly_attendance_sheet.get_attendance_years",
-            callback: function (r) {
-                if (r.message) {
-                    let year_filter = frappe.query_report.get_filter('year');
+	// "onload": function () {
+    //     frappe.call({
+    //         method: "hrms.hr.report.monthly_attendance_sheet.monthly_attendance_sheet.get_attendance_years",
+    //         callback: function (r) {
+    //             if (r.message) {
+    //                 let year_filter = frappe.query_report.get_filter('year');
                     
-                    // Update options for the year filter
-                    year_filter.df.options = r.message + "\n2020";
+    //                 // Update options for the year filter
+    //                 year_filter.df.options = r.message + "\n2020";
                     
-                    // Refresh the filter UI to apply changes
-                    year_filter.refresh();
+    //                 // Refresh the filter UI to apply changes
+    //                 year_filter.refresh();
 
-                    // Set the default value
-                    const default_year = r.message.split("\n")[0];
-                    year_filter.set_input(default_year);
-                }
-            }
-        });
-    }
+    //                 // Set the default value
+    //                 const default_year = r.message.split("\n")[0];
+    //                 year_filter.set_input(default_year);
+    //             }
+    //         }
+    //     });
+    // }
 };
