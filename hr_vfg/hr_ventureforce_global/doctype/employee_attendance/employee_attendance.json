@@ -8,20 +8,23 @@
  "field_order": [
   "employee",
   "month",
-  "unit",
-  "cnic",
+  "releiving_date",
   "column_break_3",
   "employee_name",
   "year",
-  "joining_date",
+  "email_id",
   "column_break_7",
   "biometric_id",
-  "department",
-  "image",
+  "joining_date",
   "column_break_fqji",
   "company",
+  "unit",
+  "column_break_stag",
   "designation",
-  "email_id",
+  "cnic",
+  "column_break_eyyv",
+  "department",
+  "image",
   "section_break_5",
   "table1",
   "section_break_7",
@@ -30,6 +33,7 @@
   "total_lates_int",
   "early_for_absents",
   "early_going",
+  "total_public_holidays",
   "column_break_jkru",
   "total_absents",
   "lates_for_halfday",
@@ -41,21 +45,25 @@
   "lates_for_absent",
   "no_of_sundays",
   "absent_for_check_in",
+  "holiday_hour",
   "column_break_rpvn",
   "total_leaves",
   "total_half_days",
   "late_comparision",
   "early_for_halfday",
+  "total_difference_hours",
   "column_break_25",
   "no_of_nights",
   "total_working_days",
   "hours_worked",
   "absent_threshould",
+  "extra_hours",
   "column_break_apit",
   "month_days",
   "total_working_hours",
   "total_weekly_off",
   "present_threshould",
+  "over_time",
   "check_in_and_check_out_log_unavailable_section",
   "total_absent_check_in_missing_1",
   "column_break_jbbl",
@@ -71,40 +79,28 @@
   "over_time_data_section",
   "early_ot",
   "early_sitting",
+  "holiday_halfday_ot",
   "column_break_wiyj",
   "late_sitting_hours",
   "late_sitting",
+  "early_over_time",
   "column_break_xhgm",
   "total_overtime",
   "total_sitting",
+  "extra_ot_amount",
   "column_break_izmm",
   "approved_early_over_time_hour",
   "approved_early_sitting",
+  "holiday_full_day_ot",
   "column_break_zvym",
   "approved_ot",
   "approved_late_sitting",
   "column_break_tfkt",
   "approved_overtime_le",
   "approved_total_sitting",
-  "time_calculation_section",
-  "holiday_hour",
-  "total_difference_hours",
-  "column_break_wgrj",
-  "extra_hours",
-  "holiday_full_day_ot",
-  "column_break_22",
-  "over_time",
-  "total_public_holidays",
-  "column_break_owro",
-  "holiday_halfday_ot",
-  "column_break_44",
-  "early_over_time",
-  "column_break_43",
-  "extra_ot_amount",
   "section_break_15",
   "short_hours",
   "late_coming_hours_f",
-  "diference",
   "column_break_rqou",
   "late_relaxation",
   "deduction_hours",
@@ -116,6 +112,7 @@
   "late_after_relaxation",
   "column_break_52",
   "late_plus_early_hours_",
+  "diference",
   "column_break_54",
   "late_early_adjustment",
   "allowance_section",
@@ -262,10 +259,6 @@
    "label": "Late Coming Hours"
   },
   {
-   "fieldname": "column_break_22",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "column_break_7",
    "fieldtype": "Column Break"
   },
@@ -397,18 +390,6 @@
    "fieldname": "total_difference_hours",
    "fieldtype": "Data",
    "label": "Total Difference Hours"
-  },
-  {
-   "fieldname": "time_calculation_section",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_44",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_43",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "total_public_holidays",
@@ -714,14 +695,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_wgrj",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_owro",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "column_break_rqou",
    "fieldtype": "Column Break"
   },
@@ -744,11 +717,25 @@
    "fieldname": "diference",
    "fieldtype": "Float",
    "label": "Diference"
+  },
+  {
+   "fetch_from": "employee.relieving_date",
+   "fieldname": "releiving_date",
+   "fieldtype": "Data",
+   "label": "Releiving Date"
+  },
+  {
+   "fieldname": "column_break_stag",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_eyyv",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2025-01-06 17:14:14.391657",
+ "modified": "2025-02-12 18:57:04.113589",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
