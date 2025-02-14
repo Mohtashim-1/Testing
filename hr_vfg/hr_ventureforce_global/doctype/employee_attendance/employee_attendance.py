@@ -284,14 +284,16 @@ class EmployeeAttendance(Document):
                     early_going_duration = timedelta()  # Default value
                     
                     # Handle overnight cases
-                    if check_out_1 < shift_out:
+                    if check_out_1 < shift_out and data.estimated_late:
                         check_out_1 += timedelta(days=1)
+                    # if check_out_1 < shift_out and data.estimated_late is not None:
+                    #     check_out_1 += timedelta(days=1)
                     early_going_duration = shift_out - check_out_1
                     data.early_going_hours1 = early_going_duration
-
                 else:
                     early_going_duration = timedelta()  # Ensure it has a default value when conditions are not met
-                    data.early_going_duration = early_going_duration
+                    data.early_going_hours1 = early_going_duration
+                    
 
                 data.early_going_hours1 = early_going_duration.total_seconds() / 3600  # Store hours as float
 
@@ -299,6 +301,7 @@ class EmployeeAttendance(Document):
 
         # Update parent fields with early going count and hours
         self.early_going = total_early_goings
+        self.total_early_going_hours = round(total_early_going_hours.total_seconds() / 3600, 2)
         # self.manual_absent = round(total_early_going_hours.total_seconds() / 3600, 2)  # Convert to hours
 
         for data in self.table1:
@@ -2679,7 +2682,7 @@ class EmployeeAttendance(Document):
                             total_early_going_hrs += data.early_going_hours
 
                 # Store total early going hours in the parent doctype
-                self.total_early_going_hours = str(total_early_going_hrs)
+                # self.total_early_going_hours = str(total_early_going_hrs)
                     
                 
                 if holiday_flag:
@@ -2763,7 +2766,7 @@ class EmployeeAttendance(Document):
         # self.total_lates = total_lates
         self.total_early_goings = total_early
         self.total_half_days = total_half_days
-        self.total_early_going_hours = total_early_going_hrs
+        # self.total_early_going_hours = total_early_going_hrs
         self.holiday_hour = round(flt(total_holiday_hours.total_seconds())/3600, 2)
         self.early_over_time = round(flt(total_early_ot.total_seconds())/3600, 2)
         t_lat = 0
@@ -2781,7 +2784,7 @@ class EmployeeAttendance(Document):
        
         self.total_working_hours = round(required_working_hrs,2)
         self.total_difference_hours = round(self.total_working_hours - self.hours_worked,2)
-        self.late_plus_early_hours_ = total_late_coming_hours + self.total_early_going_hours
+        # self.late_plus_early_hours_ = total_late_coming_hours + self.total_early_going_hours
         self.present_days = present_days 
         lfh = 0
         if hr_settings.maximum_lates_for_halfday > 0:
@@ -2792,7 +2795,7 @@ class EmployeeAttendance(Document):
         if hr_settings.maximum_early_for_halfday > 0:
             efh = int(total_early/hr_settings.maximum_early_for_halfday) if total_early >= hr_settings.maximum_early_for_halfday else 0
         self.early_for_halfday = round(efh/2,1)
-        self.total_early_going_hours = round(flt(total_early_going_hrs.total_seconds())/3600, 2)
+        # self.total_early_going_hours = round(flt(total_early_going_hrs.total_seconds())/3600, 2)
 
         employee = frappe.get_doc("Employee", self.employee)
         if employee.custom_late_unmark == 1:
