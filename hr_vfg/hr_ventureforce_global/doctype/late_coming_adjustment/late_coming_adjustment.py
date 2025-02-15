@@ -39,5 +39,20 @@ class LateComingAdjustment(Document):
 			frappe.db.commit()
 			doc = frappe.get_doc("Employee Attendance",r.att_ref)
 			doc.save()
+   
+	def on_cancel(self):
+		for r in self.late_coming_adjustment_ct:
+			frappe.db.sql("""
+				UPDATE `tabEmployee Attendance Table` 
+				SET late1 = 0
+				WHERE name = %s
+			""", (r.att_child_ref,))
+			
+			frappe.db.commit()
+			
+			doc = frappe.get_doc("Employee Attendance", r.att_ref)
+			doc.save()
+    
+
 	
 	
