@@ -10,6 +10,35 @@ from datetime import datetime, date
 class SalaryIncrements(Document):
 	pass
 	def validate(self):
+		for i in self.salary_increment_table:
+			prev_salary = float(i.previous_salary or 0)
+			inc_amount = float(i.increment_amount or 0)
+			inc_per = float(i.increment_per or 0)
+
+			# Debugging: Print values to check if they are being fetched correctly
+			# frappe.msgprint(f"Employee: {i.employee}, Previous Salary: {prev_salary}, Increment %: {inc_per}, Increment Amount: {inc_amount}")
+
+			# Calculate increment amount if percentage is provided but amount is missing
+			if inc_per > 0 and inc_amount == 0:
+				i.increment_amount = (prev_salary * inc_per) / 100
+				# frappe.msgprint(f"Calculated Increment Amount: {i.increment_amount}")  # Debugging
+
+			# Calculate increment percentage if amount is provided but percentage is missing
+			elif inc_amount > 0 and inc_per == 0:
+				i.increment_per = (inc_amount / prev_salary) * 100
+				# frappe.msgprint(f"Calculated Increment Percentage: {i.increment_per}")  # Debugging
+
+			# Compute after increment salary
+			i.after_increment_salary = prev_salary + i.increment_amount
+			# frappe.msgprint(f"Updated After Increment Salary: {i.after_increment_salary}")  # Debugging
+
+			# Ensure the values persist in the database
+			i.db_set("increment_amount", i.increment_amount)
+			i.db_set("increment_per", i.increment_per)
+			i.db_set("after_increment_salary", i.after_increment_salary)
+
+
+      		# if i.salary_date <= i.previous_salary_date:
 		# if len(self.salary_increment_table) == 0:
 		# 	incs = frappe.get_all("Salary Increment",filters={"employee":self.employee,"name":["!=",self.name]},fields=["*"])
 		# 	for doc in incs:
@@ -71,6 +100,7 @@ class SalaryIncrements(Document):
 		self.total_increment = increment_amount
 		self.total_salary_after_increment = total_after_increment	
 		self.save()
+  
 	def on_submit(self):
 		for d in self.salary_increment_table:
 			emp_doc = frappe.get_doc("Employee",d.employee)
