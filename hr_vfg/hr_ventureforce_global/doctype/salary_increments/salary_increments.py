@@ -72,6 +72,9 @@ class SalaryIncrements(Document):
 		employees = frappe.db.get_all("Employee",filters=filters,fields=["name"])
 		for row in employees:
 			prev = frappe.db.get_value("Salary Structure Assignment",{"docstatus":1,"employee":row.name},"base") or 0
+			if prev == 0:
+				frappe.msgprint(f"Skipping employee {row.employee} as they have no previous salary.", alert=True)
+				continue
 			if self.increment_percentage > 0 and self.increment_amount == 0:
 				self.append("salary_increment_table",{
 					    "employee":row.name,
@@ -83,15 +86,19 @@ class SalaryIncrements(Document):
 						"after_increment_salary":prev + (prev*(self.increment_percentage/100))
 					})
 			if self.increment_amount > 0 and self.increment_percentage == 0:
-				self.append("salary_increment_table",{
-					    "employee":row.name,
-						"increment_date":self.increment_date,
-						"increment_type":self.increment_type,
-						"previous_salary":prev,
-						"increment_per":(self.increment_amount/prev)*100,
-						"increment_amount":self.increment_amount,
-						"after_increment_salary": prev + self.increment_amount
-					})
+				if prev == 0:
+					frappe.msgprint(f"Warning: Employee {row.name} has no previous salary. Increment percentage will be set to 0.")
+				self.append("salary_increment_table", {
+					"employee": row.name,
+					"increment_date": self.increment_date,
+					"increment_type": self.increment_type,
+					"previous_salary": prev,
+					"increment_per": (self.increment_amount / prev) * 100 if prev > 0 else 0,
+					"increment_amount": self.increment_amount,
+					"after_increment_salary": prev + self.increment_amount
+				})
+
+
 			else:
 				frappe.msgprint("Please select only one, either Increment Percentage or Increment Amount")
 		for row in self.salary_increment_table:
