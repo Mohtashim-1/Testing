@@ -77,6 +77,7 @@ class MealForm(Document):
 	def total_qty_and_total_amount(self):
 		total_qty = 0
 		total_amount = 0
+		
 		total_qty1 = 0
 		total_amount1 = 0
 		for j in self.detail:
@@ -96,7 +97,7 @@ class MealForm(Document):
 		self.db_set('total_employees', total_qty1)
 		self.db_set('total_employee_amount', total_amount1)
 		# self.db_set('total_qty', total_qty + total_qty1 + self.total_qty)
-		self.db_set('total_amount', total_amount + total_amount1)
+		self.db_set('total_amount', total_amount + total_amount1 + self.service_amount or 0)
 		# self.save(ignore_permissions=True)
 				
 
