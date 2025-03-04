@@ -16,6 +16,7 @@ def get_column(filters):
         {"fieldname": "meal_type", "label": "Meal Type", "fieldtype": "Data", "width": 100},
         {"fieldname": "total_contractor", "label": "Total Contractor", "fieldtype": "Float"},
         {"fieldname": "total_employees", "label": "Total Employee", "fieldtype": "Float"},
+        {"fieldname": "total_qty", "label": "Qty", "fieldtype": "Float"},
         {"fieldname": "total_amount", "label": "Total Amount", "fieldtype": "Currency"},
     ]
     return columns
@@ -49,7 +50,7 @@ def get_data(filters):
         
         # Fetch data with the dynamically applied filters
         data = frappe.db.get_all('Meal Form', 
-                                 fields=['date', 'meal_provider', 'meal_type', 'total_contractor', 'total_employees', 'total_amount'], 
+                                 fields=['date', 'meal_provider', 'meal_type', 'total_contractor', 'total_employees', 'total_qty','total_amount'], 
                                  filters=filter_conditions,  # Using dynamic filter conditions
                                  order_by='date asc')  # Sorting by date in ascending order
         
