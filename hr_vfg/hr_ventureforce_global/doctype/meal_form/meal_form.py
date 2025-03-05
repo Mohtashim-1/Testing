@@ -10,12 +10,52 @@ class MealForm(Document):
 	def validate(self):
 		self.contract_rate_base_on_category()
 		self.employee_rate_base_on_category()
-		self.total_qty_and_total_amount()
+		# self.total_qty_and_total_amount()
 		self.total_service_and_total_amount()
 		self.total_sum_qty()
-
+		self.total_amount_calculation()
+		self.total_contractor_amount()
+		self.total_contractor_qty()
+		self.total_employee_qty()
+		self.total_employee_total()
+	
 	def before_save(self):
 		self.total_sum_qty()
+		self.total_amount_calculation()
+
+	def total_amount_calculation(self):
+		# frappe.msgprint('1')
+		total_contract_amount = self.total_contract_amount or 0 
+		total_employee_amount = self.total_employee_amount or 0
+		service_amount = self.service_amount or 0
+		self.total_amount = total_contract_amount + total_employee_amount + service_amount
+
+
+	def total_employee_total(self):
+		total = 0
+		for i in self.detail_meal:
+			total += i.amount
+		self.total_employee_amount = total
+
+	def total_employee_qty(self):
+		qty = 0
+		for i in self.detail_meal:
+			qty += i.qty
+		self.total_employees = qty
+
+	def total_contractor_amount(self):
+		total = 0 
+		for i in self.detail:
+			total += i.amount
+		self.total_contract_amount = total
+	
+	def total_contractor_qty(self):
+		qty = 0
+		for i in self.detail:
+			qty += i.quantity
+		self.total_contractor = qty
+
+
 
 	def total_sum_qty(self):
 		contractor_qty = self.total_contractor or 0
@@ -74,30 +114,32 @@ class MealForm(Document):
 					j.rate = 0
 					j.amount = 0
 	
-	def total_qty_and_total_amount(self):
-		total_qty = 0
-		total_amount = 0
+	
+	# def total_qty_and_total_amount(self):
+	# 	total_qty = 0
+	# 	total_amount = 0
 		
-		total_qty1 = 0
-		total_amount1 = 0
-		for j in self.detail:
-			total_qty += j.quantity
-			total_amount += j.amount
-		for i in self.detail_meal:
-			total_qty1 += i.qty
-			total_amount1 += i.amount
+	# 	total_qty1 = 0
+	# 	total_amount1 = 0
+	# 	for j in self.detail:
+	# 		total_qty += j.quantity
+	# 		total_amount += j.amount
+	# 	for i in self.detail_meal:
+	# 		total_qty1 += i.qty
+	# 		total_amount1 += i.amount
 		# self.total_contractor = total_qty
 		# self.total_contract_amount = total_amount
 		# self.total_employees = total_qty1
 		# self.total_employee_amount = total_amount1
 		# self.total_qty = self.total_contractor + self.total_employees 
 		# self.total_amount = self.total_contract_amount + self.total_employee_amount
-		self.db_set('total_contractor', total_qty)
-		self.db_set('total_contract_amount', total_amount)
-		self.db_set('total_employees', total_qty1)
-		self.db_set('total_employee_amount', total_amount1)
+		# self.db_set('total_contractor', total_qty)
+		# self.db_set('total_contract_amount', total_amount)
+		# self.db_set('total_employees', total_qty1)
+		# self.db_set('total_employee_amount', total_amount1)
 		# self.db_set('total_qty', total_qty + total_qty1 + self.total_qty)
-		self.db_set('total_amount', total_amount + total_amount1 + self.service_amount or 0)
+		# self.reload()
+		# self.db_set('total_amount', total_amount + total_amount1 + self.service_amount or 0)
 		# self.save(ignore_permissions=True)
 				
 
