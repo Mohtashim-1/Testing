@@ -408,7 +408,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
-   "link_count": 9,
+   "link_count": 10,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -502,9 +502,19 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Absent Report",
+   "link_count": 0,
+   "link_to": "Absent Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-04-09 02:50:30.479954",
+ "modified": "2025-04-09 03:13:38.437725",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "HR Addon",
