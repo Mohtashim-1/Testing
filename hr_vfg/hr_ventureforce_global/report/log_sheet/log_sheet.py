@@ -1,3 +1,5 @@
+# Copyright (c) 2025, VFG and contributors
+# For license information, please see license.txt
 import frappe
 
 def execute(filters=None):
@@ -21,9 +23,13 @@ def execute(filters=None):
         conditions.append("e.employee_name = %(employee_name)s")
         values["employee_name"] = filters.get("employee_name")
 
-    if filters.get("attendance_date"):
-        conditions.append("al.attendance_date = %(attendance_date)s")
-        values["attendance_date"] = filters.get("attendance_date")
+    if filters.get("from_date"):
+        conditions.append("al.attendance_date >= %(from_date)s")
+        values["from_date"] = filters.get("from_date")
+
+    if filters.get("to_date"):
+        conditions.append("al.attendance_date <= %(to_date)s")
+        values["to_date"] = filters.get("to_date")
 
     condition_query = " AND ".join(conditions)
     if condition_query:

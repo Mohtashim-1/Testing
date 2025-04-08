@@ -10,17 +10,25 @@ frappe.query_reports["Log Sheet"] = {
             "reqd": 0
         },
         {
-            "fieldname": "employee",
+            "fieldname": "employee_name",
             "label": __("Employee Name"),
             "fieldtype": "Link",
             "options": "Employee",
             "reqd": 0
         },
         {
-            "fieldname": "attendance_date",
-            "label": __("Date"),
+            "fieldname": "from_date",
+            "label": __("From Date"),
             "fieldtype": "Date",
-            "reqd": 0
+            "reqd": 0,
+            "default": frappe.datetime.add_days(frappe.datetime.get_today(), -7) // Default to last 7 days
+        },
+        {
+            "fieldname": "to_date",
+            "label": __("To Date"),
+            "fieldtype": "Date",
+            "reqd": 0,
+            "default": frappe.datetime.get_today() // Default to today
         }
 	]
 };
