@@ -83,6 +83,7 @@ class EmployeeAttendance(Document):
         self.no_of_sundays = 0
         self.month_days = num_days
         # except:
+
         #     pass
         holiday_flag = False
         leave_flag = False
@@ -129,32 +130,63 @@ class EmployeeAttendance(Document):
 
         # for data in self.table1:
         #     late_coming_hours += 1  
-        # self.short_hours += late_coming_hours  
+        # self.short_hours += late_coming_hours 
+
+        
         
 
         total_lates11 = 0
         for data in self.table1:
+
+            # holiday list
+
+           
+
+            
+
+
+
+
+
             if data.late == 1:
                 total_lates11 += 1  # increment by 1 each time `data.late` is 1
         self.total_lates_int = total_lates11
         self.total_lates = total_lates11
         
 
+        # for data in self.table1:
+        #     date1 = data.date
+        #     dateobj = getdate(date1)
+        #     day_of_week = dateobj.strftime('%A')
+        #     data.day = day_of_week
+        #     if data.weekly_off == 1:
+        #         data.day_type = "Weekly Off"
+        #     elif data.public_holiday == 1:
+        #         data.day_type = "Public Holiday"
+        #     elif data.weekday == 1:
+        #         data.day_type = "Weekday"
+        #     if data.weekly_off == 0:
+        #         data.weekday = 1
+
         for data in self.table1:
-            date1 = data.date
-            # print(f"\n\n\n\\\n\n\n{date1}")
-            dateobj = getdate(date1)
-            day_of_week = dateobj.strftime('%A')
-            data.day = day_of_week
-            if data.weekly_off == 1:
-                data.day_type = "Weekly Off"
-            elif data.public_holiday == 1:
-                data.day_type = "Public Holiday"
-            elif data.weekday == 1:
-                data.day_type = "Weekday"
-            
-            if data.weekly_off == 0:
+            # get the Python date object
+            dateobj = getdate(data.date)
+            data.day = dateobj.strftime('%A')
+
+            # first, only mark weekdays when it's neither a holiday nor a weekly off
+            if not data.weekly_off and not data.public_holiday:
                 data.weekday = 1
+            else:
+                data.weekday = 0
+
+            # then set the human‐readable day_type
+            if data.public_holiday:
+                data.day_type = "Public Holiday"
+            elif data.weekly_off:
+                data.day_type = "Weekly Off"
+            else:
+                data.day_type = "Weekday"
+
 
 
         # Helper function to convert time string to seconds
@@ -489,7 +521,41 @@ class EmployeeAttendance(Document):
                 if la>0:
                     data.mark_leave = 1
 
-            
+            # 0) initialize your totals before the loop
+            self.total_absents = 0
+            self.total_weekly_off = 0
+            self.total_public_holidays = 0
+
+            # 1) fetch the Holiday List document once
+            holiday_list_doc = frappe.get_doc("Holiday List", data.holiday_list)
+
+            # 2) build a fast lookup from date → record
+            holiday_map = {
+                getdate(h.holiday_date): h
+                for h in holiday_list_doc.holidays
+            }
+
+            # 3) pre‐mark each row and accumulate exactly once
+            for row in self.table1:
+                row_date = getdate(row.date)
+                entry    = holiday_map.get(row_date)
+
+                if entry:
+                    row.public_holiday = 1 if entry.public_holiday else 0
+                    row.weekly_off     = 1 if entry.weekly_off     else 0
+                else:
+                    # fallback: Sundays are weekly_off
+                    row.public_holiday = 0
+                    row.weekly_off     = 1 if row_date.weekday() == 6 else 0
+
+                # never mark someone absent on a holiday or weekly‐off
+                if row.public_holiday or row.weekly_off:
+                    row.absent = 0
+
+                # now accumulate your totals exactly once per row
+                self.total_public_holidays += row.public_holiday
+                self.total_weekly_off      += row.weekly_off
+                self.total_absents         += row.absent or 0
             
 
             if str(getdate(data.date)) in [str(d.holiday_date) for d in holidays]:
@@ -500,11 +566,16 @@ class EmployeeAttendance(Document):
                             if str(getdate(data.date)) == str(h.holiday_date):
                                 if h.public_holiday == 1:
                                     data.public_holiday = 1
-                                    self.total_public_holidays += 1
+                                    data.weekly_off = 1
+                                    # self.total_public_holidays += 1
+                                elif h.weekly_off == 1:
+                                    data.public_holiday = 1
+                                    data.weekly_off = 1
+                                    # self.total_public_holidays += 1
                                 break
                         if data.public_holiday == 0: 
                             data.weekly_off = 1
-                            self.total_weekly_off += 1
+                            # self.total_weekly_off += 1
                         if hr_settings.absent_sandwich in ['Absent Before Holiday']:
                             if previous and previous.absent == 1:
                                 p_date = previous.date
@@ -2876,32 +2947,32 @@ def check_sanwich_after_holiday(self, previous,data,hr_settings,index):
 
 
 
-# def get_holidays_for_employee(
-# 	employee, start_date, end_date, raise_exception=True, only_non_weekly=False
-# ):
-# 	"""Get Holidays for a given employee
+def get_holidays_for_employee(
+	employee, start_date, end_date, raise_exception=True, only_non_weekly=False
+):
+	"""Get Holidays for a given employee
 
-# 	`employee` (str)
-# 	`start_date` (str or datetime)
-# 	`end_date` (str or datetime)
-# 	`raise_exception` (bool)
-# 	`only_non_weekly` (bool)
+	`employee` (str)
+	`start_date` (str or datetime)
+	`end_date` (str or datetime)
+	`raise_exception` (bool)
+	`only_non_weekly` (bool)
 
-# 	return: list of dicts with `holiday_date` and `description`
-# 	"""
-# 	holiday_list = get_holiday_list_for_employee(employee, raise_exception=raise_exception)
+	return: list of dicts with `holiday_date` and `description`
+	"""
+	holiday_list = get_holiday_list_for_employee(employee, raise_exception=raise_exception)
 
-# 	if not holiday_list:
-# 		return []
+	if not holiday_list:
+		return []
 
-# 	filters = {"parent": holiday_list, "holiday_date": ("between", [start_date, end_date])}
+	filters = {"parent": holiday_list, "holiday_date": ("between", [start_date, end_date])}
 
-# 	if only_non_weekly:
-# 		filters["weekly_off"] = False
+	if only_non_weekly:
+		filters["weekly_off"] = False
 
-# 	holidays = frappe.get_all("Holiday", fields=["description","public_holiday", "weekly_off","holiday_date"], filters=filters)
+	holidays = frappe.get_all("Holiday", fields=["description","public_holiday", "weekly_off","holiday_date"], filters=filters)
 
-# 	return holidays
+	return holidays
 
 
 
@@ -3029,7 +3100,7 @@ def late_relaxation_due_to_late_sitting(self, previous, data, hr_settings, index
     
 #     doc.save(ignore_permissions=True)
 
-#     return {"message": "Child table updated successfully!"}
+    # return {"message": "Child table updated successfully!"}
 
 @frappe.whitelist()
 def refresh_table(docname):
@@ -3048,3 +3119,5 @@ def refresh_table(docname):
     doc.save(ignore_permissions=True)
     
     return {"message": "Child table updated successfully!"}
+
+
