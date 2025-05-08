@@ -16,6 +16,7 @@
   "column_break_7",
   "biometric_id",
   "joining_date",
+  "holiday_list",
   "column_break_fqji",
   "company",
   "unit",
@@ -731,11 +732,19 @@
   {
    "fieldname": "column_break_eyyv",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.holiday_list",
+   "fieldname": "holiday_list",
+   "fieldtype": "Link",
+   "label": "Holiday List",
+   "options": "Holiday List"
   }
  ],
+ "grid_page_length": 50,
  "image_field": "image",
  "links": [],
- "modified": "2025-02-12 18:57:04.113589",
+ "modified": "2025-05-08 17:03:30.147679",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
@@ -755,6 +764,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "search_fields": "employee_name",
  "sort_field": "modified",
  "sort_order": "DESC",
