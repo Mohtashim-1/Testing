@@ -521,42 +521,64 @@ class EmployeeAttendance(Document):
                 if la>0:
                     data.mark_leave = 1
 
-            # 0) initialize your totals before the loop
+            # 0) init totals
             self.total_absents = 0
             self.total_weekly_off = 0
             self.total_public_holidays = 0
 
-            # 1) fetch the Holiday List document once
-            holiday_list_doc = frappe.get_doc("Holiday List", data.holiday_list)
+            # 1) load holiday list once
+            holiday_list = frappe.get_doc("Holiday List", self.holiday_list)
+            holiday_map = { getdate(h.holiday_date): h for h in holiday_list.holidays }
 
-            # 2) build a fast lookup from date → record
-            holiday_map = {
-                getdate(h.holiday_date): h
-                for h in holiday_list_doc.holidays
-            }
+            # 2) parse join date once
+            join_date = getdate(self.joining_date)
 
-            # 3) pre‐mark each row and accumulate exactly once
+            # 3) loop once
             for row in self.table1:
                 row_date = getdate(row.date)
-                entry    = holiday_map.get(row_date)
 
-                if entry:
-                    row.public_holiday = 1 if entry.public_holiday else 0
-                    row.weekly_off     = 1 if entry.weekly_off     else 0
-                else:
-                    # fallback: Sundays are weekly_off
+                # presence flag: adjust if your field is named differently
+                has_attendance = bool(row.check_in_1 or row.check_out_1)
+
+                # lookup holiday entry
+                entry = holiday_map.get(row_date)
+                is_holiday   = bool(entry and entry.public_holiday)
+                is_weekly    = bool(entry and entry.weekly_off) or (row_date.weekday() == 6)
+
+                if row_date < join_date:
+                    # before join → always absent
                     row.public_holiday = 0
-                    row.weekly_off     = 1 if row_date.weekday() == 6 else 0
+                    row.weekly_off     = 0
+                    row.absent         = 1
 
-                # never mark someone absent on a holiday or weekly‐off
-                if row.public_holiday or row.weekly_off:
-                    row.absent = 0
+                elif is_holiday:
+                    # holiday → never absent, even if has_attendance you might still want row.absent=0
+                    row.public_holiday = 1
+                    row.weekly_off     = 0
+                    row.absent         = 0
 
-                # now accumulate your totals exactly once per row
+                elif is_weekly:
+                    # weekly-off → never absent
+                    row.public_holiday = 0
+                    row.weekly_off     = 1
+                    row.absent         = 0
+
+                elif has_attendance:
+                    # actual present → never absent
+                    row.public_holiday = 0
+                    row.weekly_off     = 0
+                    row.absent         = 0
+
+                else:
+                    # fallback → absent
+                    row.public_holiday = 0
+                    row.weekly_off     = 0
+                    row.absent         = 1
+
+                # 4) accumulate
                 self.total_public_holidays += row.public_holiday
                 self.total_weekly_off      += row.weekly_off
                 self.total_absents         += row.absent or 0
-            
 
             if str(getdate(data.date)) in [str(d.holiday_date) for d in holidays]:
                         holiday_flag = True
