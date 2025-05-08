@@ -522,63 +522,93 @@ class EmployeeAttendance(Document):
                     data.mark_leave = 1
 
             # 0) init totals
-            self.total_absents = 0
-            self.total_weekly_off = 0
+            self.total_absents         = 0
+            self.total_weekly_off      = 0
             self.total_public_holidays = 0
 
             # 1) load holiday list once
             holiday_list = frappe.get_doc("Holiday List", self.holiday_list)
-            holiday_map = { getdate(h.holiday_date): h for h in holiday_list.holidays }
+            holiday_map  = { getdate(h.holiday_date): h for h in holiday_list.holidays }
 
             # 2) parse join date once
             join_date = getdate(self.joining_date)
 
-            # 3) loop once
+            # pull your sandwich setting
+            sandwich = frappe.get_single("V HR Settings").absent_sandwich
+
+            # 3a) first pass: basic marking
             for row in self.table1:
-                row_date = getdate(row.date)
-
-                # presence flag: adjust if your field is named differently
-                has_attendance = bool(row.check_in_1 or row.check_out_1)
-
-                # lookup holiday entry
-                entry = holiday_map.get(row_date)
-                is_holiday   = bool(entry and entry.public_holiday)
-                is_weekly    = bool(entry and entry.weekly_off) or (row_date.weekday() == 6)
+                row_date      = getdate(row.date)
+                entry         = holiday_map.get(row_date)
+                is_holiday    = bool(entry and entry.public_holiday)
+                is_weekly     = bool(entry and entry.weekly_off) or (row_date.weekday() == 6)
+                has_attended  = bool(row.check_in_1 or row.check_out_1)
 
                 if row_date < join_date:
-                    # before join → always absent
-                    row.public_holiday = 0
-                    row.weekly_off     = 0
-                    row.absent         = 1
+                    row.public_holiday = row.weekly_off = 0
+                    row.absent = 1
 
                 elif is_holiday:
-                    # holiday → never absent, even if has_attendance you might still want row.absent=0
                     row.public_holiday = 1
                     row.weekly_off     = 0
                     row.absent         = 0
 
                 elif is_weekly:
-                    # weekly-off → never absent
                     row.public_holiday = 0
                     row.weekly_off     = 1
                     row.absent         = 0
 
-                elif has_attendance:
-                    # actual present → never absent
-                    row.public_holiday = 0
-                    row.weekly_off     = 0
-                    row.absent         = 0
+                elif has_attended:
+                    row.public_holiday = row.weekly_off = 0
+                    row.absent = 0
 
                 else:
-                    # fallback → absent
-                    row.public_holiday = 0
-                    row.weekly_off     = 0
-                    row.absent         = 1
+                    row.public_holiday = row.weekly_off = 0
+                    row.absent = 1
 
-                # 4) accumulate
-                self.total_public_holidays += row.public_holiday
-                self.total_weekly_off      += row.weekly_off
-                self.total_absents         += row.absent or 0
+            # 3b) second pass: sandwich rules
+            rows = list(self.table1)
+            for i, row in enumerate(rows):
+                prev = rows[i-1] if i>0 else None
+                nxt  = rows[i+1] if i<len(rows)-1 else None
+                is_hol   = bool(row.public_holiday or row.weekly_off)
+
+                if sandwich == "Absent After Holiday":
+                    # whenever someone is absent today, mark the day-before holiday absent
+                    if row.absent and prev and (prev.public_holiday or prev.weekly_off):
+                        prev.absent = 1
+
+                elif sandwich == "Absent Before Holiday":
+                    # whenever someone is absent today, mark the day-after holiday absent
+                    if row.absent and nxt and (nxt.public_holiday or nxt.weekly_off):
+                        nxt.absent = 1
+
+                elif sandwich == "Absent Before and After Holiday":
+                    # do BOTH of the above
+                    if row.absent:
+                        if prev and (prev.public_holiday or prev.weekly_off):
+                            prev.absent = 1
+                        if nxt  and (nxt.public_holiday  or nxt.weekly_off):
+                            nxt.absent  = 1
+
+                elif sandwich == "Absent Before Or After Holiday":
+                    # for each holiday row, if either neighbor is absent, mark it absent
+                    if is_hol and ((prev and prev.absent) or (nxt and nxt.absent)):
+                        row.absent = 1
+
+            # 3c) final pass: accumulate
+            for row in self.table1:
+                self.total_public_holidays += row.public_holiday or 0
+                self.total_weekly_off      += row.weekly_off     or 0
+                self.total_absents         += row.absent         or 0
+
+
+            
+
+
+
+
+
 
             if str(getdate(data.date)) in [str(d.holiday_date) for d in holidays]:
                         holiday_flag = True
@@ -3137,6 +3167,8 @@ def refresh_table(docname):
         row.difference1 = None
         row.day_type = None
         row.over_time_type = None
+
+    # doc.run_method("validate")
 
     doc.save(ignore_permissions=True)
     
