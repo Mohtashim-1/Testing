@@ -224,6 +224,7 @@ class EmployeeAttendance(Document):
 
         # Iterate over the rows in table1
         for data in self.table1:
+            self.late_sitting = 0
             if data.check_in_1 is None and data.check_out_1 is None:
                 data.total_time = None
                 data.difference = None
@@ -298,6 +299,8 @@ class EmployeeAttendance(Document):
         approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
         self.approved_total_sitting = approved_total_sitting
 
+        # initialize counters (in seconds)
+    
         
         
     
@@ -585,11 +588,10 @@ class EmployeeAttendance(Document):
 
                 elif sandwich == "Absent Before and After Holiday":
                     # do BOTH of the above
-                    if row.absent:
-                        if prev and (prev.public_holiday or prev.weekly_off):
-                            prev.absent = 1
-                        if nxt  and (nxt.public_holiday  or nxt.weekly_off):
-                            nxt.absent  = 1
+                    if (row.public_holiday or row.weekly_off) \
+                    and prev and prev.absent \
+                    and nxt  and nxt.absent:
+                        row.absent = 1
 
                 elif sandwich == "Absent Before Or After Holiday":
                     # for each holiday row, if either neighbor is absent, mark it absent
