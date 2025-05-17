@@ -12,6 +12,8 @@
   "posting_time",
   "column_break_hyvp",
   "adjustment_date",
+  "column_break_weoq",
+  "adjustment_type",
   "section_break_bmml",
   "attendance_adjustments_ct",
   "section_break_rw0e",
@@ -83,13 +85,25 @@
    "fieldtype": "Table",
    "label": "Attendance Adjustments CT",
    "options": "Attendance Adjustments CT"
+  },
+  {
+   "fieldname": "column_break_weoq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Missing Check In/ Check Out",
+   "fieldname": "adjustment_type",
+   "fieldtype": "Select",
+   "label": "Adjustment Type",
+   "options": "Missing Check In/ Check Out\nValidate Check In/ Check Out"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-14 14:49:50.227534",
+ "modified": "2025-05-17 22:36:09.571878",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Attendance Adjustments",
@@ -110,6 +124,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
