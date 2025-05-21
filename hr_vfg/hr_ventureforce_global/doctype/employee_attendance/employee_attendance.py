@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe.utils import cint
 from frappe.model.naming import make_autoname
 from frappe import msgprint, _
 from datetime import datetime
@@ -48,6 +49,7 @@ class EmployeeAttendance(Document):
         self.total_absents = 0
         # self.late_comparision = 0
         self.late_comparision = 0
+        self.early_compensation = 0
         extra_ot_amount = 0
         holiday_doc = None
         self.total_public_holidays = 0
@@ -127,7 +129,21 @@ class EmployeeAttendance(Document):
         self.total_leaves = 0
         self.short_hours = 0
         late_coming_hours = 0  # Initialize late_coming_hours
+        count = 0
+        for row in self.table1:
+            # make sure to compare numbers, not strings
+            if row.early == 1 or (isinstance(row.early, str) and row.early.isdigit() and int(row.early) == 1):
+                count += 1
+        self.total_early_goings = count
 
+        for data in self.table1:
+            if data.early_compensation == 1:
+                self.early_compensation +=1
+                data.early = 0
+                data.early_going_hours = None
+                self.total_early_goings -=1
+                # self.early_going_1 -= 1
+        
         # for data in self.table1:
         #     late_coming_hours += 1  
         # self.short_hours += late_coming_hours 
@@ -187,6 +203,7 @@ class EmployeeAttendance(Document):
             else:
                 data.day_type = "Weekday"
 
+        
 
 
         # Helper function to convert time string to seconds
@@ -307,7 +324,7 @@ class EmployeeAttendance(Document):
         
         for data in self.table1:
             # Count early goings and calculate early going hours
-            if data.early == 1:
+            if data.early == 1 and data.early_compensation == 0:
                 total_early_goings += 1
 
                 if data.check_out_1 and data.shift_out:
@@ -1356,6 +1373,13 @@ class EmployeeAttendance(Document):
                         data.late = 0
                         data.late_coming_hours = None
                         total_lates -= 1
+                
+                
+                
+
+                
+
+
                 if data.weekly_off:
                     data.shift_start = None
                     data.shift_end = None
@@ -2901,7 +2925,7 @@ class EmployeeAttendance(Document):
             flt(total_additional_hours.total_seconds())/3600, 2)
         self.extra_ot_amount = extra_ot_amount
         # self.total_lates = total_lates
-        self.total_early_goings = total_early
+        # self.total_early_goings = total_early
         self.total_half_days = total_half_days
         # self.total_early_going_hours = total_early_going_hrs
         self.holiday_hour = round(flt(total_holiday_hours.total_seconds())/3600, 2)
