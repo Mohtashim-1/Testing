@@ -1,0 +1,131 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:EC-{YY}-{MM}-{###}",
+ "creation": "2025-05-17 23:21:58.650407",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date_time",
+  "get_data",
+  "column_break_mqlj",
+  "compensation_date",
+  "column_break_wdnb",
+  "month",
+  "column_break_yzxi",
+  "day",
+  "column_break_xnnh",
+  "year",
+  "section_break_hepw",
+  "early_compensation_date_wise",
+  "section_break_b7mp",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_b7mp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Early Compensation Date Wise",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Now",
+   "fieldname": "posting_date_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Posting Date Time",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "get_data",
+   "fieldtype": "Button",
+   "label": "Get Data"
+  },
+  {
+   "fieldname": "column_break_mqlj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "compensation_date",
+   "fieldtype": "Date",
+   "label": "Compensation Date"
+  },
+  {
+   "fieldname": "column_break_wdnb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Data",
+   "label": "Month",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_yzxi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Data",
+   "label": "Day",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_xnnh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Data",
+   "label": "Year",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_hepw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "early_compensation_date_wise",
+   "fieldtype": "Table",
+   "label": "Early Compensation Date Wise",
+   "options": "Early Compensation Date Wise CT"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-05-17 23:27:43.933975",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Early Compensation Date Wise",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
