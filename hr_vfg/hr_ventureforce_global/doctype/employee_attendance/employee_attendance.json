@@ -51,6 +51,7 @@
   "total_leaves",
   "total_half_days",
   "late_comparision",
+  "early_compensation",
   "early_for_halfday",
   "total_difference_hours",
   "column_break_25",
@@ -435,7 +436,7 @@
   },
   {
    "fieldname": "late_comparision",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Late Compensation"
   },
   {
@@ -739,12 +740,17 @@
    "fieldtype": "Link",
    "label": "Holiday List",
    "options": "Holiday List"
+  },
+  {
+   "fieldname": "early_compensation",
+   "fieldtype": "Float",
+   "label": "Early Compensation"
   }
  ],
  "grid_page_length": 50,
  "image_field": "image",
  "links": [],
- "modified": "2025-05-08 17:03:30.147679",
+ "modified": "2025-05-18 01:42:04.691671",
  "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
