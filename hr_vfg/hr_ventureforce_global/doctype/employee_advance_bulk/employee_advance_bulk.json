@@ -22,6 +22,7 @@
   "employee_advance_bulk_ct",
   "section_break_fdfp",
   "total_advance",
+  "remarks",
   "section_break_8ofs",
   "amended_from"
  ],
@@ -120,13 +121,21 @@
    "fieldtype": "Float",
    "label": "Total Advance",
    "precision": "2"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Remarks",
+   "reqd": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-23 13:51:08.301853",
- "modified_by": "Administrator",
+ "modified": "2025-05-30 18:19:57.664348",
+ "modified_by": "shoaibmohtashim973@gmail.com",
  "module": "HR VentureForce Global",
  "name": "Employee Advance Bulk",
  "naming_rule": "Expression",
@@ -146,6 +155,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

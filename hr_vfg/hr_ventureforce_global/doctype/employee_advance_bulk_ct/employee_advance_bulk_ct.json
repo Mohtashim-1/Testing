@@ -7,8 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "employee_name",
+  "employee_advance",
   "column_break_ztik",
   "designation",
+  "payment_entry",
   "column_break_pptq",
   "department",
   "column_break_qoca",
@@ -79,17 +81,31 @@
   {
    "fieldname": "column_break_hane",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employee_advance",
+   "fieldtype": "Link",
+   "label": "Employee Advance",
+   "options": "Employee Advance"
+  },
+  {
+   "fieldname": "payment_entry",
+   "fieldtype": "Link",
+   "label": "Payment Entry",
+   "options": "Payment Entry"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-23 19:21:54.046440",
- "modified_by": "Administrator",
+ "modified": "2025-05-30 18:28:09.309950",
+ "modified_by": "shoaibmohtashim973@gmail.com",
  "module": "HR VentureForce Global",
  "name": "Employee Advance Bulk CT",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
