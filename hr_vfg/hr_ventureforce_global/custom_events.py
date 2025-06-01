@@ -14,6 +14,77 @@ from frappe.utils import (
 )
 from hrms.payroll.doctype.payroll_entry.payroll_entry import get_existing_salary_slips
 
+
+
+@frappe.whitelist()
+def get_employee_attendance_status(payroll_entry_name):
+    """
+    For each row in the 'employees' child table of this Payroll Entry,
+    attempt to find an Employee Attendance for that employee for the
+    payroll’s month/year. If found AND present_days > 1, mark:
+        - child_row.custom_attendance = True
+        - child_row.employee_attendance_name = attendance_doc.name
+    Otherwise, clear those fields.
+    """
+    # 1. Load the parent document
+    pe = frappe.get_doc("Payroll Entry", payroll_entry_name)
+
+    # 2. Determine month and year from the Payroll Entry’s end_date
+    try:
+        end_date = getdate(pe.end_date)
+    except Exception:
+        frappe.throw(_("Cannot parse end_date on Payroll Entry {0}").format(pe.name))
+
+    month_index = end_date.month  # 1–12
+    year = end_date.year
+    # Convert numeric month to full month name:
+    months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    month_str = months[month_index - 1]
+    
+
+    # 3. Loop through each child row in pe.employees
+    for row in pe.employees:
+        emp = row.employee
+        found = False
+        
+
+        # 3a. Try to fetch exactly one Employee Attendance record for this employee/month/year
+        attendance_list = frappe.get_all(
+            "Employee Attendance",
+            filters={
+                "employee": emp,
+                "month": month_str,
+                "year": year,
+            },
+            fields=["name", "present_days"],
+            limit=1
+        )
+        
+
+        if attendance_list:
+            att = attendance_list[0]
+            # 3b. If present_days > 1, set the flags
+            # if att.get("present_days") and flt(att.get("present_days")) > 1:
+            if flt(att.get("present_days")) > 1:
+                row.custom_attendance = 1
+                row.custom_employee_attendance = att.get("name")
+                # frappe.log_error= att.get('name')
+                found = True
+            else:
+                row.custom_attendance = 0
+                row.custom_employee_attendance = ""
+
+        # 3c. If not found or present_days ≤ 1 → clear those fields
+        if not found:
+            row.custom_attendance = 0
+            row.custom_employee_attendance = ""
+
+    # 4. Save the parent doc (this will persist child‐row changes)
+    pe.flags.ignore_mandatory = True   # if any other mandatory child fields exist
+    pe.save(ignore_permissions=True)
+
+    return {"status": "ok"}
+
 @frappe.whitelist()
 def create_salary_slips(self):
 		"""
