@@ -49,6 +49,7 @@
   "holiday_hour",
   "column_break_rpvn",
   "total_leaves",
+  "total_adjusted_leaves",
   "total_half_days",
   "late_comparision",
   "early_compensation",
@@ -745,13 +746,18 @@
    "fieldname": "early_compensation",
    "fieldtype": "Float",
    "label": "Early Compensation"
+  },
+  {
+   "fieldname": "total_adjusted_leaves",
+   "fieldtype": "Float",
+   "label": "Total Adjusted Leaves"
   }
  ],
  "grid_page_length": 50,
  "image_field": "image",
  "links": [],
- "modified": "2025-05-18 01:42:04.691671",
- "modified_by": "Administrator",
+ "modified": "2025-06-03 17:05:40.924952",
+ "modified_by": "shoaibmohtashim973@gmail.com",
  "module": "HR VentureForce Global",
  "name": "Employee Attendance",
  "owner": "Administrator",
