@@ -1001,28 +1001,18 @@ class EmployeeAttendance(Document):
                                                         hours, remainder = divmod(int(total_overtime.total_seconds()), 3600)
                                                         minutes, seconds = divmod(remainder, 60)
                                                         overtime_round_off = hr_settings.overtime_round_off
-                                                        if data.difference1 != "00:00:00":
-                                                            if overtime_round_off == 1:
-                                                                if minutes >= 30:
-                                                                    minutes = 30
-                                                                else: 
-                                                                    minutes = 00
-                                                                if seconds >= 30:
-                                                                    seconds = 00
-                                                                else:
-                                                                    seconds = 00
-                                                        total_seconds = int(total_overtime.total_seconds())
-
-                                                        # Round to nearest 30 minutes
-                                                        # 1800 seconds = 30 minutes
-                                                        rounded_seconds = round(total_seconds / 1800) * 1800
-
-                                                        # Convert back to timedelta
-                                                        rounded_timedelta = timedelta(seconds=rounded_seconds)
-
-                                                        # Format to HH:MM:SS
-                                                        hours, remainder = divmod(int(rounded_timedelta.total_seconds()), 3600)
-                                                        minutes, seconds = divmod(remainder, 60)
+                                                        
+                                                        if overtime_round_off == 1:
+                                                            # Round to nearest 30 minutes
+                                                            total_seconds = int(total_overtime.total_seconds())
+                                                            # 1800 seconds = 30 minutes
+                                                            rounded_seconds = round(total_seconds / 1800) * 1800
+                                                            # Convert back to timedelta
+                                                            rounded_timedelta = timedelta(seconds=rounded_seconds)
+                                                            # Format to HH:MM:SS
+                                                            hours, remainder = divmod(int(rounded_timedelta.total_seconds()), 3600)
+                                                            minutes, seconds = divmod(remainder, 60)
+                                                        
                                                         data.estimated_late = f"{hours:02}:{minutes:02}:{seconds:02}"
                                                         break
 
