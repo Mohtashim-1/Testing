@@ -13,19 +13,25 @@ def execute(filters=None):
         {"label": "Absent", "fieldname": "total_absents", "fieldtype": "Data", "width": 100},
     ]
 
-    conditions = "WHERE ea.total_absents != 0 AND ea.employee != 'MOHTASHIM MUHAMMAD SHOAIB'"
+    conditions = "WHERE ea.total_absents != 0"
+    params = {}
 
     if filters:
         if filters.get("employee"):
-            conditions += f" AND ea.employee = {frappe.db.escape(filters['employee'])}"
+            conditions += " AND ea.employee = %(employee)s"
+            params["employee"] = filters["employee"]
         if filters.get("year"):
-            conditions += f" AND ea.year = {frappe.db.escape(filters['year'])}"
+            conditions += " AND ea.year = %(year)s"
+            params["year"] = filters["year"]
         if filters.get("month"):
-            conditions += f" AND ea.month = {frappe.db.escape(filters['month'])}"
+            conditions += " AND ea.month = %(month)s"
+            params["month"] = filters["month"]
         if filters.get("department"):
-            conditions += f" AND ea.department = {frappe.db.escape(filters['department'])}"
+            conditions += " AND ea.department = %(department)s"
+            params["department"] = filters["department"]
         if filters.get("designation"):
-            conditions += f" AND ea.designation = {frappe.db.escape(filters['designation'])}"
+            conditions += " AND ea.designation = %(designation)s"
+            params["designation"] = filters["designation"]
 
     query = f"""
         SELECT 
@@ -42,5 +48,5 @@ def execute(filters=None):
             FIELD(ea.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
     """
 
-    data = frappe.db.sql(query, as_dict=True)
+    data = frappe.db.sql(query, params, as_dict=True)
     return columns, data
