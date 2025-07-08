@@ -126,7 +126,6 @@ class EmployeeAttendance(Document):
         time_seconds_approved_eot1 = 0
         self.total_lates_int = 0
         leave = 0
-        self.total_leaves = 0
         self.short_hours = 0
         late_coming_hours = 0  # Initialize late_coming_hours
         count = 0
@@ -136,8 +135,6 @@ class EmployeeAttendance(Document):
                 count += 1
         self.total_early_goings = count
 
-        self.total_leaves = 0
-        self.total_adjusted_leaves = 0
 
         for data in self.table1:
             data.mark_leave = 0
@@ -156,6 +153,7 @@ class EmployeeAttendance(Document):
 
             if al:
                 data.custom_adjustment_leave = 1
+                print("custom_adjustment_leave",data.custom_adjustment_leave)
             else:
                 la = frappe.get_all("Leave Application", filters={
                     "from_date": ["<=", target_date],
@@ -167,8 +165,12 @@ class EmployeeAttendance(Document):
 
                 if la:
                     data.mark_leave = 1
+                    print("mark_leave",data.mark_leave)
 
-            # Accumulate totals
+        self.total_leaves = 0
+        self.total_adjusted_leaves = 0
+        
+        for data in self.table1:
             self.total_leaves += data.mark_leave
             self.total_adjusted_leaves += data.custom_adjustment_leave
 
@@ -478,7 +480,6 @@ class EmployeeAttendance(Document):
         self.total_absent_missing_check_out = missing_absent_check_out
         self.total_halfday_missing_check_out = half_day_mark_due_to_missing_check_out
         self.total_missing = self.total_absent_check_in_missing + self.total_absent_missing_check_out
-        self.total_leaves = leave
         # if hr_settings.absent_threshould_missing_punch > self.total_missing:
         #     self.mark_absent_on_missing = self.total_missing
         if self.total_missing > hr_settings.absent_threshould_missing_punch:
