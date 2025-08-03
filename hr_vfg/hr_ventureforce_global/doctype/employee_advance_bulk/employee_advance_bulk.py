@@ -45,12 +45,11 @@ class EmployeeAdvanceBulk(Document):
 
     def on_submit(self):
         company = frappe.get_doc("Company", self.company)
-        cash_acct = company.default_cash_account
         adv_acct  = company.default_employee_advance_account
         curr      = company.default_currency
 
         for row in self.employee_advance_bulk_ct:
-            # — create & submit the Employee Advance —
+            # — create & submit the Employee Advance only —
             adv = (
                 frappe.get_doc({
                     "doctype":                "Employee Advance",
@@ -71,54 +70,148 @@ class EmployeeAdvanceBulk(Document):
                 .submit()
             )
 
-            # — create the Payment Entry as an advance —
-            pe = frappe.new_doc("Payment Entry")
-            pe.payment_type               = "Pay"
-            pe.party_type                 = "Employee"
-            pe.party                      = row.employee_name
-            pe.party_name                 = frappe.get_value("Employee",
-                                                           row.employee_name,
-                                                           "employee_name")
-            pe.company                    = self.company
-            pe.posting_date               = self.posting_date
-
-            pe.paid_from                  = cash_acct
-            pe.paid_from_account_currency = curr
-            pe.paid_to                    = adv_acct
-            pe.paid_to_account_currency   = curr
-
-            pe.paid_amount      = row.amount
-            pe.received_amount  = row.amount
-
-            pe.exchange_rate        = 1
-            pe.source_exchange_rate = 1
-            pe.target_exchange_rate = 1
-
-            pe.mode_of_payment = "Cash"
-
-            # **this flag** tells ERPNext these References are Advances
-            pe.is_advance = 1
-
-            # **append into the _References_ table**, not "advances"
-            pe.append("references", {
-                "reference_doctype":  "Employee Advance",
-                "reference_name":     adv.name,
-                "total_amount":       adv.advance_amount,
-                "outstanding_amount": adv.advance_amount,
-                "allocated_amount":   row.amount
-            })
-
-            pe.insert()
-            pe.submit()
-
-            # tell the Advance to recalc its paid_amount & status
-            adv.reload()
-            adv.set_total_advance_paid()
-
-            # save the links back on your bulk row
+            # save the employee advance link back on your bulk row
             frappe.db.set_value(row.doctype, row.name, {
-                "employee_advance": adv.name,
-                "payment_entry":    pe.name
+                "employee_advance": adv.name
             }, update_modified=False)
 
         frappe.db.commit()
+        frappe.msgprint("Employee Advances created successfully. Use 'Create Disbursed Payment' button to create payment entries.")
+
+    @frappe.whitelist()
+    def create_disbursed_payment(self):
+        """Create Payment Entry for disbursement after document is submitted"""
+        # Get the document if called from JavaScript
+        if not hasattr(self, 'name') or not self.name:
+            self = frappe.get_doc("Employee Advance Bulk", frappe.form_dict.docname)
+        
+        if self.docstatus != 1:
+            frappe.throw("Document must be submitted before creating payment entries.")
+        
+        company = frappe.get_doc("Company", self.company)
+        
+        # Get cash account - try multiple sources
+        cash_acct = self.account  # Use the account field from the document
+        if not cash_acct:
+            # Try to get from company settings
+            cash_acct = company.default_cash_account
+        if not cash_acct:
+            # Try to get from company settings directly
+            cash_acct = frappe.db.get_value("Company", self.company, "default_cash_account")
+        if not cash_acct:
+            frappe.throw("Cash account not found. Please set the account field in the document or default cash account in Company settings.")
+        
+        # Verify the cash account exists
+        if not frappe.db.exists("Account", cash_acct):
+            frappe.throw(f"Cash account '{cash_acct}' does not exist in the database.")
+        
+        # Get employee advance account
+        adv_acct = company.default_employee_advance_account
+        if not adv_acct:
+            frappe.throw("Employee advance account not found. Please set default employee advance account in Company settings.")
+        
+        # Verify the employee advance account exists
+        if not frappe.db.exists("Account", adv_acct):
+            frappe.throw(f"Employee advance account '{adv_acct}' does not exist in the database.")
+        
+        curr = company.default_currency
+
+        # Debug information
+        print(f"DEBUG: Company: {self.company}")
+        print(f"DEBUG: Document Account Field: {self.account}")
+        print(f"DEBUG: Company Default Cash Account: {company.default_cash_account}")
+        print(f"DEBUG: Final Cash Account: {cash_acct}")
+        print(f"DEBUG: Employee Advance Account: {adv_acct}")
+        print(f"DEBUG: Currency: {curr}")
+
+        payment_entries_created = 0
+
+        for row in self.employee_advance_bulk_ct:
+            if row.employee_advance and not row.payment_entry:
+                # Verify employee exists
+                if not frappe.db.exists("Employee", row.employee_name):
+                    frappe.throw(f"Employee '{row.employee_name}' does not exist in the database.")
+                
+                # Verify employee advance exists
+                if not frappe.db.exists("Employee Advance", row.employee_advance):
+                    frappe.throw(f"Employee Advance '{row.employee_advance}' does not exist in the database.")
+                
+                # Get the employee advance document
+                adv = frappe.get_doc("Employee Advance", row.employee_advance)
+                
+                # — create the Payment Entry as an advance —
+                pe = frappe.new_doc("Payment Entry")
+                pe.payment_type               = "Pay"
+                pe.party_type                 = "Employee"
+                pe.party                      = row.employee_name
+                pe.party_name                 = frappe.get_value("Employee",
+                                                               row.employee_name,
+                                                               "employee_name")
+                pe.company                    = self.company
+                pe.posting_date               = self.posting_date
+
+                pe.paid_from                  = cash_acct
+                pe.paid_from_account_currency = curr
+                pe.paid_to                    = adv_acct
+                pe.paid_to_account_currency   = curr
+
+                pe.paid_amount      = row.amount
+                pe.received_amount  = row.amount
+
+                pe.exchange_rate        = 1
+                pe.source_exchange_rate = 1
+                pe.target_exchange_rate = 1
+
+                pe.mode_of_payment = "Cash"
+
+                # Validate required fields before saving
+                if not pe.paid_from:
+                    frappe.throw(f"Paid From account is missing for employee {row.employee_name}")
+                if not pe.paid_to:
+                    frappe.throw(f"Paid To account is missing for employee {row.employee_name}")
+                if not pe.party:
+                    frappe.throw(f"Party is missing for employee {row.employee_name}")
+
+                # **this flag** tells ERPNext these References are Advances
+                pe.is_advance = 1
+
+                # **append into the _References_ table**, not "advances"
+                pe.append("references", {
+                    "reference_doctype":  "Employee Advance",
+                    "reference_name":     adv.name,
+                    "total_amount":       adv.advance_amount,
+                    "outstanding_amount": adv.advance_amount,
+                    "allocated_amount":   row.amount
+                })
+
+                pe.insert()
+                pe.submit()
+
+                # tell the Advance to recalc its paid_amount & status
+                adv.reload()
+                adv.set_total_advance_paid()
+
+                # save the payment entry link back on your bulk row
+                frappe.db.set_value(row.doctype, row.name, {
+                    "payment_entry": pe.name
+                }, update_modified=False)
+
+                payment_entries_created += 1
+
+        frappe.db.commit()
+        
+        if payment_entries_created > 0:
+            frappe.msgprint(f"Successfully created {payment_entries_created} payment entries for disbursement.")
+        else:
+            frappe.msgprint("No payment entries were created. All advances may already have payment entries.")
+        
+        return {
+            "payment_entries_created": payment_entries_created,
+            "message": f"Successfully created {payment_entries_created} payment entries for disbursement."
+        }
+
+@frappe.whitelist()
+def create_disbursed_payment(docname):
+    """Standalone function to create disbursed payment entries"""
+    doc = frappe.get_doc("Employee Advance Bulk", docname)
+    return doc.create_disbursed_payment()
