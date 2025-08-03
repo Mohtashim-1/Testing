@@ -1,0 +1,142 @@
+{
+ "cards": [
+  {
+   "chart": {
+    "chart_type": "Count",
+    "timeseries": 0,
+    "type": "Count"
+   },
+   "creation": "2025-01-27 10:00:00.000000",
+   "dashboard": "Employee Advance Bulk",
+   "docstatus": 0,
+   "doctype": "Dashboard Chart",
+   "idx": 0,
+   "is_public": 1,
+   "is_standard": 1,
+   "modified": "2025-01-27 10:00:00.000000",
+   "modified_by": "Administrator",
+   "module": "HR VentureForce Global",
+   "name": "Employee Advances Created",
+   "owner": "Administrator",
+   "roles": [
+    "System Manager"
+   ],
+   "timespan": "Last Year",
+   "type": "Count",
+   "width": "Half"
+  },
+  {
+   "chart": {
+    "chart_type": "Count",
+    "timeseries": 0,
+    "type": "Count"
+   },
+   "creation": "2025-01-27 10:00:00.000000",
+   "dashboard": "Employee Advance Bulk",
+   "docstatus": 0,
+   "doctype": "Dashboard Chart",
+   "idx": 1,
+   "is_public": 1,
+   "is_standard": 1,
+   "modified": "2025-01-27 10:00:00.000000",
+   "modified_by": "Administrator",
+   "module": "HR VentureForce Global",
+   "name": "Payment Entries Created",
+   "owner": "Administrator",
+   "roles": [
+    "System Manager"
+   ],
+   "timespan": "Last Year",
+   "type": "Count",
+   "width": "Half"
+  },
+  {
+   "chart": {
+    "chart_type": "Count",
+    "timeseries": 0,
+    "type": "Count"
+   },
+   "creation": "2025-01-27 10:00:00.000000",
+   "dashboard": "Employee Advance Bulk",
+   "docstatus": 0,
+   "doctype": "Dashboard Chart",
+   "idx": 2,
+   "is_public": 1,
+   "is_standard": 1,
+   "modified": "2025-01-27 10:00:00.000000",
+   "modified_by": "Administrator",
+   "module": "HR VentureForce Global",
+   "name": "Employee Advance Bulk Documents",
+   "owner": "Administrator",
+   "roles": [
+    "System Manager"
+   ],
+   "timespan": "Last Year",
+   "type": "Count",
+   "width": "Half"
+  }
+ ],
+ "chart_options": "{\"colors\":[\"#fc4f51\",\"#ffd700\",\"#7cba3d\",\"#ff6b35\",\"#aed581\",\"#4db6ac\",\"#7986cb\",\"#f06292\",\"#4dd0e1\",\"#d81b60\",\"#26a69a\",\"#8bc34a\",\"#ffc107\",\"#ff5722\",\"#9c27b0\",\"#607d8b\",\"#795548\",\"#9e9e9e\",\"#ff9800\",\"#2196f3\"]}",
+ "creation": "2025-01-27 10:00:00.000000",
+ "dashboard_name": "Employee Advance Bulk",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2025-01-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Employee Advance Bulk",
+ "owner": "Administrator",
+ "roles": [
+  "System Manager"
+ ],
+ "shortcuts": [
+  {
+   "creation": "2025-01-27 10:00:00.000000",
+   "dashboard": "Employee Advance Bulk",
+   "docstatus": 0,
+   "doctype": "Dashboard Shortcut",
+   "idx": 0,
+   "modified": "2025-01-27 10:00:00.000000",
+   "modified_by": "Administrator",
+   "module": "HR VentureForce Global",
+   "name": "New Employee Advance Bulk",
+   "owner": "Administrator",
+   "shortcut_type": "Create",
+   "type": "DocType",
+   "type_name": "Employee Advance Bulk"
+  },
+  {
+   "creation": "2025-01-27 10:00:00.000000",
+   "dashboard": "Employee Advance Bulk",
+   "docstatus": 0,
+   "doctype": "Dashboard Shortcut",
+   "idx": 1,
+   "modified": "2025-01-27 10:00:00.000000",
+   "modified_by": "Administrator",
+   "module": "HR VentureForce Global",
+   "name": "Employee Advances",
+   "owner": "Administrator",
+   "shortcut_type": "List",
+   "type": "DocType",
+   "type_name": "Employee Advance"
+  },
+  {
+   "creation": "2025-01-27 10:00:00.000000",
+   "dashboard": "Employee Advance Bulk",
+   "docstatus": 0,
+   "doctype": "Dashboard Shortcut",
+   "idx": 2,
+   "modified": "2025-01-27 10:00:00.000000",
+   "modified_by": "Administrator",
+   "module": "HR VentureForce Global",
+   "name": "Payment Entries",
+   "owner": "Administrator",
+   "shortcut_type": "List",
+   "type": "DocType",
+   "type_name": "Payment Entry"
+  }
+ ]
+} 

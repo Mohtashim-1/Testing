@@ -64,7 +64,7 @@ class EmployeeAdvanceBulk(Document):
                     "advance_account":        adv_acct,
                     "repay_unclaimed_amount_from_salary": 1,
                     "custom_reference_document": self.doctype,
-                    "custom_reference_voucher":  self.name
+                    "custom_reference_voucher": self.name
                 })
                 .insert()
                 .submit()
@@ -215,3 +215,36 @@ def create_disbursed_payment(docname):
     """Standalone function to create disbursed payment entries"""
     doc = frappe.get_doc("Employee Advance Bulk", docname)
     return doc.create_disbursed_payment()
+
+@frappe.whitelist()
+def get_dashboard_data():
+    """Get dashboard statistics for Employee Advance Bulk"""
+    try:
+        # Count all Employee Advances
+        employee_advances_count = frappe.db.count("Employee Advance", {
+            "docstatus": 1
+        })
+        
+        # Count all Payment Entries that are advances
+        payment_entries_count = frappe.db.count("Payment Entry", {
+            "is_advance": 1,
+            "docstatus": 1
+        })
+        
+        # Count submitted Employee Advance Bulk documents
+        bulk_documents_count = frappe.db.count("Employee Advance Bulk", {
+            "docstatus": 1
+        })
+        
+        return {
+            "employee_advances": employee_advances_count,
+            "payment_entries": payment_entries_count,
+            "bulk_documents": bulk_documents_count
+        }
+    except Exception as e:
+        frappe.log_error(f"Error getting dashboard data: {str(e)}", "Employee Advance Bulk Dashboard Error")
+        return {
+            "employee_advances": 0,
+            "payment_entries": 0,
+            "bulk_documents": 0
+        }

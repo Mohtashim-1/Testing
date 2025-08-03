@@ -1,0 +1,21 @@
+{
+ "chart_type": "Number",
+ "creation": "2025-01-27 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "modified": "2025-01-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "HR VentureForce Global",
+ "name": "Employee Advance Bulk Statistics",
+ "owner": "Administrator",
+ "query": "SELECT 'Employee Advances' as label, COUNT(*) as value FROM `tabEmployee Advance` WHERE docstatus = 1 UNION ALL SELECT 'Payment Entries' as label, COUNT(*) as value FROM `tabPayment Entry` WHERE is_advance = 1 AND docstatus = 1 UNION ALL SELECT 'Bulk Documents' as label, COUNT(*) as value FROM `tabEmployee Advance Bulk` WHERE docstatus = 1",
+ "roles": [
+  "System Manager"
+ ],
+ "timespan": "Last Year",
+ "type": "Number",
+ "width": "Full"
+} 
