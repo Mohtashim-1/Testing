@@ -53,6 +53,7 @@ class EmployeeAdvanceBulk(Document):
             adv = (
                 frappe.get_doc({
                     "doctype":                "Employee Advance",
+                    "custom_employee_advance_bulk": self.name,
                     "employee":               row.employee_name,
                     "company":                self.company,
                     "posting_date":           self.posting_date,
@@ -79,7 +80,7 @@ class EmployeeAdvanceBulk(Document):
         frappe.msgprint("Employee Advances created successfully. Use 'Create Disbursed Payment' button to create payment entries.")
 
     @frappe.whitelist()
-    def create_disbursed_payment(self):
+    def create_disbursed_payment(self, payment_account=None):
         """Create Payment Entry for disbursement after document is submitted"""
         # Get the document if called from JavaScript
         if not hasattr(self, 'name') or not self.name:
@@ -90,8 +91,8 @@ class EmployeeAdvanceBulk(Document):
         
         company = frappe.get_doc("Company", self.company)
         
-        # Get cash account - try multiple sources
-        cash_acct = self.account  # Use the account field from the document
+        # Get cash account - use the provided payment account or fallback to document account
+        cash_acct = payment_account or self.account
         if not cash_acct:
             # Try to get from company settings
             cash_acct = company.default_cash_account
@@ -99,7 +100,7 @@ class EmployeeAdvanceBulk(Document):
             # Try to get from company settings directly
             cash_acct = frappe.db.get_value("Company", self.company, "default_cash_account")
         if not cash_acct:
-            frappe.throw("Cash account not found. Please set the account field in the document or default cash account in Company settings.")
+            frappe.throw("Payment account not found. Please select a payment account or set the account field in the document.")
         
         # Verify the cash account exists
         if not frappe.db.exists("Account", cash_acct):
@@ -118,6 +119,7 @@ class EmployeeAdvanceBulk(Document):
 
         # Debug information
         print(f"DEBUG: Company: {self.company}")
+        print(f"DEBUG: Selected Payment Account: {payment_account}")
         print(f"DEBUG: Document Account Field: {self.account}")
         print(f"DEBUG: Company Default Cash Account: {company.default_cash_account}")
         print(f"DEBUG: Final Cash Account: {cash_acct}")
@@ -174,6 +176,7 @@ class EmployeeAdvanceBulk(Document):
 
                 # **this flag** tells ERPNext these References are Advances
                 pe.is_advance = 1
+                pe.custom_employee_advance_bulk = self.name
 
                 # **append into the _References_ table**, not "advances"
                 pe.append("references", {
@@ -190,6 +193,10 @@ class EmployeeAdvanceBulk(Document):
                 # tell the Advance to recalc its paid_amount & status
                 adv.reload()
                 adv.set_total_advance_paid()
+                adv.save()
+                
+                # Force update the Employee Advance status
+                self.update_employee_advance_status(adv.name, row.amount)
 
                 # save the payment entry link back on your bulk row
                 frappe.db.set_value(row.doctype, row.name, {
@@ -210,11 +217,39 @@ class EmployeeAdvanceBulk(Document):
             "message": f"Successfully created {payment_entries_created} payment entries for disbursement."
         }
 
+    def update_employee_advance_status(self, advance_name, paid_amount):
+        """Update Employee Advance status after Payment Entry submission"""
+        try:
+            # Get the Employee Advance document
+            adv = frappe.get_doc("Employee Advance", advance_name)
+            
+            # Update the paid amount
+            current_paid = adv.paid_amount or 0
+            new_paid = current_paid + paid_amount
+            adv.paid_amount = new_paid
+            
+            # Update status based on paid amount
+            if new_paid >= adv.advance_amount:
+                adv.status = "Paid"
+            elif new_paid > 0:
+                adv.status = "Partially Paid"
+            else:
+                adv.status = "Unpaid"
+            
+            # Save the changes
+            adv.save(ignore_permissions=True)
+            
+            print(f"DEBUG: Updated Employee Advance {advance_name} - Paid Amount: {new_paid}, Status: {adv.status}")
+            
+        except Exception as e:
+            frappe.log_error(f"Error updating Employee Advance status: {str(e)}", "Employee Advance Status Update Error")
+            print(f"ERROR: Failed to update Employee Advance {advance_name}: {str(e)}")
+
 @frappe.whitelist()
-def create_disbursed_payment(docname):
+def create_disbursed_payment(docname, payment_account=None):
     """Standalone function to create disbursed payment entries"""
     doc = frappe.get_doc("Employee Advance Bulk", docname)
-    return doc.create_disbursed_payment()
+    return doc.create_disbursed_payment(payment_account)
 
 @frappe.whitelist()
 def get_dashboard_data():

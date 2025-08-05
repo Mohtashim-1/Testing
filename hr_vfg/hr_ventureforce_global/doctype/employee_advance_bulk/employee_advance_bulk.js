@@ -33,20 +33,35 @@ frappe.ui.form.on('Employee Advance Bulk', {
 });
 
 function create_disbursed_payment(frm) {
-    frappe.call({
-        method: 'hr_vfg.hr_ventureforce_global.doctype.employee_advance_bulk.employee_advance_bulk.create_disbursed_payment',
-        args: {
-            docname: frm.doc.name
-        },
-        callback: function(r) {
-            if (r.exc) {
-                frappe.msgprint(__('Error: ') + r.exc);
-            } else {
-                frappe.msgprint(__('Payment entries created successfully!'));
-                frm.reload_doc();
-                // Refresh the form to hide the button
-                frm.refresh();
-            }
+    // Show dialog to select payment account
+    frappe.prompt([
+        {
+            'fieldname': 'payment_account',
+            'fieldtype': 'Link',
+            'label': 'Payment Account',
+            'options': 'Account',
+            'reqd': 1,
+            'description': 'Select the account from which payment will be made'
         }
-    });
+    ], function(values) {
+        if (values.payment_account) {
+            frappe.call({
+                method: 'hr_vfg.hr_ventureforce_global.doctype.employee_advance_bulk.employee_advance_bulk.create_disbursed_payment',
+                args: {
+                    docname: frm.doc.name,
+                    payment_account: values.payment_account
+                },
+                callback: function(r) {
+                    if (r.exc) {
+                        frappe.msgprint(__('Error: ') + r.exc);
+                    } else {
+                        frappe.msgprint(__('Payment entries created successfully!'));
+                        frm.reload_doc();
+                        // Refresh the form to hide the button
+                        frm.refresh();
+                    }
+                }
+            });
+        }
+    }, __('Select Payment Account'), __('Create Payment'));
 }
