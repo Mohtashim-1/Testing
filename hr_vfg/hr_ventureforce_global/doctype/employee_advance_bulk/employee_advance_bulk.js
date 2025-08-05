@@ -65,3 +65,5 @@ function create_disbursed_payment(frm) {
         }
     }, __('Select Payment Account'), __('Create Payment'));
 }
+
+

@@ -84,13 +84,13 @@
   },
   {
    "fieldname": "employee_advance",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Employee Advance",
    "options": "Employee Advance"
   },
   {
    "fieldname": "payment_entry",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Payment Entry",
    "options": "Payment Entry"
   }
@@ -99,8 +99,8 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-05-30 18:28:09.309950",
- "modified_by": "shoaibmohtashim973@gmail.com",
+ "modified": "2025-08-06 02:21:36.993061",
+ "modified_by": "Administrator",
  "module": "HR VentureForce Global",
  "name": "Employee Advance Bulk CT",
  "owner": "Administrator",

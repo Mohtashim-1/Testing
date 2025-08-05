@@ -64,8 +64,8 @@ class EmployeeAdvanceBulk(Document):
                     "mode_of_payment":        "Cash",
                     "advance_account":        adv_acct,
                     "repay_unclaimed_amount_from_salary": 1,
-                    "custom_reference_document": self.doctype,
-                    "custom_reference_voucher": self.name
+                    # "custom_reference_document": self.doctype,
+                    # "custom_reference_voucher": self.name
                 })
                 .insert()
                 .submit()
@@ -165,6 +165,7 @@ class EmployeeAdvanceBulk(Document):
                 pe.target_exchange_rate = 1
 
                 pe.mode_of_payment = "Cash"
+                pe.custom_employee_advance_bulk = self.name
 
                 # Validate required fields before saving
                 if not pe.paid_from:
@@ -176,14 +177,13 @@ class EmployeeAdvanceBulk(Document):
 
                 # **this flag** tells ERPNext these References are Advances
                 pe.is_advance = 1
-                pe.custom_employee_advance_bulk = self.name
 
                 # **append into the _References_ table**, not "advances"
                 pe.append("references", {
                     "reference_doctype":  "Employee Advance",
                     "reference_name":     adv.name,
                     "total_amount":       adv.advance_amount,
-                    "outstanding_amount": adv.advance_amount,
+                    "outstanding_amount": adv.advance_amount - (adv.paid_amount or 0),
                     "allocated_amount":   row.amount
                 })
 
@@ -197,6 +197,12 @@ class EmployeeAdvanceBulk(Document):
                 
                 # Force update the Employee Advance status
                 self.update_employee_advance_status(adv.name, row.amount)
+                
+                # Also trigger ERPNext's standard payment allocation
+                pe.reload()
+                pe.set_total_allocated_amount()
+                pe.set_unallocated_amount()
+                pe.save()
 
                 # save the payment entry link back on your bulk row
                 frappe.db.set_value(row.doctype, row.name, {
@@ -223,6 +229,12 @@ class EmployeeAdvanceBulk(Document):
             # Get the Employee Advance document
             adv = frappe.get_doc("Employee Advance", advance_name)
             
+            print(f"DEBUG: Before update - Employee Advance {advance_name}")
+            print(f"DEBUG: Current paid_amount: {adv.paid_amount}")
+            print(f"DEBUG: Advance amount: {adv.advance_amount}")
+            print(f"DEBUG: Current status: {adv.status}")
+            print(f"DEBUG: Adding paid_amount: {paid_amount}")
+            
             # Update the paid amount
             current_paid = adv.paid_amount or 0
             new_paid = current_paid + paid_amount
@@ -236,6 +248,8 @@ class EmployeeAdvanceBulk(Document):
             else:
                 adv.status = "Unpaid"
             
+            print(f"DEBUG: After update - New paid_amount: {new_paid}, New status: {adv.status}")
+            
             # Save the changes
             adv.save(ignore_permissions=True)
             
@@ -244,6 +258,8 @@ class EmployeeAdvanceBulk(Document):
         except Exception as e:
             frappe.log_error(f"Error updating Employee Advance status: {str(e)}", "Employee Advance Status Update Error")
             print(f"ERROR: Failed to update Employee Advance {advance_name}: {str(e)}")
+
+    
 
 @frappe.whitelist()
 def create_disbursed_payment(docname, payment_account=None):
