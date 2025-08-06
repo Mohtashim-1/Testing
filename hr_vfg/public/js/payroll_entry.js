@@ -22,5 +22,21 @@ frappe.ui.form.on("Payroll Entry", {
                 });
             }, __("Actions"));
         }
+        // Add button to create missing advance deductions
+        if (frm.doc.docstatus === 0) {
+            frm.add_custom_button(__('Create Missing Advance Deductions'), function() {
+                frappe.call({
+                    method: 'hr_vfg.hr_ventureforce_global.custom_events.create_missing_advance_deductions',
+                    args: {
+                        payroll_entry_name: frm.doc.name
+                    },
+                    callback: function(r) {
+                        if (r.message && r.message.created_records) {
+                            frm.reload_doc();
+                        }
+                    }
+                });
+            }, __('Create'));
+        }
     }
 });

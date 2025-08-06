@@ -15,13 +15,137 @@ from frappe.utils import (
 from hrms.payroll.doctype.payroll_entry.payroll_entry import get_existing_salary_slips
 
 
+def create_missing_additional_salaries_for_advances(employee, start_date, end_date):
+    """
+    Create additional salary records for employee advances that are missing them.
+    """
+    missing_advances = check_employee_advances_for_salary_deduction(employee, start_date, end_date)
+    created_additional_salaries = []
+    
+    for advance_info in missing_advances:
+        advance_name = advance_info["advance_name"]
+        unclaimed_amount = advance_info["unclaimed_amount"]
+        
+        # Get the employee advance document
+        advance_doc = frappe.get_doc("Employee Advance", advance_name)
+        
+        # Create additional salary using the standard method
+        from hrms.hr.doctype.employee_advance.employee_advance import create_return_through_additional_salary
+        
+        additional_salary = create_return_through_additional_salary(advance_doc)
+        
+        # Set the payroll date to the end date of the payroll period
+        additional_salary.payroll_date = end_date
+        
+        # Set the amount to the unclaimed amount
+        additional_salary.amount = unclaimed_amount
+        
+        # Insert and submit the additional salary
+        additional_salary.insert()
+        additional_salary.submit()
+        
+        created_additional_salaries.append({
+            "advance_name": advance_name,
+            "additional_salary_name": additional_salary.name,
+            "amount": unclaimed_amount
+        })
+    
+    return created_additional_salaries
+
+
+@frappe.whitelist()
+def create_missing_advance_deductions(payroll_entry_name):
+    """
+    Create missing additional salary records for employee advances in a payroll entry.
+    """
+    payroll_entry = frappe.get_doc("Payroll Entry", payroll_entry_name)
+    created_records = []
+    
+    for employee_row in payroll_entry.employees:
+        employee = employee_row.employee
+        created = create_missing_additional_salaries_for_advances(
+            employee, payroll_entry.start_date, payroll_entry.end_date
+        )
+        created_records.extend(created)
+    
+    if created_records:
+        advance_names = [record["advance_name"] for record in created_records]
+        additional_salary_names = [record["additional_salary_name"] for record in created_records]
+        total_amount = sum(record["amount"] for record in created_records)
+        
+        frappe.msgprint(
+            _(
+                "Created {0} additional salary records for employee advances: {1}. "
+                "Total amount: {2}. Additional Salary records: {3}"
+            ).format(
+                len(created_records),
+                frappe.bold(", ".join(advance_names)),
+                frappe.bold(frappe.utils.fmt_money(total_amount)),
+                frappe.bold(", ".join(additional_salary_names))
+            ),
+            title=_("Additional Salary Records Created"),
+            indicator="green",
+        )
+    else:
+        frappe.msgprint(
+            _("No missing employee advance deductions found."),
+            title=_("No Action Required"),
+            indicator="blue",
+        )
+    
+    return {"created_records": created_records}
+
+
+def check_employee_advances_for_salary_deduction(employee, start_date, end_date):
+    """
+    Check if there are any employee advances that should be deducted from salary
+    but are missing additional salary records.
+    """
+    advances = frappe.get_all(
+        "Employee Advance",
+        filters={
+            "employee": employee,
+            "repay_unclaimed_amount_from_salary": 1,
+            "docstatus": 1,
+            "status": ["in", ["Paid", "Unpaid"]]
+        },
+        fields=["name", "advance_amount", "paid_amount", "claimed_amount", "return_amount"]
+    )
+    
+    missing_additional_salaries = []
+    
+    for advance in advances:
+        unclaimed_amount = advance.paid_amount - advance.claimed_amount - advance.return_amount
+        
+        if unclaimed_amount > 0:
+            # Check if there's an additional salary for this advance
+            additional_salary = frappe.get_all(
+                "Additional Salary",
+                filters={
+                    "employee": employee,
+                    "ref_doctype": "Employee Advance",
+                    "ref_docname": advance.name,
+                    "docstatus": 1,
+                    "payroll_date": ["between", [start_date, end_date]]
+                },
+                fields=["name", "amount"]
+            )
+            
+            if not additional_salary:
+                missing_additional_salaries.append({
+                    "advance_name": advance.name,
+                    "unclaimed_amount": unclaimed_amount
+                })
+    
+    return missing_additional_salaries
+
 
 @frappe.whitelist()
 def get_employee_attendance_status(payroll_entry_name):
     """
     For each row in the 'employees' child table of this Payroll Entry,
     attempt to find an Employee Attendance for that employee for the
-    payroll’s month/year. If found AND present_days > 1, mark:
+    payroll's month/year. If found AND present_days > 1, mark:
         - child_row.custom_attendance = True
         - child_row.employee_attendance_name = attendance_doc.name
     Otherwise, clear those fields.
@@ -29,7 +153,7 @@ def get_employee_attendance_status(payroll_entry_name):
     # 1. Load the parent document
     pe = frappe.get_doc("Payroll Entry", payroll_entry_name)
 
-    # 2. Determine month and year from the Payroll Entry’s end_date
+    # 2. Determine month and year from the Payroll Entry's end_date
     try:
         end_date = getdate(pe.end_date)
     except Exception:
@@ -119,6 +243,8 @@ def create_salary_slips_for_employees(employees, args, publish_progress=True):
         salary_slips_exists_for = get_existing_salary_slips(employees, args)
         count = 0
         salary_slips_not_created = []
+        missing_advances = []
+        
         for emp in employees:
             if emp not in salary_slips_exists_for:
                 e_month  = getdate(args.get("end_date")).month
@@ -145,10 +271,31 @@ def create_salary_slips_for_employees(employees, args, publish_progress=True):
 
                 except:
                     frappe.error_log(frappe.get_traceback(),"PAYROLL")
+                
+                # Check for missing employee advance deductions
+                missing_advances_for_emp = check_employee_advances_for_salary_deduction(
+                    emp, args.get("start_date"), args.get("end_date")
+                )
+                if missing_advances_for_emp:
+                    missing_advances.extend(missing_advances_for_emp)
+                
                 args.update({"doctype": "Salary Slip", "employee": emp})
                 ss = frappe.get_doc(args)
+                
+                # Add custom leave calculations
                 add_leaves(ss)
+                
+                # Calculate salary components including additional salaries (employee advances)
+                if ss.salary_structure:
+                    ss.calculate_component_amounts("earnings")
+                    ss.calculate_component_amounts("deductions")
+                
                 ss.insert()
+                
+                # Calculate net pay to ensure all components are properly calculated
+                ss.calculate_net_pay()
+                ss.save()
+                
                 count += 1
                 if publish_progress:
                     frappe.publish_progress(
@@ -162,6 +309,22 @@ def create_salary_slips_for_employees(employees, args, publish_progress=True):
         payroll_entry = frappe.get_doc("Payroll Entry", args.payroll_entry)
         payroll_entry.db_set("salary_slips_created", 1)
         payroll_entry.notify_update()
+
+        # Show warning about missing employee advance deductions
+        if missing_advances:
+            advance_names = [adv["advance_name"] for adv in missing_advances]
+            total_amount = sum(adv["unclaimed_amount"] for adv in missing_advances)
+            frappe.msgprint(
+                _(
+                    "Employee advances found that should be deducted from salary but are missing additional salary records: {0}. "
+                    "Total unclaimed amount: {1}. Please create additional salary records for these advances."
+                ).format(
+                    frappe.bold(", ".join(advance_names)),
+                    frappe.bold(frappe.utils.fmt_money(total_amount))
+                ),
+                title=_("Employee Advances Not Deducted"),
+                indicator="orange",
+            )
 
         if salary_slips_not_created:
             frappe.msgprint(

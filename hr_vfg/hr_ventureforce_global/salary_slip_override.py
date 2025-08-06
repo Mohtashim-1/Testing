@@ -61,7 +61,67 @@ from hrms.payroll.doctype.salary_slip.salary_slip import SalarySlip
 
 
 class CustomSalarySlip(SalarySlip):
-	pass
+    def get_advance_deduction_component(self):
+        # Get the latest salary structure assignment for the employee as of the end date
+        assignment = frappe.get_all(
+            "Salary Structure Assignment",
+            filters={
+                "employee": self.employee,
+                "from_date": ["<=", self.end_date],
+                "docstatus": 1,
+            },
+            fields=["salary_structure"],
+            order_by="from_date desc",
+            limit=1,
+        )
+        if not assignment:
+            return None
+
+        salary_structure = assignment[0].salary_structure
+        structure_doc = frappe.get_doc("Salary Structure", salary_structure)
+        # Find deduction component with 'advance' in the name
+        for row in structure_doc.deductions:
+            if "advance" in row.salary_component.lower():
+                return row.salary_component
+        return None
+
+    def add_employee_advance_deductions(self):
+        advances = frappe.get_all(
+            "Employee Advance",
+            filters={
+                "employee": self.employee,
+                "repay_unclaimed_amount_from_salary": 1,
+                "docstatus": 1,
+                "status": ["in", ["Paid", "Unpaid"]],
+            },
+            fields=["name", "paid_amount", "claimed_amount", "return_amount", "advance_account"],
+        )
+        # Dynamically get the deduction component
+        deduction_component = self.get_advance_deduction_component()
+        if not deduction_component:
+            frappe.throw(_("No 'Advance' deduction component found in the assigned Salary Structure for this employee."))
+
+        for adv in advances:
+            unclaimed = (adv.paid_amount or 0) - (adv.claimed_amount or 0) - (adv.return_amount or 0)
+            if unclaimed > 0:
+                already = any(
+                    (getattr(d, "employee_advance", None) == adv.name or getattr(d, "ref_doctype", None) == "Employee Advance" and getattr(d, "ref_docname", None) == adv.name)
+                    for d in self.get("deductions", [])
+                )
+                if not already:
+                    self.append("deductions", {
+                        "salary_component": deduction_component,
+                        "amount": unclaimed,
+                        "employee_advance": adv.name,
+                        "account": adv.advance_account,
+                        "ref_doctype": "Employee Advance",
+                        "ref_docname": adv.name,
+                    })
+
+    def validate(self):
+        super().validate()
+        self.add_employee_advance_deductions()
+	
 	# def get_taxable_earnings_for_prev_period(self, payroll_period,start_date, end_date, allow_tax_exemption=False):
 	# 	payroll_period = get_payroll_period(self.start_date, self.end_date, self.company)
 	# 	prev = frappe.db.sql("""select previous_salary_earned from `tabPrevious Salary Detail` where employee=%s and payroll_period=%s""",
