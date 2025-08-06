@@ -45,8 +45,7 @@
    "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date",
-   "read_only": 1
+   "label": "Posting Date"
   },
   {
    "fieldname": "employee_advance_bulk_ct",
@@ -134,7 +133,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-30 18:19:57.664348",
+ "modified": "2025-08-06 19:43:50.576664",
  "modified_by": "shoaibmohtashim973@gmail.com",
  "module": "HR VentureForce Global",
  "name": "Employee Advance Bulk",
