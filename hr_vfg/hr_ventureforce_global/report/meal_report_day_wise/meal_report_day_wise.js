@@ -16,7 +16,7 @@ frappe.query_reports["Meal Report Day Wise"] = {
 		},
         {
             "fieldname": "meal_supplier",
-            "label": __("Meal Supplier"),
+            "label": __("Supplier"),
             "fieldtype": "Link",
             "options": "Meal Provider"
         },
