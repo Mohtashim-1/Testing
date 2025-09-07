@@ -18,10 +18,12 @@ class MealForm(Document):
 		self.total_contractor_qty()
 		self.total_employee_qty()
 		self.total_employee_total()
+		self.check_rate_not_zero()
 	
 	def before_save(self):
 		self.total_sum_qty()
 		self.total_amount_calculation()
+		self.check_rate_not_zero()
 
 	def total_amount_calculation(self):
 		# frappe.msgprint('1')
@@ -54,6 +56,14 @@ class MealForm(Document):
 		for i in self.detail:
 			qty += i.quantity
 		self.total_contractor = qty
+
+	def check_rate_not_zero(self):
+		for i in self.detail:
+			if i.rate == 0:
+				frappe.throw("Rate cannot be zero")
+		for i in self.detail_meal:
+			if i.rate == 0:
+				frappe.throw("Rate cannot be zero")
 
 
 
