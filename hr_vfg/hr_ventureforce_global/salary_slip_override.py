@@ -98,11 +98,24 @@ class CustomSalarySlip(SalarySlip):
             },
             fields=["name", "paid_amount", "claimed_amount", "return_amount", "advance_account", "posting_date"],
         )
+        
         # Dynamically get the deduction component
         deduction_component = self.get_advance_deduction_component()
         if not deduction_component:
             frappe.throw(_("No 'Advance' deduction component found in the assigned Salary Structure for this employee."))
 
+        # Remove existing advance deductions to prevent duplicates
+        deductions_to_remove = []
+        for i, d in enumerate(self.get("deductions", [])):
+            if (hasattr(d, 'ref_doctype') and d.ref_doctype == "Employee Advance") or \
+               (hasattr(d, 'salary_component') and "advance" in d.salary_component.lower()):
+                deductions_to_remove.append(i)
+        
+        # Remove in reverse order to maintain indices
+        for i in reversed(deductions_to_remove):
+            self.remove(self.deductions[i])
+
+        # Add fresh advance deductions
         for adv in advances:
             unclaimed = (adv.paid_amount or 0) - (adv.claimed_amount or 0) - (adv.return_amount or 0)
             if unclaimed > 0:
@@ -121,21 +134,13 @@ class CustomSalarySlip(SalarySlip):
                 
                 # Only add direct deduction if no Additional Salary exists for this advance
                 if not additional_salary_exists:
-                    # Check if this advance is already in deductions by checking ref_docname
-                    already_exists = False
-                    for d in self.get("deductions", []):
-                        if hasattr(d, 'ref_docname') and d.ref_docname == adv.name:
-                            already_exists = True
-                            break
-                    
-                    if not already_exists:
-                        self.append("deductions", {
-                            "salary_component": deduction_component,
-                            "amount": unclaimed,
-                            "account": adv.advance_account,
-                            "ref_doctype": "Employee Advance",
-                            "ref_docname": adv.name,
-                        })
+                    self.append("deductions", {
+                        "salary_component": deduction_component,
+                        "amount": unclaimed,
+                        "account": adv.advance_account,
+                        "ref_doctype": "Employee Advance",
+                        "ref_docname": adv.name,
+                    })
 
     def validate(self):
         super().validate()
