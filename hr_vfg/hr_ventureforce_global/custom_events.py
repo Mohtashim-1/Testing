@@ -39,6 +39,8 @@ def create_missing_additional_salaries_for_advances(employee, start_date, end_da
         
         # Set the amount to the unclaimed amount
         additional_salary.amount = unclaimed_amount
+        additional_salary.salary_component = "Advance Salary - Deduction"
+        additional_salary.type = "Deduction"
         
         # Insert and submit the additional salary
         additional_salary.insert()
@@ -107,9 +109,11 @@ def check_employee_advances_for_salary_deduction(employee, start_date, end_date)
             "employee": employee,
             "repay_unclaimed_amount_from_salary": 1,
             "docstatus": 1,
-            "status": ["in", ["Paid", "Unpaid"]]
+            "status": ["in", ["Paid", "Unpaid"]],
+            # Only include advances that were posted within the salary slip period
+            "posting_date": ["between", [start_date, end_date]]
         },
-        fields=["name", "advance_amount", "paid_amount", "claimed_amount", "return_amount"]
+        fields=["name", "advance_amount", "paid_amount", "claimed_amount", "return_amount", "posting_date"]
     )
     
     missing_additional_salaries = []
@@ -118,7 +122,7 @@ def check_employee_advances_for_salary_deduction(employee, start_date, end_date)
         unclaimed_amount = advance.paid_amount - advance.claimed_amount - advance.return_amount
         
         if unclaimed_amount > 0:
-            # Check if there's an additional salary for this advance
+            # Check if there's an additional salary for this advance in the current payroll period
             additional_salary = frappe.get_all(
                 "Additional Salary",
                 filters={
@@ -134,7 +138,8 @@ def check_employee_advances_for_salary_deduction(employee, start_date, end_date)
             if not additional_salary:
                 missing_additional_salaries.append({
                     "advance_name": advance.name,
-                    "unclaimed_amount": unclaimed_amount
+                    "unclaimed_amount": unclaimed_amount,
+                    "posting_date": advance.posting_date
                 })
     
     return missing_additional_salaries
@@ -247,9 +252,15 @@ def create_salary_slips_for_employees(employees, args, publish_progress=True):
         
         for emp in employees:
             if emp not in salary_slips_exists_for:
-                e_month  = getdate(args.get("end_date")).month
-                year = getdate(args.get("end_date")).year
-                month_str  = ["January", "February", "March", "April","May","June","July","August","September","October","November","December"][e_month-1]
+                # Ensure we're using the correct date format
+                end_date = getdate(args.get("end_date"))
+                e_month = end_date.month
+                year = end_date.year
+                month_str = ["January", "February", "March", "April","May","June","July","August","September","October","November","December"][e_month-1]
+                
+                # Debug: Print the dates to see what's happening
+                frappe.log_error(f"Payroll dates - Start: {args.get('start_date')}, End: {args.get('end_date')}, Month: {month_str}, Year: {year}", "PAYROLL_DEBUG")
+                
                 try:
                     employee_att = frappe.get_all("Employee Attendance",
                     filters={"month":month_str,"employee": emp,"year":year},fields=["*"])[0]

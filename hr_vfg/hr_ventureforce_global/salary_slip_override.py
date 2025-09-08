@@ -93,8 +93,10 @@ class CustomSalarySlip(SalarySlip):
                 "repay_unclaimed_amount_from_salary": 1,
                 "docstatus": 1,
                 "status": ["in", ["Paid", "Unpaid"]],
+                # Only include advances that were posted within the salary slip period
+                "posting_date": ["between", [self.start_date, self.end_date]]
             },
-            fields=["name", "paid_amount", "claimed_amount", "return_amount", "advance_account"],
+            fields=["name", "paid_amount", "claimed_amount", "return_amount", "advance_account", "posting_date"],
         )
         # Dynamically get the deduction component
         deduction_component = self.get_advance_deduction_component()
@@ -104,19 +106,36 @@ class CustomSalarySlip(SalarySlip):
         for adv in advances:
             unclaimed = (adv.paid_amount or 0) - (adv.claimed_amount or 0) - (adv.return_amount or 0)
             if unclaimed > 0:
-                already = any(
-                    (getattr(d, "employee_advance", None) == adv.name or getattr(d, "ref_doctype", None) == "Employee Advance" and getattr(d, "ref_docname", None) == adv.name)
-                    for d in self.get("deductions", [])
-                )
-                if not already:
-                    self.append("deductions", {
-                        "salary_component": deduction_component,
-                        "amount": unclaimed,
-                        "employee_advance": adv.name,
-                        "account": adv.advance_account,
+                # Check if there's already an Additional Salary for this advance in this payroll period
+                additional_salary_exists = frappe.get_all(
+                    "Additional Salary",
+                    filters={
+                        "employee": self.employee,
                         "ref_doctype": "Employee Advance",
                         "ref_docname": adv.name,
-                    })
+                        "docstatus": 1,
+                        "payroll_date": ["between", [self.start_date, self.end_date]]
+                    },
+                    limit=1
+                )
+                
+                # Only add direct deduction if no Additional Salary exists for this advance
+                if not additional_salary_exists:
+                    # Check if this advance is already in deductions by checking ref_docname
+                    already_exists = False
+                    for d in self.get("deductions", []):
+                        if hasattr(d, 'ref_docname') and d.ref_docname == adv.name:
+                            already_exists = True
+                            break
+                    
+                    if not already_exists:
+                        self.append("deductions", {
+                            "salary_component": deduction_component,
+                            "amount": unclaimed,
+                            "account": adv.advance_account,
+                            "ref_doctype": "Employee Advance",
+                            "ref_docname": adv.name,
+                        })
 
     def validate(self):
         super().validate()
