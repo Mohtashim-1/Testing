@@ -89,30 +89,34 @@ class LateOverTime(Document):
 			frappe.db.commit()
 
 			# Reload and update the parent document
+			# Reload document to get fresh data from DB (not from cache)
 			doc = frappe.get_doc("Employee Attendance", r.att_ref)
+			doc.reload()  # Ensure we have the latest data including SQL changes
 			child_row = doc.getone({"name": r.att_child_ref})
-			child_row.approved_ot1 = r.approved_overtime
-			doc.save()
-
-			# Reload to verify update
-			doc.reload()
-			frappe.log_error(f"Updated approved_ot1: {child_row.approved_ot1}")
+			if child_row:
+				child_row.approved_ot1 = r.approved_overtime
+				doc.save()
+				frappe.db.commit()
+				# Log for debugging (optional)
+				frappe.log_error(f"Updated approved_ot1: {child_row.approved_ot1}")
 	
 	def on_cancel(self):
 		for r in self.details:
-			
+			# Update the `approved_ot1` field in `Employee Attendance Table`
 			frappe.db.sql("update `tabEmployee Attendance Table` set approved_ot1='' where name=%s", 
 						  (r.att_child_ref,))
 			frappe.db.commit()
 
+			# Reload and update the parent document
+			# Reload document to get fresh data from DB (not from cache)
 			doc = frappe.get_doc("Employee Attendance", r.att_ref)
+			doc.reload()  # Ensure we have the latest data including SQL changes
 			child_row = doc.getone({"name": r.att_child_ref})
-			child_row.approved_ot1 = ''
-			doc.save()
-
-
-			doc.reload()
-			frappe.log_error(f"Updated approved_ot1: {child_row.approved_ot1}")
-			frappe.log_error(f"Updated approved_ot1: {child_row.approved_ot1}")
+			if child_row:
+				child_row.approved_ot1 = ''
+				doc.save()
+				frappe.db.commit()
+				# Log for debugging (optional)
+				frappe.log_error(f"Cleared approved_ot1: {child_row.approved_ot1}")
 
 

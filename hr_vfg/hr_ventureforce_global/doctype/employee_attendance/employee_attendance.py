@@ -468,22 +468,7 @@ class EmployeeAttendance(Document):
         #     if data.check_in_1 is None and data.check_out_1 is None:
         #         data.absent = 1
 
-        for data in self.table1:
-            missing_absent_check_in += data.absent_mark_due_to_missing_check_in or 0
-            missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in or 0
-            missing_absent_check_out += data.absent_mark_due_to_missing_check_out or 0
-            half_day_mark_due_to_missing_check_out += data.half_day_mark_due_to_missing_check_out or 0
-            # leave += data.mark_leave or 0
-
-        self.total_absent_check_in_missing_1 = missing_absent_check_in
-        self.total_absent_check_in_missing = missing_half_day_check_in
-        self.total_absent_missing_check_out = missing_absent_check_out
-        self.total_halfday_missing_check_out = half_day_mark_due_to_missing_check_out
-        self.total_missing = self.total_absent_check_in_missing + self.total_absent_missing_check_out
-        # if hr_settings.absent_threshould_missing_punch > self.total_missing:
-        #     self.mark_absent_on_missing = self.total_missing
-        if self.total_missing > hr_settings.absent_threshould_missing_punch:
-            self.mark_absent_on_missing = self.total_missing - hr_settings.absent_threshould_missing_punch
+        # Note: Totals calculation moved to end of validate method after all processing is complete
 
 
         
@@ -3010,6 +2995,92 @@ class EmployeeAttendance(Document):
             efh = int(total_early/hr_settings.maximum_early_for_halfday) if total_early >= hr_settings.maximum_early_for_halfday else 0
         self.early_for_halfday = round(efh/2,1)
         # self.total_early_going_hours = round(flt(total_early_going_hrs.total_seconds())/3600, 2)
+
+        # Calculate missing check-in/check-out totals AFTER all processing is complete
+        # Recalculate missing check-in/check-out fields for each row after holiday logic
+        for data in self.table1:
+            # Skip holidays and weekly offs - missing check-in/check-out should only count for working days
+            if data.public_holiday == 1 or data.weekly_off == 1:
+                data.absent_mark_due_to_missing_check_in = 0
+                data.half_day_mark_due_to_missing__check_in = 0
+                data.absent_mark_due_to_missing_check_out = 0
+                data.half_day_mark_due_to_missing_check_out = 0
+                continue
+            
+            # Re-evaluate missing check-in/check-out for working days only
+            if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 == "" or data.check_out_1 == "":
+                # Both are missing, set everything to 0
+                data.check_in_missing = 0
+                data.check_out_missing = 0
+                data.absent_mark_due_to_missing_check_in = 0
+                data.half_day_mark_due_to_missing__check_in = 0
+                data.absent_mark_due_to_missing_check_out = 0
+                data.half_day_mark_due_to_missing_check_out = 0
+            # Case 2: If only check_in_1 is None but check_out_1 is available
+            elif data.check_in_1 is None and data.check_out_1 is not None:
+                data.check_in_missing = 1
+                data.check_out_missing = 0
+                if hr_settings.check_not_marked == 1:
+                    if hr_settings.mark_absent == 1:
+                        data.absent_mark_due_to_missing_check_in = 1
+                    else:
+                        data.absent_mark_due_to_missing_check_in = 0
+                    if hr_settings.mark_half_day == 1:
+                        data.half_day_mark_due_to_missing__check_in = 1
+                    else:
+                        data.half_day_mark_due_to_missing__check_in = 0
+                else:
+                    data.absent_mark_due_to_missing_check_in = 0
+                    data.half_day_mark_due_to_missing__check_in = 0
+                data.absent_mark_due_to_missing_check_out = 0
+                data.half_day_mark_due_to_missing_check_out = 0
+            # Case 3: If only check_out_1 is None but check_in_1 is available
+            elif data.check_in_1 is not None and data.check_out_1 is None:
+                data.check_in_missing = 0
+                data.check_out_missing = 1
+                if hr_settings.check_out_not_marked == 1:
+                    if hr_settings.mark_absent_check_out == 1:
+                        data.absent_mark_due_to_missing_check_out = 1
+                    else:
+                        data.absent_mark_due_to_missing_check_out = 0
+                    if hr_settings.mark_half_day_check_out == 1:
+                        data.half_day_mark_due_to_missing_check_out = 1
+                    else:
+                        data.half_day_mark_due_to_missing_check_out = 0
+                else:
+                    data.absent_mark_due_to_missing_check_out = 0
+                    data.half_day_mark_due_to_missing_check_out = 0
+            # Case 4: If both check_in_1 and check_out_1 are present
+            else:
+                data.check_in_missing = 0
+                data.check_out_missing = 0
+                data.absent_mark_due_to_missing_check_in = 0
+                data.half_day_mark_due_to_missing__check_in = 0
+                data.absent_mark_due_to_missing_check_out = 0
+                data.half_day_mark_due_to_missing_check_out = 0
+        
+        # Now calculate totals after all fields are properly set
+        missing_absent_check_in = 0
+        missing_half_day_check_in = 0
+        missing_absent_check_out = 0
+        half_day_mark_due_to_missing_check_out = 0
+        
+        for data in self.table1:
+            missing_absent_check_in += data.absent_mark_due_to_missing_check_in or 0
+            missing_half_day_check_in += data.half_day_mark_due_to_missing__check_in or 0
+            missing_absent_check_out += data.absent_mark_due_to_missing_check_out or 0
+            half_day_mark_due_to_missing_check_out += data.half_day_mark_due_to_missing_check_out or 0
+
+        self.total_absent_check_in_missing_1 = missing_absent_check_in
+        self.total_absent_check_in_missing = missing_half_day_check_in
+        self.total_absent_missing_check_out = missing_absent_check_out
+        self.total_halfday_missing_check_out = half_day_mark_due_to_missing_check_out
+        self.total_missing = self.total_absent_check_in_missing + self.total_absent_missing_check_out
+        
+        if self.total_missing > hr_settings.absent_threshould_missing_punch:
+            self.mark_absent_on_missing = self.total_missing - hr_settings.absent_threshould_missing_punch
+        else:
+            self.mark_absent_on_missing = 0
 
         employee = frappe.get_doc("Employee", self.employee)
         if employee.custom_late_unmark == 1:

@@ -76,12 +76,15 @@ class AttendanceAdjustments(Document):
                 """,
                 (row.check_in, row.check_out, row.att_child_ref)
             )
+            frappe.db.commit()
 
             # ...and also update via Document API (to fire all hooks)
+            # Reload document to get fresh data from DB (not from cache)
             doc = frappe.get_doc("Employee Attendance", row.att_ref)
+            doc.reload()  # Ensure we have the latest data including SQL changes
             child = doc.getone({"name": row.att_child_ref})
-            child.check_in_1  = row.check_in
-            child.check_out_1 = row.check_out
-            doc.save()
-
-        frappe.db.commit()
+            if child:
+                child.check_in_1  = row.check_in
+                child.check_out_1 = row.check_out
+                doc.save()
+                frappe.db.commit()
