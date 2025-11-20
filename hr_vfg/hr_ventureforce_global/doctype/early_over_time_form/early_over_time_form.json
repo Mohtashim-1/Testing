@@ -9,6 +9,8 @@
   "date",
   "ot_frequency",
   "column_break_dond",
+  "day",
+  "column_break_hwci",
   "month",
   "column_break_uska",
   "year",
@@ -47,23 +49,8 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "month",
-   "fieldtype": "Select",
-   "hidden": 1,
-   "label": "Month",
-   "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
-  },
-  {
    "fieldname": "column_break_uska",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "2024",
-   "fieldname": "year",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Year",
-   "options": "Year"
   },
   {
    "fieldname": "section_break_zhjt",
@@ -100,13 +87,33 @@
    "fieldtype": "Time",
    "hidden": 1,
    "label": "OT Frequency"
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Data",
+   "label": "Day"
+  },
+  {
+   "fieldname": "column_break_hwci",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Data",
+   "label": "Year"
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Data",
+   "label": "Month"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-26 18:58:01.638095",
- "modified_by": "Administrator",
+ "modified": "2025-11-20 17:56:27.573071",
+ "modified_by": "shoaibmohtashim973@gmail.com",
  "module": "HR VentureForce Global",
  "name": "Early Over Time Form",
  "naming_rule": "Expression",
@@ -126,6 +133,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

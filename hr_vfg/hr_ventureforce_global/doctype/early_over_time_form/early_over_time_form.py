@@ -3,9 +3,18 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import getdate
+import calendar
 
 
 class EarlyOverTimeForm(Document):
+	def before_validate(self):
+		"""Extract day, month name, and year from date field"""
+		if self.date:
+			date_obj = getdate(self.date)
+			self.day = date_obj.day
+			self.month = calendar.month_name[date_obj.month]  # Full month name like "November"
+			self.year = date_obj.year
 	@frappe.whitelist()
 	def get_data(self):
 		rec = frappe.db.sql("""
