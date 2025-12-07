@@ -295,7 +295,8 @@ class EmployeeAttendance(Document):
             #     data.shift_in = None
             #     data.shift_out = None
 
-            # Sum early_ot
+            # Sum early_ot - Note: early_ot might not be calculated yet at this point
+            # Will be recalculated later after early_ot is set for all rows
             if data.early_ot:
                 total_seconds1 += time_to_seconds(data.early_ot)
                 pass
@@ -542,6 +543,8 @@ class EmployeeAttendance(Document):
             data.additional_hours = None
             data.late_coming_hours = None
             data.early_going_hours = None
+            data.early_ot = None  # Reset early_ot to prevent accumulation of old values
+            data.estimate_early = None  # Reset estimate_early to prevent accumulation of old multiplied values
             data.early = 0
             data.absent = 0
             data.weekly_off = 0
@@ -2685,9 +2688,6 @@ class EmployeeAttendance(Document):
                 
                 else:
                     raise ValueError(f"No Shift Found for these employee: {self.employee}")
-                
-                
-                
 
                 # if data.check_in_1:
 
@@ -2939,7 +2939,73 @@ class EmployeeAttendance(Document):
             except:
                 frappe.log_error(frappe.get_traceback(),"Attendance")
                 previous = data
-             
+        
+        # Recalculate early_ot totals after all early_ot values are set
+        # Reset counters
+        total_seconds1_recalc = 0
+        total_seconds_approved_eot_recalc = 0
+        time_seconds_approved_eot1_recalc = 0
+        
+        # Helper function to convert time to seconds (handles both string and timedelta)
+        def time_to_seconds_recalc(time_input):
+            if isinstance(time_input, str):
+                try:
+                    time_parts = [int(part) for part in time_input.split(':')]
+                    if len(time_parts) == 3:
+                        return time_parts[0] * 3600 + time_parts[1] * 60 + time_parts[2]
+                    return 0
+                except (ValueError, AttributeError):
+                    return 0
+            elif isinstance(time_input, timedelta):
+                return int(time_input.total_seconds())
+            else:
+                return 0
+        
+        # Recalculate totals after early_ot is set
+        total_seconds3_recalc = 0  # For early_sitting (estimate_early)
+        for data in self.table1:
+            # Sum early_ot (base value, not multiplied)
+            # Only count if early_ot is not None and not empty
+            if data.early_ot:
+                # Convert timedelta to seconds for accurate calculation
+                early_ot_seconds = time_to_seconds_recalc(data.early_ot)
+                total_seconds1_recalc += early_ot_seconds
+            
+            # Sum estimate_early (multiplied value) for early_sitting
+            if data.estimate_early:
+                estimate_early_seconds = time_to_seconds_recalc(data.estimate_early)
+                total_seconds3_recalc += estimate_early_seconds
+            
+            # Sum approved_eot
+            if data.approved_eot:
+                total_seconds_approved_eot_recalc += time_to_seconds_recalc(data.approved_eot)
+                time_seconds_approved_eot1_recalc += time_to_seconds_recalc(data.approved_eot)
+        
+        # Update totals with recalculated values
+        if total_seconds1_recalc > 0:
+            self.early_ot = "{:.2f}".format(total_seconds1_recalc / 3600.0)
+        else:
+            self.early_ot = "0.00"
+        
+        # Update early_sitting with recalculated estimate_early values
+        if total_seconds3_recalc > 0:
+            self.early_sitting = "{:.2f}".format(total_seconds3_recalc / 3600.0)
+        else:
+            self.early_sitting = "0.00"
+        
+        if total_seconds_approved_eot_recalc > 0:
+            self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot_recalc / 3600.0)
+            self.approved_early_sitting = "{:.2f}".format(time_seconds_approved_eot1_recalc / 3600.0)
+        
+        # Recalculate total sitting with updated early_sitting
+        if hasattr(self, 'late_sitting') and hasattr(self, 'early_sitting'):
+            total_sitting = float(self.late_sitting) + float(self.early_sitting)
+            self.total_sitting = "{:.2f}".format(total_sitting)
+        
+        # Recalculate approved total sitting
+        if hasattr(self, 'approved_late_sitting') and hasattr(self, 'approved_early_sitting'):
+            approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
+            self.approved_total_sitting = approved_total_sitting
 
         self.hours_worked = round(
             flt((total_hr_worked-total_late_hr_worked).total_seconds())/3600, 2)
