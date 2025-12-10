@@ -8,7 +8,6 @@ frappe.ui.form.on("Early Over Time Form", {
                 method:"get_data",
                 doc: frm.doc,
                 args:{
-
                 },
                 callback: function(r){
                     frm.reload_doc()
