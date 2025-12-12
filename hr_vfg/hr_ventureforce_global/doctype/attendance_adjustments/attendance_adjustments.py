@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe import _
 
 class AttendanceAdjustments(Document):
     @frappe.whitelist()
@@ -66,25 +67,170 @@ class AttendanceAdjustments(Document):
         self.save()
 
     def on_submit(self):
-        for row in self.attendance_adjustments_ct:
-            # update via SQL (for speed)...
-            frappe.db.sql(
-                """
-                UPDATE `tabEmployee Attendance Table`
-                SET check_in_1=%s, check_out_1=%s
-                WHERE name=%s
-                """,
-                (row.check_in, row.check_out, row.att_child_ref)
+        import traceback
+        
+        print("=" * 80)
+        print("=== Attendance Adjustments on_submit STARTED ===")
+        print(f"Document: {self.name}")
+        print(f"Total rows in attendance_adjustments_ct: {len(self.attendance_adjustments_ct)}")
+        print("=" * 80)
+        
+        frappe.log_error(
+            f"=== Attendance Adjustments on_submit STARTED ===\n"
+            f"Document: {self.name}\n"
+            f"Total rows in attendance_adjustments_ct: {len(self.attendance_adjustments_ct)}",
+            "Attendance Adjustments: on_submit START"
+        )
+        
+        # Group updates by parent document to avoid reloading the same parent multiple times
+        parent_docs = {}
+        
+        # First, collect all updates grouped by parent document
+        print("\n[Step 1] Collecting updates from child table...")
+        frappe.log_error("Step 1: Collecting updates from child table", "Attendance Adjustments: Step 1")
+        for idx, row in enumerate(self.attendance_adjustments_ct):
+            print(f"  Row {idx}: att_ref={row.att_ref}, att_child_ref={row.att_child_ref}, "
+                  f"check_in={row.check_in}, check_out={row.check_out}")
+            frappe.log_error(
+                f"Row {idx}: att_ref={row.att_ref}, att_child_ref={row.att_child_ref}, "
+                f"check_in={row.check_in}, check_out={row.check_out}",
+                f"Attendance Adjustments: Row {idx}"
             )
-            frappe.db.commit()
-
-            # ...and also update via Document API (to fire all hooks)
-            # Reload document to get fresh data from DB (not from cache)
-            doc = frappe.get_doc("Employee Attendance", row.att_ref)
-            doc.reload()  # Ensure we have the latest data including SQL changes
-            child = doc.getone({"name": row.att_child_ref})
-            if child:
-                child.check_in_1  = row.check_in
-                child.check_out_1 = row.check_out
-                doc.save()
+            
+            if not row.att_ref or not row.att_child_ref:
+                print(f"  ⚠️ Row {idx} skipped: Missing att_ref or att_child_ref")
+                frappe.log_error(
+                    f"Row {idx} skipped: Missing att_ref or att_child_ref",
+                    "Attendance Adjustments: Skipped Row"
+                )
+                continue
+                
+            if row.att_ref not in parent_docs:
+                parent_docs[row.att_ref] = []
+            
+            parent_docs[row.att_ref].append({
+                "child_name": row.att_child_ref,
+                "check_in": row.check_in,
+                "check_out": row.check_out
+            })
+        
+        print(f"\n[Step 2] Collected {len(parent_docs)} parent documents to update")
+        frappe.log_error(
+            f"Step 2: Collected {len(parent_docs)} parent documents to update",
+            "Attendance Adjustments: Step 2"
+        )
+        
+        # Update each parent document with all its child updates
+        for parent_name, updates in parent_docs.items():
+            try:
+                print(f"\n{'=' * 80}")
+                print(f"[Step 3] Processing parent document: {parent_name}")
+                print(f"Number of child updates: {len(updates)}")
+                print(f"{'=' * 80}")
+                frappe.log_error(
+                    f"Step 3: Processing parent document: {parent_name}\n"
+                    f"Number of child updates: {len(updates)}",
+                    f"Attendance Adjustments: Processing {parent_name}"
+                )
+                
+                # Clear cache first to ensure fresh data
+                print("[Step 3.1] Clearing cache...")
+                frappe.log_error("Step 3.1: Clearing cache", f"Attendance Adjustments: {parent_name} - Clear Cache")
+                frappe.clear_cache(doctype="Employee Attendance")
+                
+                # Get the parent document
+                print(f"[Step 3.2] Loading parent document: {parent_name}")
+                frappe.log_error("Step 3.2: Loading parent document", f"Attendance Adjustments: {parent_name} - Load Doc")
+                doc = frappe.get_doc("Employee Attendance", parent_name)
+                print(f"[Step 3.3] Document loaded successfully")
+                print(f"  Document name: {doc.name}")
+                print(f"  Number of child records: {len(doc.get('table1', []))}")
+                frappe.log_error(
+                    f"Step 3.3: Document loaded successfully\n"
+                    f"Document name: {doc.name}\n"
+                    f"Number of child records: {len(doc.get('table1', []))}",
+                    f"Attendance Adjustments: {parent_name} - Doc Loaded"
+                )
+                
+                # Update all child records for this parent
+                print(f"[Step 3.4] Updating child records...")
+                frappe.log_error("Step 3.4: Updating child records", f"Attendance Adjustments: {parent_name} - Update Children")
+                for update_idx, update in enumerate(updates):
+                    print(f"  Updating child {update_idx + 1}/{len(updates)}:")
+                    print(f"    child_name: {update['child_name']}")
+                    print(f"    check_in: {update['check_in']}")
+                    print(f"    check_out: {update['check_out']}")
+                    frappe.log_error(
+                        f"Updating child {update_idx + 1}/{len(updates)}:\n"
+                        f"  child_name: {update['child_name']}\n"
+                        f"  check_in: {update['check_in']}\n"
+                        f"  check_out: {update['check_out']}",
+                        f"Attendance Adjustments: {parent_name} - Child {update_idx + 1}"
+                    )
+                    
+                    child = doc.getone({"name": update["child_name"]})
+                    if child:
+                        print(f"    ✓ Child found!")
+                        print(f"      Old values: check_in_1={child.check_in_1}, check_out_1={child.check_out_1}")
+                        frappe.log_error(
+                            f"Child found. Old values: check_in_1={child.check_in_1}, check_out_1={child.check_out_1}",
+                            f"Attendance Adjustments: {parent_name} - Child Found"
+                        )
+                        child.check_in_1 = update["check_in"]
+                        child.check_out_1 = update["check_out"]
+                        print(f"      New values: check_in_1={child.check_in_1}, check_out_1={child.check_out_1}")
+                        frappe.log_error(
+                            f"Child updated. New values: check_in_1={child.check_in_1}, check_out_1={child.check_out_1}",
+                            f"Attendance Adjustments: {parent_name} - Child Updated"
+                        )
+                    else:
+                        available_names = [c.name for c in doc.get('table1', [])]
+                        print(f"    ✗ ERROR: Child record {update['child_name']} not found!")
+                        print(f"      Available child names: {available_names}")
+                        frappe.log_error(
+                            f"ERROR: Child record {update['child_name']} not found in parent {parent_name}\n"
+                            f"Available child names: {available_names}",
+                            "Attendance Adjustments: Child Record Not Found"
+                        )
+                
+                # Save the document - this will trigger validate() and recalculate all totals
+                print(f"[Step 3.5] Saving parent document...")
+                frappe.log_error("Step 3.5: Saving parent document", f"Attendance Adjustments: {parent_name} - Save")
+                doc.save(ignore_permissions=True)
+                print(f"[Step 3.6] Document saved, committing...")
+                frappe.log_error("Step 3.6: Document saved, committing", f"Attendance Adjustments: {parent_name} - Commit")
                 frappe.db.commit()
+                print(f"✓ SUCCESS: Parent document {parent_name} updated successfully!")
+                frappe.log_error(
+                    f"SUCCESS: Parent document {parent_name} updated successfully",
+                    f"Attendance Adjustments: {parent_name} - SUCCESS"
+                )
+                
+            except Exception as e:
+                error_traceback = traceback.format_exc()
+                print(f"\n{'!' * 80}")
+                print(f"✗ ERROR updating Employee Attendance {parent_name}:")
+                print(f"  Error message: {str(e)}")
+                print(f"  Error type: {type(e).__name__}")
+                print(f"  Traceback:")
+                print(error_traceback)
+                print(f"{'!' * 80}\n")
+                frappe.log_error(
+                    f"ERROR updating Employee Attendance {parent_name}:\n"
+                    f"Error message: {str(e)}\n"
+                    f"Error type: {type(e).__name__}\n"
+                    f"Traceback:\n{error_traceback}",
+                    "Attendance Adjustments: Update Error"
+                )
+                frappe.db.rollback()
+                frappe.throw(_("Error updating attendance for {0}: {1}").format(parent_name, str(e)))
+        
+        print(f"\n{'=' * 80}")
+        print(f"=== Attendance Adjustments on_submit COMPLETED ===")
+        print(f"Document: {self.name}")
+        print(f"{'=' * 80}\n")
+        frappe.log_error(
+            f"=== Attendance Adjustments on_submit COMPLETED ===\n"
+            f"Document: {self.name}",
+            "Attendance Adjustments: on_submit END"
+        )
