@@ -82,41 +82,96 @@ class LateOverTime(Document):
 			self.save()
 
 	def on_submit(self):
+		# Group updates by parent document to avoid reloading the same parent multiple times
+		parent_docs = {}
+		
 		for r in self.details:
-			# Update the `approved_ot1` field in `Employee Attendance Table`
+			# Update the `approved_ot1` field in `Employee Attendance Table` via SQL
 			frappe.db.sql("update `tabEmployee Attendance Table` set approved_ot1=%s where name=%s", 
 						  (r.approved_overtime, r.att_child_ref))
-			frappe.db.commit()
-
-			# Reload and update the parent document
-			# Reload document to get fresh data from DB (not from cache)
-			doc = frappe.get_doc("Employee Attendance", r.att_ref)
-			doc.reload()  # Ensure we have the latest data including SQL changes
-			child_row = doc.getone({"name": r.att_child_ref})
-			if child_row:
-				child_row.approved_ot1 = r.approved_overtime
-				doc.save()
+			
+			# Group by parent document
+			if r.att_ref not in parent_docs:
+				parent_docs[r.att_ref] = []
+			parent_docs[r.att_ref].append({
+				"child_ref": r.att_child_ref,
+				"approved_ot1": r.approved_overtime
+			})
+		
+		frappe.db.commit()
+		
+		# Update each parent document once with all its child updates
+		for parent_name, updates in parent_docs.items():
+			try:
+				# Clear cache to ensure fresh data
+				frappe.clear_cache(doctype="Employee Attendance")
+				
+				# Reload document to get fresh data from DB (not from cache)
+				doc = frappe.get_doc("Employee Attendance", parent_name)
+				doc.reload()
+				
+				# Update all child records for this parent
+				for update in updates:
+					child_row = doc.getone({"name": update["child_ref"]})
+					if child_row:
+						child_row.approved_ot1 = update["approved_ot1"]
+				
+				# Save the document - this will trigger validate() and recalculate all totals
+				doc.save(ignore_permissions=True)
 				frappe.db.commit()
-				# Log for debugging (optional)
-				frappe.log_error(f"Updated approved_ot1: {child_row.approved_ot1}")
+				
+			except Exception as e:
+				frappe.log_error(
+					f"Error updating Employee Attendance {parent_name} from Late Over Time: {str(e)}\n{frappe.get_traceback()}",
+					"Late Over Time: Update Error"
+				)
+				frappe.db.rollback()
+				frappe.throw(f"Error updating attendance for {parent_name}: {str(e)}")
 	
 	def on_cancel(self):
+		# Group updates by parent document to avoid reloading the same parent multiple times
+		parent_docs = {}
+		
 		for r in self.details:
-			# Update the `approved_ot1` field in `Employee Attendance Table`
+			# Update the `approved_ot1` field in `Employee Attendance Table` via SQL
 			frappe.db.sql("update `tabEmployee Attendance Table` set approved_ot1='' where name=%s", 
 						  (r.att_child_ref,))
-			frappe.db.commit()
-
-			# Reload and update the parent document
-			# Reload document to get fresh data from DB (not from cache)
-			doc = frappe.get_doc("Employee Attendance", r.att_ref)
-			doc.reload()  # Ensure we have the latest data including SQL changes
-			child_row = doc.getone({"name": r.att_child_ref})
-			if child_row:
-				child_row.approved_ot1 = ''
-				doc.save()
+			
+			# Group by parent document
+			if r.att_ref not in parent_docs:
+				parent_docs[r.att_ref] = []
+			parent_docs[r.att_ref].append({
+				"child_ref": r.att_child_ref
+			})
+		
+		frappe.db.commit()
+		
+		# Update each parent document once with all its child updates
+		for parent_name, updates in parent_docs.items():
+			try:
+				# Clear cache to ensure fresh data
+				frappe.clear_cache(doctype="Employee Attendance")
+				
+				# Reload document to get fresh data from DB (not from cache)
+				doc = frappe.get_doc("Employee Attendance", parent_name)
+				doc.reload()
+				
+				# Update all child records for this parent
+				for update in updates:
+					child_row = doc.getone({"name": update["child_ref"]})
+					if child_row:
+						child_row.approved_ot1 = ''
+				
+				# Save the document - this will trigger validate() and recalculate all totals
+				doc.save(ignore_permissions=True)
 				frappe.db.commit()
-				# Log for debugging (optional)
-				frappe.log_error(f"Cleared approved_ot1: {child_row.approved_ot1}")
+				
+			except Exception as e:
+				frappe.log_error(
+					f"Error updating Employee Attendance {parent_name} from Late Over Time (cancel): {str(e)}\n{frappe.get_traceback()}",
+					"Late Over Time: Cancel Error"
+				)
+				frappe.db.rollback()
+				frappe.throw(f"Error updating attendance for {parent_name}: {str(e)}")
 
 

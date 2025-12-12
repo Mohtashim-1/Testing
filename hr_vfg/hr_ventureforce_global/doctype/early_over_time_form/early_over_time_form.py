@@ -50,24 +50,97 @@ class EarlyOverTimeForm(Document):
 		self.save()
 
 	def on_submit(self):
+		# Group updates by parent document to avoid reloading the same parent multiple times
+		parent_docs = {}
+		
 		for r in self.early_over_time_form_ct:
-			# frappe.db.sql("""
-			# update `tabEmployee Attendance Table` set approved_early_over_time=%s where name=%s
-			# """,(r.approved_early_over_time,r.att_child_ref))
-
+			# Update the `approved_eot` field in `Employee Attendance Table` via SQL
 			frappe.db.sql("""
 			update `tabEmployee Attendance Table` set approved_eot=%s where name=%s
 			""",(r.approved_early_over_time,r.att_child_ref))
-			frappe.db.commit()
-			doc = frappe.get_doc("Employee Attendance",r.att_ref)
-			doc.save()
+			
+			# Group by parent document
+			if r.att_ref not in parent_docs:
+				parent_docs[r.att_ref] = []
+			parent_docs[r.att_ref].append({
+				"child_ref": r.att_child_ref,
+				"approved_eot": r.approved_early_over_time
+			})
+		
+		frappe.db.commit()
+		
+		# Update each parent document once with all its child updates
+		for parent_name, updates in parent_docs.items():
+			try:
+				# Clear cache to ensure fresh data
+				frappe.clear_cache(doctype="Employee Attendance")
+				
+				# Reload document to get fresh data from DB (not from cache)
+				doc = frappe.get_doc("Employee Attendance", parent_name)
+				doc.reload()
+				
+				# Update all child records for this parent
+				for update in updates:
+					child_row = doc.getone({"name": update["child_ref"]})
+					if child_row:
+						child_row.approved_eot = update["approved_eot"]
+				
+				# Save the document - this will trigger validate() and recalculate all totals
+				doc.save(ignore_permissions=True)
+				frappe.db.commit()
+				
+			except Exception as e:
+				frappe.log_error(
+					f"Error updating Employee Attendance {parent_name} from Early Over Time Form: {str(e)}\n{frappe.get_traceback()}",
+					"Early Over Time Form: Update Error"
+				)
+				frappe.db.rollback()
+				frappe.throw(f"Error updating attendance for {parent_name}: {str(e)}")
 
 	
 	def on_cancel(self):
+		# Group updates by parent document to avoid reloading the same parent multiple times
+		parent_docs = {}
+		
 		for r in self.early_over_time_form_ct:
+			# Update the `approved_eot` field in `Employee Attendance Table` via SQL
 			frappe.db.sql("""
 			update `tabEmployee Attendance Table` set approved_eot='' where name=%s
 			""", (r.att_child_ref))
-			frappe.db.commit()
-			doc = frappe.get_doc("Employee Attendance", r.att_ref)
-			doc.save()
+			
+			# Group by parent document
+			if r.att_ref not in parent_docs:
+				parent_docs[r.att_ref] = []
+			parent_docs[r.att_ref].append({
+				"child_ref": r.att_child_ref
+			})
+		
+		frappe.db.commit()
+		
+		# Update each parent document once with all its child updates
+		for parent_name, updates in parent_docs.items():
+			try:
+				# Clear cache to ensure fresh data
+				frappe.clear_cache(doctype="Employee Attendance")
+				
+				# Reload document to get fresh data from DB (not from cache)
+				doc = frappe.get_doc("Employee Attendance", parent_name)
+				doc.reload()
+				
+				# Update all child records for this parent
+				for update in updates:
+					child_row = doc.getone({"name": update["child_ref"]})
+					if child_row:
+						child_row.approved_eot = ''
+				
+				# Save the document - this will trigger validate() and recalculate all totals
+				doc.save(ignore_permissions=True)
+				frappe.db.commit()
+				
+			except Exception as e:
+				frappe.log_error(
+					f"Error updating Employee Attendance {parent_name} from Early Over Time Form (cancel): {str(e)}\n{frappe.get_traceback()}",
+					"Early Over Time Form: Cancel Error"
+				)
+				frappe.db.rollback()
+				frappe.throw(f"Error updating attendance for {parent_name}: {str(e)}")

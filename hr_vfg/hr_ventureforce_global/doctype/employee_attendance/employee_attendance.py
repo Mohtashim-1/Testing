@@ -321,6 +321,7 @@ class EmployeeAttendance(Document):
             # Sum approved_eot
             if data.approved_eot:
                 total_seconds_approved_eot += time_to_seconds(data.approved_eot)
+                time_seconds_approved_eot1 += time_to_seconds(data.approved_eot)
                 pass
                 # print(f"Added {time_to_seconds(data.approved_eot)} seconds from {data.approved_eot}")
 
@@ -328,11 +329,6 @@ class EmployeeAttendance(Document):
             if data.approved_ot1:
                 total_seconds_approved_ot1 += time_to_seconds(data.approved_ot1)
                 # print(f"Added {time_to_seconds(data.approved_ot1)} seconds from {data.approved_ot1}")
-
-            # Sum approved early sitting (again checking approved_eot for any duplicate logic)
-            if data.approved_eot:
-                total_seconds_approved_eot += time_to_seconds(data.approved_eot)
-                # print(f"Added {time_to_seconds(data.approved_eot)} seconds from {data.approved_eot}")
 
         # Calculate total hours after loop
         self.early_ot = "{:.2f}".format(total_seconds1 / 3600.0)
@@ -356,7 +352,7 @@ class EmployeeAttendance(Document):
 
         # Approved total sitting
         approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
-        self.approved_total_sitting = approved_total_sitting
+        self.approved_total_sitting = "{:.2f}".format(approved_total_sitting)
 
         # initialize counters (in seconds)
     
@@ -2940,11 +2936,14 @@ class EmployeeAttendance(Document):
                 frappe.log_error(frappe.get_traceback(),"Attendance")
                 previous = data
         
-        # Recalculate early_ot totals after all early_ot values are set
+        # Recalculate all overtime totals after all values are set (including updates from forms)
         # Reset counters
-        total_seconds1_recalc = 0
-        total_seconds_approved_eot_recalc = 0
-        time_seconds_approved_eot1_recalc = 0
+        total_seconds1_recalc = 0  # For early_ot
+        total_seconds2_recalc = 0  # For late_sitting (estimated_late)
+        total_seconds3_recalc = 0  # For early_sitting (estimate_early)
+        total_seconds_approved_eot_recalc = 0  # For approved_early_over_time_hour
+        total_seconds_approved_ot1_recalc = 0  # For approved_late_sitting (approved_ot1)
+        time_seconds_approved_eot1_recalc = 0  # For approved_early_sitting (approved_eot)
         
         # Helper function to convert time to seconds (handles both string and timedelta)
         def time_to_seconds_recalc(time_input):
@@ -2961,8 +2960,7 @@ class EmployeeAttendance(Document):
             else:
                 return 0
         
-        # Recalculate totals after early_ot is set
-        total_seconds3_recalc = 0  # For early_sitting (estimate_early)
+        # Recalculate totals after all values are set (including updates from late/early overtime forms)
         for data in self.table1:
             # Sum early_ot (base value, not multiplied)
             # Only count if early_ot is not None and not empty
@@ -2971,15 +2969,26 @@ class EmployeeAttendance(Document):
                 early_ot_seconds = time_to_seconds_recalc(data.early_ot)
                 total_seconds1_recalc += early_ot_seconds
             
+            # Sum estimated_late for late_sitting
+            if data.estimated_late:
+                estimated_late_seconds = time_to_seconds_recalc(data.estimated_late)
+                total_seconds2_recalc += estimated_late_seconds
+            
             # Sum estimate_early (multiplied value) for early_sitting
             if data.estimate_early:
                 estimate_early_seconds = time_to_seconds_recalc(data.estimate_early)
                 total_seconds3_recalc += estimate_early_seconds
             
-            # Sum approved_eot
+            # Sum approved_ot1 for approved_late_sitting
+            if data.approved_ot1:
+                approved_ot1_seconds = time_to_seconds_recalc(data.approved_ot1)
+                total_seconds_approved_ot1_recalc += approved_ot1_seconds
+            
+            # Sum approved_eot for approved_early_sitting
             if data.approved_eot:
-                total_seconds_approved_eot_recalc += time_to_seconds_recalc(data.approved_eot)
-                time_seconds_approved_eot1_recalc += time_to_seconds_recalc(data.approved_eot)
+                approved_eot_seconds = time_to_seconds_recalc(data.approved_eot)
+                total_seconds_approved_eot_recalc += approved_eot_seconds
+                time_seconds_approved_eot1_recalc += approved_eot_seconds
         
         # Update totals with recalculated values
         if total_seconds1_recalc > 0:
@@ -2987,25 +2996,39 @@ class EmployeeAttendance(Document):
         else:
             self.early_ot = "0.00"
         
+        # Update late_sitting with recalculated estimated_late values
+        if total_seconds2_recalc > 0:
+            self.late_sitting = "{:.2f}".format(total_seconds2_recalc / 3600.0)
+        else:
+            self.late_sitting = "0.00"
+        
         # Update early_sitting with recalculated estimate_early values
         if total_seconds3_recalc > 0:
             self.early_sitting = "{:.2f}".format(total_seconds3_recalc / 3600.0)
         else:
             self.early_sitting = "0.00"
         
+        # Update approved_late_sitting with recalculated approved_ot1 values
+        if total_seconds_approved_ot1_recalc > 0:
+            self.approved_late_sitting = "{:.2f}".format(total_seconds_approved_ot1_recalc / 3600.0)
+        else:
+            self.approved_late_sitting = "0.00"
+        
+        # Update approved_early_over_time_hour and approved_early_sitting
         if total_seconds_approved_eot_recalc > 0:
             self.approved_early_over_time_hour = "{:.2f}".format(total_seconds_approved_eot_recalc / 3600.0)
             self.approved_early_sitting = "{:.2f}".format(time_seconds_approved_eot1_recalc / 3600.0)
+        else:
+            self.approved_early_over_time_hour = "0.00"
+            self.approved_early_sitting = "0.00"
         
-        # Recalculate total sitting with updated early_sitting
-        if hasattr(self, 'late_sitting') and hasattr(self, 'early_sitting'):
-            total_sitting = float(self.late_sitting) + float(self.early_sitting)
-            self.total_sitting = "{:.2f}".format(total_sitting)
+        # Recalculate total sitting with updated late_sitting and early_sitting
+        total_sitting = float(self.late_sitting) + float(self.early_sitting)
+        self.total_sitting = "{:.2f}".format(total_sitting)
         
-        # Recalculate approved total sitting
-        if hasattr(self, 'approved_late_sitting') and hasattr(self, 'approved_early_sitting'):
-            approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
-            self.approved_total_sitting = approved_total_sitting
+        # Recalculate approved total sitting with updated approved_late_sitting and approved_early_sitting
+        approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
+        self.approved_total_sitting = "{:.2f}".format(approved_total_sitting)
 
         self.hours_worked = round(
             flt((total_hr_worked-total_late_hr_worked).total_seconds())/3600, 2)
@@ -3028,7 +3051,16 @@ class EmployeeAttendance(Document):
         self.extra_hours = round(
             flt(total_additional_hours.total_seconds())/3600, 2)
         self.extra_ot_amount = extra_ot_amount
-        # self.total_lates = total_lates
+        
+        # Recalculate total_lates AFTER late compensation (late1) has been applied
+        # This ensures compensated lates are not counted
+        total_lates_recalc = 0
+        for data in self.table1:
+            if data.late == 1:
+                total_lates_recalc += 1
+        self.total_lates_int = total_lates_recalc
+        self.total_lates = total_lates_recalc
+        
         # self.total_early_goings = total_early
         self.total_half_days = total_half_days
         # self.total_early_going_hours = total_early_going_hrs
