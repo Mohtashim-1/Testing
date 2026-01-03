@@ -80,14 +80,33 @@ class EmployeeAdvanceBulk(Document):
         frappe.msgprint("Employee Advances created successfully. Use 'Create Disbursed Payment' button to create payment entries.")
 
     @frappe.whitelist()
-    def create_disbursed_payment(self, payment_account=None):
+    def create_disbursed_payment(self, payment_account=None, mode_of_payment=None, reference_no=None, reference_date=None):
         """Create Payment Entry for disbursement after document is submitted"""
         # Get the document if called from JavaScript
         if not hasattr(self, 'name') or not self.name:
             self = frappe.get_doc("Employee Advance Bulk", frappe.form_dict.docname)
+            # Get fields from form_dict if available
+            if not mode_of_payment:
+                mode_of_payment = frappe.form_dict.get('mode_of_payment')
+            if not reference_no:
+                reference_no = frappe.form_dict.get('reference_no')
+            if not reference_date:
+                reference_date = frappe.form_dict.get('reference_date')
         
         if self.docstatus != 1:
             frappe.throw("Document must be submitted before creating payment entries.")
+        
+        # Validate mode of payment is provided
+        if not mode_of_payment:
+            frappe.throw("Mode of Payment is required. Please select a mode of payment in the dialog.")
+        
+        # Check if mode of payment type is Bank and requires reference fields
+        mode_of_payment_type = frappe.get_cached_value("Mode of Payment", mode_of_payment, "type")
+        if mode_of_payment_type == "Bank":
+            if not reference_no:
+                frappe.throw("Reference No is required for bank transactions. Please provide it in the dialog.")
+            if not reference_date:
+                frappe.throw("Reference Date is required for bank transactions. Please provide it in the dialog.")
         
         company = frappe.get_doc("Company", self.company)
         
@@ -141,6 +160,15 @@ class EmployeeAdvanceBulk(Document):
                 # Get the employee advance document
                 adv = frappe.get_doc("Employee Advance", row.employee_advance)
                 
+                # Calculate outstanding amount to ensure we don't allocate more than available
+                outstanding_amount = adv.advance_amount - (adv.paid_amount or 0)
+                # Ensure allocated_amount doesn't exceed outstanding_amount
+                allocated_amount = min(row.amount, outstanding_amount)
+                
+                if allocated_amount <= 0:
+                    frappe.msgprint(f"Skipping payment for {row.employee_name}: No outstanding amount available.")
+                    continue
+                
                 # — create the Payment Entry as an advance —
                 pe = frappe.new_doc("Payment Entry")
                 pe.payment_type               = "Pay"
@@ -157,14 +185,13 @@ class EmployeeAdvanceBulk(Document):
                 pe.paid_to                    = adv_acct
                 pe.paid_to_account_currency   = curr
 
-                pe.paid_amount      = row.amount
-                pe.received_amount  = row.amount
+                pe.paid_amount      = allocated_amount
+                pe.received_amount  = allocated_amount
 
                 pe.exchange_rate        = 1
                 pe.source_exchange_rate = 1
                 pe.target_exchange_rate = 1
 
-                pe.mode_of_payment = "Cash"
                 pe.custom_employee_advance_bulk = self.name
 
                 # Validate required fields before saving
@@ -175,6 +202,14 @@ class EmployeeAdvanceBulk(Document):
                 if not pe.party:
                     frappe.throw(f"Party is missing for employee {row.employee_name}")
 
+                # Use the user-selected mode of payment
+                pe.mode_of_payment = mode_of_payment
+                
+                # Set reference_no and reference_date if mode of payment type is Bank
+                if mode_of_payment_type == "Bank":
+                    pe.reference_no = reference_no
+                    pe.reference_date = reference_date
+
                 # **this flag** tells ERPNext these References are Advances
                 pe.is_advance = 1
 
@@ -183,8 +218,8 @@ class EmployeeAdvanceBulk(Document):
                     "reference_doctype":  "Employee Advance",
                     "reference_name":     adv.name,
                     "total_amount":       adv.advance_amount,
-                    "outstanding_amount": adv.advance_amount - (adv.paid_amount or 0),
-                    "allocated_amount":   row.amount
+                    "outstanding_amount": outstanding_amount,
+                    "allocated_amount":   allocated_amount
                 })
 
                 pe.insert()
@@ -196,7 +231,7 @@ class EmployeeAdvanceBulk(Document):
                 adv.save()
                 
                 # Force update the Employee Advance status
-                self.update_employee_advance_status(adv.name, row.amount)
+                self.update_employee_advance_status(adv.name, allocated_amount)
                 
                 # Also trigger ERPNext's standard payment allocation
                 pe.reload()
@@ -262,10 +297,10 @@ class EmployeeAdvanceBulk(Document):
     
 
 @frappe.whitelist()
-def create_disbursed_payment(docname, payment_account=None):
+def create_disbursed_payment(docname, payment_account=None, mode_of_payment=None, reference_no=None, reference_date=None):
     """Standalone function to create disbursed payment entries"""
     doc = frappe.get_doc("Employee Advance Bulk", docname)
-    return doc.create_disbursed_payment(payment_account)
+    return doc.create_disbursed_payment(payment_account, mode_of_payment, reference_no, reference_date)
 
 @frappe.whitelist()
 def get_dashboard_data():
