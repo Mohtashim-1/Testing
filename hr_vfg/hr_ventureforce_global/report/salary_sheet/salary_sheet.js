@@ -31,22 +31,24 @@ frappe.query_reports["Salary Sheet"] = {
     ],
 
     "onload": function () {
+        // Ensure Year records exist dynamically in Year DocType
         frappe.call({
-            method: "hrms.hr.report.monthly_attendance_sheet.monthly_attendance_sheet.get_attendance_years",
+            method: "hr_vfg.hr_ventureforce_global.report.salary_sheet.salary_sheet.ensure_year_records",
             callback: function (r) {
-                if (r.message) {
+                if (r.message && r.message.success) {
+                    // Year records are now ensured
+                    // Link field will automatically show all Year records
+                    
+                    // Set default to current year
                     let year_filter = frappe.query_report.get_filter('year');
-                    
-                    // Update options for the year filter
-                    year_filter.df.options = r.message + "\n2020";
-                    
-                    // Refresh the filter UI to apply changes
-                    year_filter.refresh();
-
-                    // Set the default value
-                    const default_year = r.message.split("\n")[0];
-                    year_filter.set_input(default_year);
+                    if (year_filter) {
+                        const current_year = new Date().getFullYear().toString();
+                        year_filter.set_input(current_year);
+                    }
                 }
+            },
+            error: function(err) {
+                console.log("Error ensuring year records:", err);
             }
         });
     }

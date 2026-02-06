@@ -165,3 +165,78 @@ def get_day_name(date):
 			6:"Sunday"
 		}
 		return switcher.get(day,"Not Found")
+
+@frappe.whitelist()
+def ensure_year_records():
+	"""Ensure Year records exist in Year DocType based on available salary slip years"""
+	try:
+		# Get all unique years from Salary Slips
+		years = frappe.db.sql("""
+			SELECT DISTINCT year 
+			FROM `tabSalary Slip` 
+			WHERE year IS NOT NULL AND year != ''
+			ORDER BY year DESC
+		""", as_dict=True)
+		
+		# Also add current year and a few future years
+		current_year = str(datetime.now().year)
+		year_list = [current_year]
+		for i in range(1, 3):
+			year_list.append(str(int(current_year) + i))
+		
+		# Add years from salary slips
+		for y in years:
+			if y.get('year') and y['year'] not in year_list:
+				year_list.append(y['year'])
+		
+		# Ensure Year DocType exists (check if it's a standard DocType or custom)
+		year_doctype_exists = frappe.db.exists("DocType", "Year")
+		
+		if not year_doctype_exists:
+			# Create Year DocType if it doesn't exist
+			year_doc = frappe.get_doc({
+				"doctype": "DocType",
+				"name": "Year",
+				"module": "HR VentureForce Global",
+				"custom": 1,
+				"fields": [
+					{
+						"fieldname": "year",
+						"fieldtype": "Data",
+						"label": "Year",
+						"reqd": 1,
+						"unique": 1
+					}
+				]
+			})
+			year_doc.insert(ignore_permissions=True)
+			frappe.db.commit()
+		
+		# Create Year records if they don't exist
+		created_years = []
+		for year_value in year_list:
+			if not frappe.db.exists("Year", year_value):
+				try:
+					year_doc = frappe.get_doc({
+						"doctype": "Year",
+						"year": year_value
+					})
+					year_doc.insert(ignore_permissions=True)
+					created_years.append(year_value)
+				except frappe.DuplicateEntryError:
+					pass
+		
+		if created_years:
+			frappe.db.commit()
+		
+		return {
+			"success": True,
+			"created": created_years,
+			"message": f"Ensured {len(year_list)} year records exist"
+		}
+	except Exception as e:
+		frappe.log_error(f"Error ensuring year records: {str(e)}", "Ensure Year Records")
+		return {
+			"success": False,
+			"error": str(e)
+		}
