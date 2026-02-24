@@ -28,6 +28,41 @@ class EmployeeAttendance(Document):
             frappe.throw("Employee and Month must be set before generating the name.")
         self.name = make_autoname(self.employee + '-' + self.month)
 
+    def _get_shift_assignment_for_date(self, target_date):
+        target_date = getdate(target_date)
+
+        assignment = frappe.db.sql(
+            """
+            SELECT name, shift_type, start_date, end_date
+            FROM `tabShift Assignment`
+            WHERE employee = %s
+              AND docstatus < 2
+              AND start_date <= %s
+              AND (end_date IS NULL OR end_date = '' OR end_date >= %s)
+            ORDER BY start_date DESC, creation DESC
+            LIMIT 1
+            """,
+            (self.employee, target_date, target_date),
+            as_dict=True,
+        )
+        if assignment:
+            return assignment[0]
+
+        assignment = frappe.db.sql(
+            """
+            SELECT name, shift_type, start_date, end_date
+            FROM `tabShift Assignment`
+            WHERE employee = %s
+              AND docstatus < 2
+              AND start_date <= %s
+            ORDER BY start_date DESC, creation DESC
+            LIMIT 1
+            """,
+            (self.employee, target_date),
+            as_dict=True,
+        )
+        return assignment[0] if assignment else None
+
     def validate(self):
         total_early = 0
         total_lates = 0
@@ -773,15 +808,9 @@ class EmployeeAttendance(Document):
 
                 if data.check_in_1 is None and data.check_out_1 is None or data.check_in_1 or data.check_out_1:
                     shift = None
-                    shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee,
-                                                                            'start_date': ["<=", getdate(data.date)],'end_date': [">=", getdate(data.date)]}, fields=["*"])
-                    if len(shift_ass) > 0:
-                        shift = shift_ass[0].shift_type
-                    else:
-                        shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee,
-                                                                            'start_date': ["<=", getdate(data.date)]}, fields=["*"])
-                    if len(shift_ass) > 0:
-                        shift = shift_ass[0].shift_type
+                    shift_ass = self._get_shift_assignment_for_date(data.date)
+                    if shift_ass:
+                        shift = shift_ass.get("shift_type")
                     if shift is None:
                         frappe.throw(_("No shift available for this employee{0}").format(self.employee))
                     data.shift = shift
@@ -842,15 +871,9 @@ class EmployeeAttendance(Document):
                    
                 if data.check_in_1 and data.check_in_1 != data.check_out_1:
                     shift = None
-                    shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee,
-                                                                            'start_date': ["<=", getdate(data.date)],'end_date': [">=", getdate(data.date)]}, fields=["*"])
-                    if len(shift_ass) > 0:
-                        shift = shift_ass[0].shift_type
-                    else:
-                        shift_ass = frappe.get_all("Shift Assignment", filters={'employee': self.employee,
-                                                                            'start_date': ["<=", getdate(data.date)]}, fields=["*"])
-                    if len(shift_ass) > 0:
-                        shift = shift_ass[0].shift_type
+                    shift_ass = self._get_shift_assignment_for_date(data.date)
+                    if shift_ass:
+                        shift = shift_ass.get("shift_type")
                     if shift == None:
                         frappe.throw(_("No shift available for this employee{0}").format(self.employee))
                     data.shift = shift
@@ -902,17 +925,11 @@ class EmployeeAttendance(Document):
                             shift1 = None
                             if data.day_type == "Weekly Off":
                                 # Fetch the shift assignment
-                                shift_ass = frappe.get_all("Shift Assignment", 
-                                                            filters={
-                                                                'employee': self.employee,
-                                                                'start_date': ["<=", data.date],
-                                                                'status': 'Active'
-                                                            }, 
-                                                            fields=['*'])
+                                shift_ass = self._get_shift_assignment_for_date(data.date)
 
                                 if shift_ass:
                                     # Fetch the assigned shift
-                                    shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
+                                    shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass.get("shift_type")}, fields=['*'])
                                     if shift1:
                                         weekend_slab = shift1[0].custom_slab
                                         if weekend_slab:
@@ -1464,23 +1481,17 @@ class EmployeeAttendance(Document):
 
 
                 shift1 = None
+                data.shift_in = None
+                data.shift_out = None
 
-                shift_ass = frappe.get_all("Shift Assignment", 
-                                           filters={'employee': self.employee,
-                                            'start_date': ["<=", getdate(data.date)],
-                                            'status' : 'Active',
-                                            # 'start_date': ["<=", '2024-06-01']
-                                            }, 
-                                            fields=['*'])
+                shift_ass = self._get_shift_assignment_for_date(data.date)
                 # if data.day == "Monday":
                 #     data.early_ot = "90:90:90"
                 shift1 = None
             
                 if shift_ass:
-                    first_shift_ass = shift_ass[0]
-                
                     # shift1 = frappe.get_all("Shift Type", filters={"name": shift}, fields=['*'])
-                    shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass[0].shift_type}, fields=['*'])
+                    shift1 = frappe.get_all("Shift Type", filters={"name": shift_ass.get("shift_type")}, fields=['*'])
                     if shift1 and len(shift1) > 0:
                         shift_data = shift1[0]
                         # data.early_ot = "90:00:00"
@@ -3023,11 +3034,11 @@ class EmployeeAttendance(Document):
             self.approved_early_sitting = "0.00"
         
         # Recalculate total sitting with updated late_sitting and early_sitting
-        total_sitting = float(self.late_sitting) + float(self.early_sitting)
-        self.total_sitting = "{:.2f}".format(total_sitting)
+            total_sitting = float(self.late_sitting) + float(self.early_sitting)
+            self.total_sitting = "{:.2f}".format(total_sitting)
         
         # Recalculate approved total sitting with updated approved_late_sitting and approved_early_sitting
-        approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
+            approved_total_sitting = float(self.approved_late_sitting) + float(self.approved_early_sitting)
         self.approved_total_sitting = "{:.2f}".format(approved_total_sitting)
 
         self.hours_worked = round(
@@ -3421,5 +3432,3 @@ def refresh_table(docname):
     doc.save(ignore_permissions=True)
     
     return {"message": "Child table updated successfully!"}
-
-
