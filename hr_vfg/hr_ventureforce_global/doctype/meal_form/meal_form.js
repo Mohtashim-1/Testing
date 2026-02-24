@@ -2,7 +2,8 @@ frappe.ui.form.on('Meal Form', {
     meal_type: function (frm) {
         console.log('Meal Type Selected: ', frm.doc.meal_type); // Debugging
 
-        if (frm.doc.meal_type === 'Breakfast' || frm.doc.meal_type === 'Lunch' || frm.doc.meal_type === 'Dinner' || frm.doc.meal_type === 'Iftari') {
+        if (frm.doc.meal_type === 'Breakfast' || frm.doc.meal_type === 'Lunch' || frm.doc.meal_type === 'Dinner' || frm.doc.meal_type === 'Iftari' && 
+            frm.doc.meal_type === 'Sehri') {
             // Show child tables
             frm.toggle_display('detail', true);
             frm.toggle_display('detail_meal', true);
