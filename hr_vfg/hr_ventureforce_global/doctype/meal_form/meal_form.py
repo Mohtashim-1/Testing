@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import flt
 from datetime import datetime
 
 
@@ -58,12 +59,22 @@ class MealForm(Document):
 		self.total_contractor = qty
 
 	def check_rate_not_zero(self):
+		invalid_rows = []
+
 		for i in self.detail:
-			if i.rate == 0:
-				frappe.throw("Rate cannot be zero")
+			if flt(i.quantity) > 0 and flt(i.rate) <= 0:
+				invalid_rows.append(
+					f"Contractor row #{i.idx} (Meal Category: {i.meal_category or 'N/A'})"
+				)
+
 		for i in self.detail_meal:
-			if i.rate == 0:
-				frappe.throw("Rate cannot be zero")
+			if flt(i.qty) > 0 and flt(i.rate) <= 0:
+				invalid_rows.append(
+					f"Employee row #{i.idx} (Meal Category: {i.meal_category or 'N/A'})"
+				)
+
+		if invalid_rows:
+			frappe.throw("Rate cannot be zero for: " + ", ".join(invalid_rows))
 
 
 
@@ -90,19 +101,14 @@ class MealForm(Document):
 
 		date = datetime.strptime(self.date, "%Y-%m-%d").date() if isinstance(self.date, str) else self.date
 
-		for m in meal_data:
-			for j in self.detail:
-				from_date = datetime.strptime(m.from_date, "%Y-%m-%d").date() if isinstance(m.from_date, str) else m.from_date
-				to_date = datetime.strptime(m.to_date, "%Y-%m-%d").date() if isinstance(m.to_date, str) else m.to_date
-
-				if from_date <= date <= to_date:
-					if m.category == j.meal_category:
-						if m.meal_type == self.meal_type:
-							j.rate = m.rate
-							j.amount = j.rate * j.quantity
-				else:
-					j.rate = 0
-					j.amount = 0
+		for j in self.detail:
+			matched_rate = self._get_rate_for_row(meal_data, j.meal_category, date)
+			if matched_rate is None:
+				j.rate = 0
+				j.amount = 0
+			else:
+				j.rate = matched_rate
+				j.amount = j.rate * j.quantity
 
 	def employee_rate_base_on_category(self):
 		meal_provider = frappe.get_doc("Meal Provider", self.meal_provider)
@@ -110,19 +116,26 @@ class MealForm(Document):
 
 		date = datetime.strptime(self.date, "%Y-%m-%d").date() if isinstance(self.date, str) else self.date
 
-		for m in meal_data:
-			for j in self.detail_meal:
-				from_date = datetime.strptime(m.from_date, "%Y-%m-%d").date() if isinstance(m.from_date, str) else m.from_date
-				to_date = datetime.strptime(m.to_date, "%Y-%m-%d").date() if isinstance(m.to_date, str) else m.to_date
+		for j in self.detail_meal:
+			matched_rate = self._get_rate_for_row(meal_data, j.meal_category, date)
+			if matched_rate is None:
+				j.rate = 0
+				j.amount = 0
+			else:
+				j.rate = matched_rate
+				j.amount = j.rate * j.qty
 
-				if from_date <= date <= to_date:
-					if m.category == j.meal_category:
-						if m.meal_type == self.meal_type:
-							j.rate = m.rate
-							j.amount = j.rate * j.qty
-				else:
-					j.rate = 0
-					j.amount = 0
+	def _get_rate_for_row(self, meal_data, row_category, date):
+		for m in meal_data:
+			from_date = datetime.strptime(m.from_date, "%Y-%m-%d").date() if isinstance(m.from_date, str) else m.from_date
+			to_date = datetime.strptime(m.to_date, "%Y-%m-%d").date() if isinstance(m.to_date, str) else m.to_date
+			if (
+				from_date <= date <= to_date
+				and m.category == row_category
+				and m.meal_type == self.meal_type
+			):
+				return m.rate
+		return None
 	
 	
 	# def total_qty_and_total_amount(self):
